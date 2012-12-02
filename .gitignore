@@ -1,9 +1,7 @@
 *.class
 
-# Package Files #
-*.jar
-*.war
-*.ear
+# Netbeans folders #
 /dist/
 /nbproject/private/
 .DS_Store
+/build/
