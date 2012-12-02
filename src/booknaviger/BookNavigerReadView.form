@@ -1,0 +1,442 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <NonVisualComponents>
+    <Container class="javax.swing.JPopupMenu" name="PopupMenu">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="PopupMenu" noResource="true"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JPopupMenu() {&#xa;&#xa;    @Override&#xa;    protected void firePopupMenuWillBecomeInvisible() {&#xa;        super.firePopupMenuWillBecomeInvisible();&#xa;        disableCursor(false);&#xa;    }&#xa;&#xa;    @Override&#xa;    protected void firePopupMenuWillBecomeVisible() {&#xa;        super.firePopupMenuWillBecomeVisible();&#xa;        disableCursor(true);&#xa;    }&#xa;}"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+        <Property name="useNullLayout" type="boolean" value="true"/>
+      </Layout>
+      <SubComponents>
+        <Menu class="javax.swing.JMenu" name="navigateMenu">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="navigateMenu.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="navigateMenu.text"/>
+            <Property name="name" type="java.lang.String" value="navigateMenu" noResource="true"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="previousPageMenuItem">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="booknaviger.BookNavigerReadView" id="goPreviousPage" methodName="goPreviousPage"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="previousPageMenuItem.icon"/>
+                <Property name="text" type="java.lang.String" resourceKey="previousPageMenuItem.text"/>
+                <Property name="name" type="java.lang.String" value="previousPageMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="nextPageMenuItem">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="booknaviger.BookNavigerReadView" id="goNextPage" methodName="goNextPage"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="nextPageMenuItem.icon"/>
+                <Property name="text" type="java.lang.String" resourceKey="nextPageMenuItem.text"/>
+                <Property name="name" type="java.lang.String" value="nextPageMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="navigateMenuSeparator1">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="navigateMenuSeparator1" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="tenPageBeforeMenuItem">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="booknaviger.BookNavigerReadView" id="go10PagesBefore" methodName="go10PagesBefore"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="tenPageBeforeMenuItem.icon"/>
+                <Property name="text" type="java.lang.String" resourceKey="tenPageBeforeMenuItem.text"/>
+                <Property name="name" type="java.lang.String" value="tenPageBeforeMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="tenPageAfterMenuItem">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="booknaviger.BookNavigerReadView" id="go10PagesAfter" methodName="go10PagesAfter"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="tenPageAfterMenuItem.icon"/>
+                <Property name="text" type="java.lang.String" resourceKey="tenPageAfterMenuItem.text"/>
+                <Property name="name" type="java.lang.String" value="tenPageAfterMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="navigateMenuSeparator2">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="navigateMenuSeparator2" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="firstPageMenuItem">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="booknaviger.BookNavigerReadView" id="goFirstPage" methodName="goFirstPage"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="firstPageMenuItem.icon"/>
+                <Property name="text" type="java.lang.String" resourceKey="firstPageMenuItem.text"/>
+                <Property name="name" type="java.lang.String" value="firstPageMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="lastPageMenuItem">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="booknaviger.BookNavigerReadView" id="goLastPage" methodName="goLastPage"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="lastPageMenuItem.icon"/>
+                <Property name="text" type="java.lang.String" resourceKey="lastPageMenuItem.text"/>
+                <Property name="name" type="java.lang.String" value="lastPageMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="navigateMenuSeparator3">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="navigateMenuSeparator3" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="showListMenuItem">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="booknaviger.BookNavigerReadView" id="displayPageSelector" methodName="displayPageSelector"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="showListMenuItem.icon"/>
+                <Property name="text" type="java.lang.String" resourceKey="showListMenuItem.text"/>
+                <Property name="name" type="java.lang.String" value="showListMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="displayMenu">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="displayMenu.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="displayMenu.text"/>
+            <Property name="name" type="java.lang.String" value="displayMenu" noResource="true"/>
+          </Properties>
+          <SubComponents>
+            <Menu class="javax.swing.JMenu" name="zoomMenu">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="zoomMenu.icon"/>
+                <Property name="text" type="java.lang.String" resourceKey="zoomMenu.text"/>
+                <Property name="name" type="java.lang.String" value="zoomMenu" noResource="true"/>
+              </Properties>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="defaultZoomMenuItem">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="booknaviger.BookNavigerReadView" id="setDefaultZoom" methodName="setDefaultZoom"/>
+                    </Property>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="defaultZoomMenuItem.icon"/>
+                    <Property name="text" type="java.lang.String" resourceKey="defaultZoomMenuItem.text"/>
+                    <Property name="name" type="java.lang.String" value="defaultZoomMenuItem" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="decreaseZoomMenuItem">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="booknaviger.BookNavigerReadView" id="decreaseZoom" methodName="decreaseZoom"/>
+                    </Property>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="decreaseZoomMenuItem.icon"/>
+                    <Property name="text" type="java.lang.String" resourceKey="decreaseZoomMenuItem.text"/>
+                    <Property name="name" type="java.lang.String" value="decreaseZoomMenuItem" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="increaseZoomMenuItem">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="booknaviger.BookNavigerReadView" id="increaseZoom" methodName="increaseZoom"/>
+                    </Property>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="increaseZoomMenuItem.icon"/>
+                    <Property name="text" type="java.lang.String" resourceKey="increaseZoomMenuItem.text"/>
+                    <Property name="name" type="java.lang.String" value="increaseZoomMenuItem" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JSeparator" name="zoomMenuSeparator1">
+                  <Properties>
+                    <Property name="name" type="java.lang.String" value="zoomMenuSeparator1" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="horizontalMaxZoomCheckBoxMenuItem">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="booknaviger.BookNavigerReadView" id="horizontalMaxZoomChange" methodName="horizontalMaxZoomChange"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="horizontalMaxZoomCheckBoxMenuItem.text"/>
+                    <Property name="toolTipText" type="java.lang.String" resourceKey="horizontalMaxZoomCheckBoxMenuItem.toolTipText"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="horizontalMaxZoomCheckBoxMenuItem.icon"/>
+                    <Property name="name" type="java.lang.String" value="horizontalMaxZoomCheckBoxMenuItem" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JCheckBoxMenuItem" name="verticalMaxZoomCheckBoxMenuItem">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="booknaviger.BookNavigerReadView" id="verticalMaxZoomChange" methodName="verticalMaxZoomChange"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="verticalMaxZoomCheckBoxMenuItem.text"/>
+                    <Property name="toolTipText" type="java.lang.String" resourceKey="verticalMaxZoomCheckBoxMenuItem.toolTipText"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="verticalMaxZoomCheckBoxMenuItem.icon"/>
+                    <Property name="name" type="java.lang.String" value="verticalMaxZoomCheckBoxMenuItem" noResource="true"/>
+                  </Properties>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
+            <Menu class="javax.swing.JMenu" name="rotateMenu">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" noResource="true" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/booknaviger/resources/menuicons/rotation.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="rotateMenu.text"/>
+                <Property name="name" type="java.lang.String" value="rotateMenu" noResource="true"/>
+              </Properties>
+              <SubComponents>
+                <MenuItem class="javax.swing.JRadioButtonMenuItem" name="rotationInitialRadioButtonMenuItem">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="booknaviger.BookNavigerReadView" id="rotationInitial" methodName="rotationInitial"/>
+                    </Property>
+                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                      <ComponentRef name="rotationButtonGroup"/>
+                    </Property>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="rotationInitialRadioButtonMenuItem.icon"/>
+                    <Property name="name" type="java.lang.String" value="rotationInitialRadioButtonMenuItem" noResource="true"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                  </AuxValues>
+                </MenuItem>
+                <MenuItem class="javax.swing.JRadioButtonMenuItem" name="rotation90CWRadioButtonMenuItem">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="booknaviger.BookNavigerReadView" id="rotation90CW" methodName="rotation90CW"/>
+                    </Property>
+                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                      <ComponentRef name="rotationButtonGroup"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="rotation90CWRadioButtonMenuItem.text"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="rotation90CWRadioButtonMenuItem.icon"/>
+                    <Property name="name" type="java.lang.String" value="rotation90CWRadioButtonMenuItem" noResource="true"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                  </AuxValues>
+                </MenuItem>
+                <MenuItem class="javax.swing.JRadioButtonMenuItem" name="rotation180RadioButtonMenuItem">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="booknaviger.BookNavigerReadView" id="rotation180" methodName="rotation180"/>
+                    </Property>
+                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                      <ComponentRef name="rotationButtonGroup"/>
+                    </Property>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="rotation180RadioButtonMenuItem.icon"/>
+                    <Property name="name" type="java.lang.String" value="rotation180RadioButtonMenuItem" noResource="true"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                  </AuxValues>
+                </MenuItem>
+                <MenuItem class="javax.swing.JRadioButtonMenuItem" name="rotation90CCWRadioButtonMenuItem">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="booknaviger.BookNavigerReadView" id="rotation90CCW" methodName="rotation90CCW"/>
+                    </Property>
+                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                      <ComponentRef name="rotationButtonGroup"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="rotation90CCWRadioButtonMenuItem.text"/>
+                    <Property name="icon" type="javax.swing.Icon" resourceKey="rotation90CCWRadioButtonMenuItem.icon"/>
+                    <Property name="name" type="java.lang.String" value="rotation90CCWRadioButtonMenuItem" noResource="true"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+                  </AuxValues>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="doublePagesCheckBoxMenuItem">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="booknaviger.BookNavigerReadView" id="activateDoublePages" methodName="activateDoublePages"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="doublePagesCheckBoxMenuItem.text"/>
+                <Property name="toolTipText" type="java.lang.String" resourceKey="doublePagesCheckBoxMenuItem.toolTipText"/>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="doublePagesCheckBoxMenuItem.icon"/>
+                <Property name="name" type="java.lang.String" value="doublePagesCheckBoxMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <MenuItem class="javax.swing.JMenuItem" name="minimizeMenuItem">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+              <action class="booknaviger.BookNavigerReadView" id="reduceToSystray" methodName="reduceToSystray"/>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="minimizeMenuItem.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="minimizeMenuItem.text"/>
+            <Property name="name" type="java.lang.String" value="minimizeMenuItem" noResource="true"/>
+          </Properties>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="exitViewerMenuItem">
+          <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+              <action class="booknaviger.BookNavigerReadView" id="exitViewer" methodName="exitViewer"/>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="exitViewerMenuItem.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="exitViewerMenuItem.text"/>
+            <Property name="name" type="java.lang.String" value="exitViewerMenuItem" noResource="true"/>
+          </Properties>
+        </MenuItem>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.ButtonGroup" name="rotationButtonGroup">
+    </Component>
+  </NonVisualComponents>
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="2"/>
+    <Property name="name" type="java.lang.String" value="ReadingFrame" noResource="true"/>
+    <Property name="undecorated" type="boolean" value="true"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="2"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="readScrollPane" alignment="0" max="32767" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="readScrollPane" alignment="0" max="32767" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JScrollPane" name="readScrollPane">
+      <Properties>
+        <Property name="alignmentX" type="float" value="0.0"/>
+        <Property name="alignmentY" type="float" value="0.0"/>
+        <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
+          <ComponentRef name="PopupMenu"/>
+        </Property>
+        <Property name="name" type="java.lang.String" value="readScrollPane" noResource="true"/>
+        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[480, 344]"/>
+        </Property>
+        <Property name="wheelScrollingEnabled" type="boolean" value="false" postCode="readScrollPane.addMouseWheelListener(mouseWheelListener);"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="horizontalScrollBar = readScrollPane.getHorizontalScrollBar();&#xa;verticalScrollBar = readScrollPane.getVerticalScrollBar();"/>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Container class="booknaviger.ReadPanel" name="readPanel">
+          <Properties>
+            <Property name="alignmentX" type="float" value="0.0"/>
+            <Property name="name" type="java.lang.String" value="readPanel" noResource="true"/>
+          </Properties>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+          <SubComponents>
+            <Container class="booknaviger.BorderReadComponent" name="leftBorderReadComponent">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" resourceKey="leftBorderReadComponent.toolTipText"/>
+                <Property name="alignmentX" type="float" value="0.0"/>
+                <Property name="alignmentY" type="float" value="0.0"/>
+                <Property name="doubleBuffered" type="boolean" value="true"/>
+                <Property name="inheritsPopupMenu" type="boolean" value="true"/>
+                <Property name="name" type="java.lang.String" value="leftBorderReadComponent" noResource="true"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="leftBorderReadComponent.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));&#xa;leftBorderReadComponent.addMouseListener(previousPageMouseAdapter);"/>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+              </AuxValues>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="160" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="344" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+            </Container>
+            <Container class="booknaviger.ReadComponent" name="readComponent">
+              <Properties>
+                <Property name="alignmentX" type="float" value="0.0"/>
+                <Property name="alignmentY" type="float" value="0.0"/>
+                <Property name="doubleBuffered" type="boolean" value="true"/>
+                <Property name="inheritsPopupMenu" type="boolean" value="true"/>
+                <Property name="name" type="java.lang.String" value="readComponent" noResource="true"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="readComponent.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(1, 1, new int[1 * 1], 0, 1)), new Point(0, 0), &quot;invisibleCursor&quot;));&#xa;readComponent.addMouseListener(nextPageMouseAdapter);"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new booknaviger.ReadComponent(this)"/>
+              </AuxValues>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="160" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="344" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+            </Container>
+            <Container class="booknaviger.BorderReadComponent" name="rightBorderReadComponent">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" resourceKey="rightBorderReadComponent.toolTipText"/>
+                <Property name="alignmentX" type="float" value="0.0"/>
+                <Property name="alignmentY" type="float" value="0.0"/>
+                <Property name="doubleBuffered" type="boolean" value="true"/>
+                <Property name="inheritsPopupMenu" type="boolean" value="true"/>
+                <Property name="name" type="java.lang.String" value="rightBorderReadComponent" noResource="true"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="rightBorderReadComponent.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));&#xa;rightBorderReadComponent.addMouseListener(nextPageMouseAdapter);"/>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
+              </AuxValues>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="160" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="344" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+            </Container>
+          </SubComponents>
+        </Container>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>
