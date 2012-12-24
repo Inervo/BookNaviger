@@ -5,7 +5,7 @@
 
 package booknaviger.macworld;
 
-import booknaviger.BookNavigerApp;
+import booknaviger.MainInterface;
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
 import com.apple.eawt.AppEvent.AppReOpenedEvent;
@@ -14,8 +14,6 @@ import com.apple.eawt.AppReOpenedListener;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
 import java.awt.SystemTray;
-import org.jdesktop.application.Application;
-import org.jdesktop.application.ResourceMap;
 
 /**
  *
@@ -23,14 +21,14 @@ import org.jdesktop.application.ResourceMap;
  */
 public class MacOSXApplicationAdapter {
 
-    BookNavigerApp bna = null;
+    MainInterface mainInterace = null;
 
     /**
      * Constructeur de l'adapteur de l'application pour Mac OS X
-     * @param bna instance de BookNavigerApp
+     * @param mainInterace instance de BookNavigerApp
      */
-    public MacOSXApplicationAdapter(final BookNavigerApp bna) {
-        this.bna = bna;
+    public MacOSXApplicationAdapter(final MainInterface mainInterface) {
+        this.mainInterace = mainInterface;
         com.apple.eawt.Application.getApplication().setAboutHandler(new AboutHandler() {
 
             /**
@@ -39,7 +37,7 @@ public class MacOSXApplicationAdapter {
              */
             @Override
             public void handleAbout(AboutEvent ae) {
-                bna.getBnv().showAboutBox();
+                //mainInterface.showAboutBox();
             }
         });
         com.apple.eawt.Application.getApplication().setQuitHandler(new QuitHandler() {
@@ -50,7 +48,7 @@ public class MacOSXApplicationAdapter {
              */
             @Override
             public void handleQuitRequestWith(QuitEvent qe, QuitResponse qr) {
-                bna.exit();
+                mainInterface.exit();
             }
         });
         com.apple.eawt.Application.getApplication().addAppEventListener(new AppReOpenedListener() {
@@ -61,22 +59,20 @@ public class MacOSXApplicationAdapter {
              */
             @Override
             public void appReOpened(AppReOpenedEvent aroe) {
-                if (bna == null)
+                if (mainInterace == null)
                     return;
-                if (bna.getBnv() == null)
-                    return;
-                if (bna.getBnv().getFrame().isDisplayable() && !bna.getBnv().getFrame().isVisible())
-                    bna.getBnv().getFrame().setVisible(true);
-                if (bna.getBnv().getReadView() == null)
-                    return;
-                if (bna.getBnv().getReadView().isDisplayable() && !bna.getBnv().getReadView().isVisible()) {
-                    bna.getBnv().getReadView().setVisible(true);
-                    SystemTray sysTray = SystemTray.getSystemTray();
-                    sysTray.remove(sysTray.getTrayIcons()[0]);
-                }
+//                if (mainInterace.getFrame().isDisplayable() && !mainInterace.getFrame().isVisible())
+//                    mainInterace.getFrame().setVisible(true);
+//                if (mainInterace.getReadView() == null)
+//                    return;
+//                if (mainInterace.getReadView().isDisplayable() && !mainInterace.getReadView().isVisible()) {
+//                    mainInterace.getReadView().setVisible(true);
+//                    SystemTray sysTray = SystemTray.getSystemTray();
+//                    sysTray.remove(sysTray.getTrayIcons()[0]);
+//                }
             }
         });
-        ResourceMap resourceMap = Application.getInstance().getContext().getResourceMap();
-        com.apple.eawt.Application.getApplication().setDockIconImage(resourceMap.getImageIcon("Application.logo").getImage());
+//        ResourceMap resourceMap = Application.getInstance().getContext().getResourceMap();
+//        com.apple.eawt.Application.getApplication().setDockIconImage(resourceMap.getImageIcon("Application.logo").getImage());
     }
 }

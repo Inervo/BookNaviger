@@ -3,7 +3,6 @@
 
 package booknaviger.macworld;
 
-import booknaviger.BookNavigerReadView;
 import com.apple.eawt.event.GestureAdapter;
 import com.apple.eawt.event.GesturePhaseEvent;
 import com.apple.eawt.event.GestureUtilities;
@@ -20,11 +19,11 @@ public class TrackPadAdapter extends GestureAdapter {
 
     double value = 0;
     boolean actionPerformed = false;
-    BookNavigerReadView bnrv = null;
+//    BookNavigerReadView bnrv = null;
 
-    public TrackPadAdapter(BookNavigerReadView bnrv) {
-        this.bnrv = bnrv;
-    }
+//    public TrackPadAdapter(BookNavigerReadView bnrv) {
+//        this.bnrv = bnrv;
+//    }
 
     public void addListenerOn(JComponent jc) {
         GestureUtilities.addGestureListenerTo(jc, this);
@@ -47,11 +46,11 @@ public class TrackPadAdapter extends GestureAdapter {
         value += me.getMagnification();
         if (value >= 0.7) {
             actionPerformed = true;
-            bnrv.increaseZoom();
+//            bnrv.increaseZoom();
         }
         if (value <= -0.7) {
             actionPerformed = true;
-            bnrv.decreaseZoom();
+//            bnrv.decreaseZoom();
         }
     }
 
@@ -62,22 +61,22 @@ public class TrackPadAdapter extends GestureAdapter {
         value += re.getRotation();
         if (value >= 60) {
             actionPerformed = true;
-            bnrv.getReadComponent().rotateCCW();
+//            bnrv.getReadComponent().rotateCCW();
         }
         if (value <= -60) {
             actionPerformed = true;
-            bnrv.getReadComponent().rotateCW();
+//            bnrv.getReadComponent().rotateCW();
         }
     }
 
     @Override
     public void swipedLeft(SwipeEvent se) {
-        bnrv.goNextPage();
+//        bnrv.goNextPage();
     }
 
     @Override
     public void swipedRight(SwipeEvent se) {
-        bnrv.goPreviousPage();
+//        bnrv.goPreviousPage();
     }
 
 }

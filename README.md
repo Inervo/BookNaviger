@@ -1,4 +1,0 @@
-BookNaviger
-===========
-
-Book reading software
