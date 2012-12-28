@@ -16,7 +16,6 @@ import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 /**
@@ -32,10 +31,12 @@ public class ZipHandler extends AbstractImageHandler {
         try {
             zipFile = new ZipFile(album, Charset.forName("IBM437"));
         } catch (IOException ex) {
+            Logger.getLogger(ZipHandler.class.getName()).log(Level.SEVERE, null, ex);
 //            new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Read_Zip", album.toString());
 //            previewComponent.setNoPreviewImage();
             return;
         }
+        
         Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
         List<? extends ZipEntry> entries = Collections.list(zipEntries);
         Collections.sort(entries, new Comparator<ZipEntry>() {
@@ -57,21 +58,14 @@ public class ZipHandler extends AbstractImageHandler {
     @Override
     public BufferedImage getImage(int pageNumber) {
         pageNumber--; // is now pageIndex
-        if (imageEntries.isEmpty() || pageNumber >= (imageEntries.size()) || pageNumber < 0)
+        if (imageEntries.isEmpty() || pageNumber >= (imageEntries.size()) || pageNumber < 0) {
             return null;
+        }
         try {
             return new ImageReader(zipFile.getInputStream(imageEntries.get(pageNumber))).readImage();
-        } catch (ZipException ex) {
+        } catch (IOException | NullPointerException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
 //            new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Unsupported_Zip_Compression", currentEntry.getName());
-//            previewComponent.setNoPreviewImage();
-        } catch (IOException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-//            new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Reading_Image", currentEntry.getName());
-//            previewComponent.setNoPreviewImage();
-        } catch (NullPointerException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-//            new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Reading_Image", currentEntry.getName());
 //            previewComponent.setNoPreviewImage();
         }
         return null;
@@ -83,6 +77,7 @@ public class ZipHandler extends AbstractImageHandler {
     }
 
     @Override
+    @SuppressWarnings("FinalizeDeclaration")
     protected void finalize() throws Throwable {
         zipFile.close();
         super.finalize();

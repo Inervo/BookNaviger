@@ -2,18 +2,6 @@
  */
 package testpackage;
 
-import com.github.junrar.Archive;
-import com.github.junrar.exception.RarException;
-import com.github.junrar.rarfile.FileHeader;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author Inervo
@@ -24,30 +12,7 @@ public class NewApplication extends javax.swing.JFrame {
      * Creates new form NewApplication
      */
     public NewApplication() {
-        initComponents();
-        try {
-            Archive rar = new Archive(new File("/Users/Inervo/manga & bd/6666/T02 - Civis Pacem Parabellum.rar"));
-            List<FileHeader> fh = rar.getFileHeaders();
-            Collections.sort(fh, new Comparator<FileHeader>() {
-
-                @Override
-                public int compare(FileHeader o1, FileHeader o2) {
-                    return o1.getFileNameString().compareTo(o2.getFileNameString());
-                }
-            });
-            rar.extractFile(fh.get(0), new OutputStream() {
-
-                @Override
-                public void write(int b) throws IOException {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
-            });
-        } catch (RarException ex) {
-            Logger.getLogger(NewApplication.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(NewApplication.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        initComponents();       
     }
 
     /**
@@ -60,6 +25,7 @@ public class NewApplication extends javax.swing.JFrame {
     private void initComponents() {
 
         jPopupMenu1 = new javax.swing.JPopupMenu();
+        jFileChooser1 = new javax.swing.JFileChooser();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -144,11 +110,15 @@ public class NewApplication extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 400, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .add(0, 12, Short.MAX_VALUE)
+                .add(jFileChooser1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 279, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .add(jFileChooser1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 12, Short.MAX_VALUE))
         );
 
         pack();
@@ -169,7 +139,7 @@ public class NewApplication extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Aqua".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -202,6 +172,7 @@ public class NewApplication extends javax.swing.JFrame {
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;

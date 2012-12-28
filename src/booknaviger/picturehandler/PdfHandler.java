@@ -3,12 +3,10 @@
 
 package booknaviger.picturehandler;
 
-import booknaviger.MainInterface;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.icepdf.core.exceptions.PDFException;
@@ -35,9 +33,10 @@ public class PdfHandler extends AbstractImageHandler {
     @Override
     public BufferedImage getImage(int pageNumber) {
         pageNumber--; // is now pageIndex
-        if (pdfDocument.getNumberOfPages() == 0 || pageNumber >= (pdfDocument.getNumberOfPages()) || pageNumber < 0)
+        if (pdfDocument.getNumberOfPages() == 0 || pageNumber >= (pdfDocument.getNumberOfPages()) || pageNumber < 0) {
             return null;
-        BufferedImage bufferedImage = null;
+        }
+        BufferedImage bufferedImage;
         try {
             bufferedImage = (BufferedImage) pdfDocument.getPageImages(pageNumber).get(0);
         }

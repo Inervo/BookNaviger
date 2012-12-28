@@ -19,7 +19,7 @@ import javax.swing.SwingUtilities;
  *
  * @author Inervo
  */
-public class PreviewComponent extends JComponent {
+public final class PreviewComponent extends JComponent {
 
     private BufferedImage previewImage;
     private int imageWidth;
@@ -43,8 +43,9 @@ public class PreviewComponent extends JComponent {
 
             @Override
             public void run() {
-                if (previewImage != null)
+                if (previewImage != null) {
                     previewImage.flush();
+                }
                 previewImage = image;
                 imageWidth = width;
                 imageHeight = height;
@@ -61,7 +62,7 @@ public class PreviewComponent extends JComponent {
     }
 
     public void setNoPreviewImage() {
-        Image image = new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/noPreview.png")).getImage();
+        Image image = new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/PreviewComponent").getString("no-preview_image"))).getImage();
         setImage(new ImageReader(image).convertImageToBufferedImage());
     }
 
@@ -70,13 +71,14 @@ public class PreviewComponent extends JComponent {
         int width = getParent().getWidth();
         int height = getParent().getHeight() - 50; // size of the 2 jtoolbar
         int maxWidth = (width / 5) + (width / 2);
-        int newWidth = 0;
-        int newHeight = 0;
+        int newWidth;
+        int newHeight;
         
         
 
-        if (previewImage == null)
+        if (previewImage == null) {
             return;
+        }
         if (imageWidth > (maxWidth)) {
             newWidth = maxWidth;
             float scale = (float) newWidth / (float) imageWidth;
@@ -124,7 +126,7 @@ public class PreviewComponent extends JComponent {
         }*/
 
         
-        this.setPreferredSize(new Dimension(newWidth, newHeight));
+        this.setPreferredSize(new Dimension(newWidth, getHeight()));
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.clearRect(0, 0, width, height);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);

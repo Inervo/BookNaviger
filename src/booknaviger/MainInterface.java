@@ -2,6 +2,7 @@
  */
 package booknaviger;
 
+import booknaviger.macworld.MacOSXApplicationAdapter;
 import booknaviger.picturehandler.AbstractImageHandler;
 import booknaviger.picturehandler.FolderHandler;
 import booknaviger.picturehandler.PdfHandler;
@@ -18,12 +19,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -37,24 +41,38 @@ public class MainInterface extends javax.swing.JFrame {
     private int busyIconIndex = 0;
     private Icon idleIcon;
     private Icon[] busyIcons = new Icon[15];
-    boolean isAdjusting = false;
-    File serie = null;
-    File album = null;
-    PreviewImageLoader threadedPreviewLoader = new PreviewImageLoader();
-    AbstractImageHandler imageHandler = null;
+    private boolean isAdjusting = false;
+    private File serie = null;
+    private File album = null;
+    private PreviewImageLoader threadedPreviewLoader = new PreviewImageLoader();
+    private AbstractImageHandler imageHandler = null;
+    private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
 
     /**
      * Creates new form MainInterface
      */
     public MainInterface() {
+        macInit();
         initComponents();
         setTimer();
+    }
+    
+    private void macInit() {
+        if (MacOSXApplicationAdapter.isMac()) {
+            new MacOSXApplicationAdapter(this);
+        }
+    }
+    
+    private static void preInterface() {
+        if (MacOSXApplicationAdapter.isMac()) {
+            MacOSXApplicationAdapter.setMacInterfaceAndCommands();
+        }
     }
     
     private void setTimer() {
         int busyAnimationRate = 30;
         for (int i = 0; i < busyIcons.length; i++) {
-            busyIcons[i] = new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/busyicons/busy-icon" + i + ".png"));
+            busyIcons[i] = new javax.swing.ImageIcon(getClass().getResource(java.text.MessageFormat.format(resourceBundle.getString("busy_icon_{0}"), new Object[] {i})));
         }
         busyIconTimer = new Timer(busyAnimationRate, new ActionListener() {
 
@@ -64,7 +82,7 @@ public class MainInterface extends javax.swing.JFrame {
                 statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
             }
         });
-        idleIcon = new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/busyicons/idle-icon.png"));
+        idleIcon = new javax.swing.ImageIcon(getClass().getResource(resourceBundle.getString("idle_icon")));
         statusAnimationLabel.setIcon(idleIcon);
     }
 
@@ -81,10 +99,10 @@ public class MainInterface extends javax.swing.JFrame {
         booksFolderFileChooser = new javax.swing.JFileChooser();
         mainToolBar = new javax.swing.JToolBar();
         resumeButton = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JToolBar.Separator();
+        toolbarSeparator1 = new javax.swing.JToolBar.Separator();
         refreshAllButton = new javax.swing.JButton();
         refreshCurrentButton = new javax.swing.JButton();
-        jSeparator3 = new javax.swing.JToolBar.Separator();
+        toolbarSeparator2 = new javax.swing.JToolBar.Separator();
         profileComboBox = new javax.swing.JComboBox();
         booksPreviewSplitPane = new javax.swing.JSplitPane();
         seriesScrollPane = new javax.swing.JScrollPane();
@@ -97,14 +115,14 @@ public class MainInterface extends javax.swing.JFrame {
         statusAnimationLabel = new javax.swing.JLabel();
         toolBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        generateReportMenuItem = new javax.swing.JMenuItem();
         bookFolderMenuItem = new javax.swing.JMenuItem();
         exitMenuItem = new javax.swing.JMenuItem();
         optionMenu = new javax.swing.JMenu();
         resumeMenuItem = new javax.swing.JMenuItem();
         profileMenu = new javax.swing.JMenu();
         profilesMenuItem = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        profileSeparator = new javax.swing.JPopupMenu.Separator();
         optionsSeparator = new javax.swing.JPopupMenu.Separator();
         refreshAllMenuItem = new javax.swing.JMenuItem();
         refreshCurrentMenuItem = new javax.swing.JMenuItem();
@@ -117,40 +135,51 @@ public class MainInterface extends javax.swing.JFrame {
         autoUpdatesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
 
-        booksFolderFileChooser.setDialogTitle("Choose the folder where books series are...");
+        booksFolderFileChooser.setDialogTitle(resourceBundle.getString("books-folder_title_jdialog")); // NOI18N
         booksFolderFileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("BookNaviger"); // NOI18N
 
         mainToolBar.setFloatable(false);
         mainToolBar.setRollover(true);
         mainToolBar.setPreferredSize(new java.awt.Dimension(166, 25));
 
-        resumeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/resume.png"))); // NOI18N
+        resumeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/resume.png"))); // NOI18N
         resumeButton.setFocusable(false);
         resumeButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         resumeButton.setMaximumSize(new java.awt.Dimension(20, 20));
         resumeButton.setMinimumSize(new java.awt.Dimension(20, 20));
         resumeButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(resumeButton);
-        mainToolBar.add(jSeparator1);
+        mainToolBar.add(toolbarSeparator1);
 
-        refreshAllButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/refreshSeries.png"))); // NOI18N
+        refreshAllButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/refreshSeries.png"))); // NOI18N
         refreshAllButton.setFocusable(false);
         refreshAllButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         refreshAllButton.setMaximumSize(new java.awt.Dimension(20, 20));
         refreshAllButton.setMinimumSize(new java.awt.Dimension(20, 20));
         refreshAllButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        refreshAllButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshAllActionPerformed(evt);
+            }
+        });
         mainToolBar.add(refreshAllButton);
 
-        refreshCurrentButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/refreshAlbums.png"))); // NOI18N
+        refreshCurrentButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/refreshAlbums.png"))); // NOI18N
         refreshCurrentButton.setFocusable(false);
         refreshCurrentButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         refreshCurrentButton.setMaximumSize(new java.awt.Dimension(20, 20));
         refreshCurrentButton.setMinimumSize(new java.awt.Dimension(20, 20));
         refreshCurrentButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        refreshCurrentButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshCurrentAlbumActionPerformed(evt);
+            }
+        });
         mainToolBar.add(refreshCurrentButton);
-        mainToolBar.add(jSeparator3);
+        mainToolBar.add(toolbarSeparator2);
 
         profileComboBox.setMaximumSize(new java.awt.Dimension(200, 20));
         profileComboBox.setMinimumSize(new java.awt.Dimension(96, 20));
@@ -190,6 +219,10 @@ public class MainInterface extends javax.swing.JFrame {
         });
         seriesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         seriesTable.setShowVerticalLines(false);
+        seriesTable.getTableHeader().setReorderingAllowed(false);
+        seriesTable.getColumnModel().getColumn(0).setHeaderValue(resourceBundle.getString("seriesTable.title"));
+        seriesTable.getColumnModel().getColumn(1).setMaxWidth(50);
+        seriesTable.getColumnModel().getColumn(1).setMinWidth(25);
         seriesScrollPane.setViewportView(seriesTable);
         ListSelectionModel seriesListSelectionModel = seriesTable.getSelectionModel();
         seriesListSelectionModel.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -228,6 +261,9 @@ public class MainInterface extends javax.swing.JFrame {
         albumsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         albumsTable.setShowHorizontalLines(false);
         albumsTable.setShowVerticalLines(false);
+        albumsTable.getTableHeader().setReorderingAllowed(false);
+        albumsTable.getColumnModel().getColumn(1).setMinWidth(0);
+        albumsTable.getColumnModel().getColumn(1).setMaxWidth(0);
         albumsScrollPane.setViewportView(albumsTable);
         ListSelectionModel albumsListSelectionModel = albumsTable.getSelectionModel();
         albumsListSelectionModel.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -266,14 +302,14 @@ public class MainInterface extends javax.swing.JFrame {
         getContentPane().add(statusToolBar, java.awt.BorderLayout.PAGE_END);
 
         fileMenu.setMnemonic('f');
-        fileMenu.setText("File");
+        fileMenu.setText(resourceBundle.getString("file_menu")); // NOI18N
 
-        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/report.png"))); // NOI18N
-        jMenuItem2.setText("Generate a report");
-        fileMenu.add(jMenuItem2);
+        generateReportMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/report.png"))); // NOI18N
+        generateReportMenuItem.setText(resourceBundle.getString("report-generate_menu")); // NOI18N
+        fileMenu.add(generateReportMenuItem);
 
-        bookFolderMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/library.png"))); // NOI18N
-        bookFolderMenuItem.setText("Folder of books series");
+        bookFolderMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/library.png"))); // NOI18N
+        bookFolderMenuItem.setText(resourceBundle.getString("books-folder_menu")); // NOI18N
         bookFolderMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bookFolderMenuItemActionPerformed(evt);
@@ -282,9 +318,9 @@ public class MainInterface extends javax.swing.JFrame {
         fileMenu.add(bookFolderMenuItem);
 
         exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.META_MASK));
-        exitMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/quit.png"))); // NOI18N
+        exitMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/quit.png"))); // NOI18N
         exitMenuItem.setMnemonic('x');
-        exitMenuItem.setText("Exit");
+        exitMenuItem.setText(resourceBundle.getString("exit_menu")); // NOI18N
         exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exitMenuItemActionPerformed(evt);
@@ -294,62 +330,72 @@ public class MainInterface extends javax.swing.JFrame {
 
         toolBar.add(fileMenu);
 
-        optionMenu.setText("Controls");
+        optionMenu.setText(resourceBundle.getString("controls_menu")); // NOI18N
 
-        resumeMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/resume.png"))); // NOI18N
-        resumeMenuItem.setText("Resume");
+        resumeMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/resume.png"))); // NOI18N
+        resumeMenuItem.setText(resourceBundle.getString("resume_menu")); // NOI18N
         optionMenu.add(resumeMenuItem);
 
-        profileMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/profile.png"))); // NOI18N
-        profileMenu.setText("Profiles");
+        profileMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/profile.png"))); // NOI18N
+        profileMenu.setText(resourceBundle.getString("profile-list_menu")); // NOI18N
 
-        profilesMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/profileBox.png"))); // NOI18N
-        profilesMenuItem.setText("Profiles");
+        profilesMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/profileBox.png"))); // NOI18N
+        profilesMenuItem.setText(resourceBundle.getString("profiles_menu")); // NOI18N
         profileMenu.add(profilesMenuItem);
-        profileMenu.add(jSeparator2);
+        profileMenu.add(profileSeparator);
 
         optionMenu.add(profileMenu);
         optionMenu.add(optionsSeparator);
 
-        refreshAllMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/refreshSeries.png"))); // NOI18N
-        refreshAllMenuItem.setText("Refresh all series");
+        refreshAllMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/refreshSeries.png"))); // NOI18N
+        refreshAllMenuItem.setText(resourceBundle.getString("refresh-all-series_menu")); // NOI18N
+        refreshAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshAllActionPerformed(evt);
+            }
+        });
         optionMenu.add(refreshAllMenuItem);
 
-        refreshCurrentMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/refreshAlbums.png"))); // NOI18N
-        refreshCurrentMenuItem.setText("Refresh current album");
+        refreshCurrentMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/refreshAlbums.png"))); // NOI18N
+        refreshCurrentMenuItem.setText(resourceBundle.getString("refresh-current-album_menu")); // NOI18N
+        refreshCurrentMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshCurrentAlbumActionPerformed(evt);
+            }
+        });
         optionMenu.add(refreshCurrentMenuItem);
 
         toolBar.add(optionMenu);
 
-        languageMenu.setText("Language");
+        languageMenu.setText(resourceBundle.getString("language_menu")); // NOI18N
 
         languageButtonGroup.add(defaultLanguageCheckBoxMenuItem);
         defaultLanguageCheckBoxMenuItem.setSelected(true);
-        defaultLanguageCheckBoxMenuItem.setText("Default");
-        defaultLanguageCheckBoxMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/defaultLanguage.png"))); // NOI18N
+        defaultLanguageCheckBoxMenuItem.setText(resourceBundle.getString("default-language_menu")); // NOI18N
+        defaultLanguageCheckBoxMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/defaultLanguage.png"))); // NOI18N
         languageMenu.add(defaultLanguageCheckBoxMenuItem);
         languageMenu.add(languageSeparator);
 
         languageButtonGroup.add(englishLanguageCheckBoxMenuItem);
-        englishLanguageCheckBoxMenuItem.setText("English");
-        englishLanguageCheckBoxMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/en_US.png"))); // NOI18N
+        englishLanguageCheckBoxMenuItem.setText(resourceBundle.getString("english-language_menu")); // NOI18N
+        englishLanguageCheckBoxMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/en_US.png"))); // NOI18N
         languageMenu.add(englishLanguageCheckBoxMenuItem);
 
         languageButtonGroup.add(frenchLanguageCheckBoxMenuItem);
-        frenchLanguageCheckBoxMenuItem.setText("French");
-        frenchLanguageCheckBoxMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/fr_FR.png"))); // NOI18N
+        frenchLanguageCheckBoxMenuItem.setText(resourceBundle.getString("french-language_menu")); // NOI18N
+        frenchLanguageCheckBoxMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/fr_FR.png"))); // NOI18N
         languageMenu.add(frenchLanguageCheckBoxMenuItem);
 
         toolBar.add(languageMenu);
 
-        helpMenu.setText("Help");
+        helpMenu.setText(resourceBundle.getString("help_menu")); // NOI18N
 
         autoUpdatesCheckBoxMenuItem.setSelected(true);
-        autoUpdatesCheckBoxMenuItem.setText("Auto check for updates");
+        autoUpdatesCheckBoxMenuItem.setText(resourceBundle.getString("auto-update_menu")); // NOI18N
         helpMenu.add(autoUpdatesCheckBoxMenuItem);
 
-        aboutMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/graphics/mainmenu/aboutIcon.png"))); // NOI18N
-        aboutMenuItem.setText("About");
+        aboutMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/aboutIcon.png"))); // NOI18N
+        aboutMenuItem.setText(resourceBundle.getString("about_menu")); // NOI18N
         helpMenu.add(aboutMenuItem);
 
         toolBar.add(helpMenu);
@@ -366,6 +412,17 @@ public class MainInterface extends javax.swing.JFrame {
     private void bookFolderMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bookFolderMenuItemActionPerformed
         changeFolder();
     }//GEN-LAST:event_bookFolderMenuItemActionPerformed
+
+    private void refreshAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshAllActionPerformed
+        listSeries();
+    }//GEN-LAST:event_refreshAllActionPerformed
+
+    private void refreshCurrentAlbumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshCurrentAlbumActionPerformed
+        int selectedRow = seriesTable.getSelectedRow();
+        if (selectedRow != -1) {
+            listAlbums(selectedRow);
+        }
+    }//GEN-LAST:event_refreshCurrentAlbumActionPerformed
 
     private void setActionInProgress(boolean inProgress) {
         if (inProgress) {
@@ -400,16 +457,19 @@ public class MainInterface extends javax.swing.JFrame {
     /**
      * Modification du dossier contenant les bouquins
      */
-    public void changeFolder() {
+    private void changeFolder() {
         booksFolderFileChooser.setCurrentDirectory((booksDirectory == null) ? null : booksDirectory.getParentFile());
         if (booksFolderFileChooser.showOpenDialog(this) == javax.swing.JFileChooser.APPROVE_OPTION) {
             booksDirectory = booksFolderFileChooser.getSelectedFile();
             // profiles[currentProfile][1] = directory.toString();
-            listFilesInBaseDir();
+            listSeries();
         }
     }
     
-    private Thread listFilesInBaseDir() {
+    /**
+     * Rafraichi la liste de toutes les séries
+     */
+    private void listSeries() {
         setActionInProgress(true);
         previewComponent.setNoPreviewImage();
         Thread toExecute = new Thread(new Runnable() {
@@ -479,11 +539,12 @@ public class MainInterface extends javax.swing.JFrame {
                 setActionInProgress(false);
             }
         });
-        if (SwingUtilities.isEventDispatchThread())
+        if (SwingUtilities.isEventDispatchThread()) {
             toExecute.start();
-        else
+        }
+        else {
             toExecute.run();
-        return toExecute;
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -531,14 +592,15 @@ public class MainInterface extends javax.swing.JFrame {
                 List<Thread> rows = new ArrayList<>();
                 for (int i = 0; i < allFilesValue.length; i++) {
                     String name = allFilesValue[i].getName();
-                    if (!allFilesValue[i].isHidden() && (allFilesValue[i].isDirectory() || name.toLowerCase().endsWith(".zip") || name.toLowerCase().endsWith("cbz") || name.toLowerCase().endsWith(".rar") || name.toLowerCase().endsWith(".cbr") || name.toLowerCase().endsWith(".pdf"))) {
+                    if (!allFilesValue[i].isHidden() && (allFilesValue[i].isDirectory() || name.toLowerCase().endsWith(".zip") || name.toLowerCase().endsWith(".cbz") || name.toLowerCase().endsWith(".rar") || name.toLowerCase().endsWith(".cbr") || name.toLowerCase().endsWith(".pdf"))) {
                         final int index = i;
                         Thread tampon = new Thread(new Runnable() {
 
                             @Override
                             public void run() {
-                                if (allFilesValue[index].isDirectory())
+                                if (allFilesValue[index].isDirectory()) {
                                     albumsTableModel.addRow(new Object[]{allFilesValue[index].getName(), ""});
+                                }
                                 else {
                                     String albumFullName = allFilesValue[index].getName();
                                     int indexOfExtension = albumFullName.lastIndexOf(".");
@@ -562,8 +624,9 @@ public class MainInterface extends javax.swing.JFrame {
 
                         @Override
                         public void run() {
-                            if (albumsTableModel.getRowCount() != 0)
+                            if (albumsTableModel.getRowCount() != 0) {
                                 albumsTable.getSelectionModel().setSelectionInterval(0, 0);
+                            }
                             //albumScrollPane.getVerticalScrollBar().setValue(0);
                             isAdjusting = false;
                         }
@@ -600,7 +663,7 @@ public class MainInterface extends javax.swing.JFrame {
         }
     }
     
-    class PreviewImageLoader extends Thread {
+    private class PreviewImageLoader extends Thread {
         
         public PreviewImageLoader() {
         }
@@ -613,32 +676,36 @@ public class MainInterface extends javax.swing.JFrame {
                 BufferedImage previewImage = imageHandler.getImage(1);
                 if (previewImage != null) {
                     previewComponent.setImage(previewImage);
-                } else
-                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for direcory. album : " + album);
+                } else {
+                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for direcory. album : {0}", album);
+                }
             }
             else if (album.getName().toLowerCase().endsWith(".zip") || album.getName().toLowerCase().endsWith(".cbz")) {
                 imageHandler = new ZipHandler(album);
                 BufferedImage previewImage = imageHandler.getImage(1);
                 if (previewImage != null) {
                     previewComponent.setImage(previewImage);
-                } else
-                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for zip. album : " + album);
+                } else {
+                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for zip. album : {0}", album);
+                }
             }
             else if (album.getName().toLowerCase().endsWith(".rar") || album.getName().toLowerCase().endsWith(".cbr")) {
                 imageHandler = new RarHandler(album);
                 BufferedImage previewImage = imageHandler.getImage(1);
                 if (previewImage != null) {
                     previewComponent.setImage(previewImage);
-                } else
-                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for rar. album : " + album);
+                } else {
+                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for rar. album : {0}", album);
+                }
             }
             else if (album.getName().toLowerCase().endsWith(".pdf")) {
                 imageHandler = new PdfHandler(album);
                 BufferedImage previewImage = imageHandler.getImage(1);
                 if (previewImage != null) {
                     previewComponent.setImage(previewImage);
-                } else
-                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for pdf. album : " + album);
+                } else {
+                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for pdf. album : {0}", album);
+                }
             }
             else {
                 previewComponent.setNoPreviewImage();
@@ -661,6 +728,12 @@ public class MainInterface extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        preInterface();
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -683,11 +756,8 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JCheckBoxMenuItem frenchLanguageCheckBoxMenuItem;
+    private javax.swing.JMenuItem generateReportMenuItem;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JToolBar.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator2;
-    private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.ButtonGroup languageButtonGroup;
     private javax.swing.JMenu languageMenu;
     private javax.swing.JPopupMenu.Separator languageSeparator;
@@ -697,6 +767,7 @@ public class MainInterface extends javax.swing.JFrame {
     private static booknaviger.PreviewComponent previewComponent;
     private javax.swing.JComboBox profileComboBox;
     private javax.swing.JMenu profileMenu;
+    private javax.swing.JPopupMenu.Separator profileSeparator;
     private javax.swing.JMenuItem profilesMenuItem;
     private javax.swing.JButton refreshAllButton;
     private javax.swing.JMenuItem refreshAllMenuItem;
@@ -710,5 +781,7 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JToolBar statusToolBar;
     private javax.swing.Box.Filler statusToolBarFiller;
     private javax.swing.JMenuBar toolBar;
+    private javax.swing.JToolBar.Separator toolbarSeparator1;
+    private javax.swing.JToolBar.Separator toolbarSeparator2;
     // End of variables declaration//GEN-END:variables
 }

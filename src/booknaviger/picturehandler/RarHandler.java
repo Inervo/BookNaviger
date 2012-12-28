@@ -57,8 +57,9 @@ public class RarHandler extends AbstractImageHandler {
     @Override
     public BufferedImage getImage(int pageNumber) {
         pageNumber--; // is now pageIndex
-        if (compressedFilesHeaders.isEmpty() || pageNumber >= (compressedFilesHeaders.size()) || pageNumber < 0)
+        if (compressedFilesHeaders.isEmpty() || pageNumber >= (compressedFilesHeaders.size()) || pageNumber < 0) {
             return null;
+        }
         PipedInputStream pis = new PipedInputStream();
         PipedOutputStream pos = null;
         try {
@@ -104,6 +105,7 @@ public class RarHandler extends AbstractImageHandler {
     }
 
     @Override
+    @SuppressWarnings("FinalizeDeclaration")
     protected void finalize() throws Throwable {
         archive.close();
         super.finalize();

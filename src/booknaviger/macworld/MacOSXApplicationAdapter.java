@@ -13,7 +13,6 @@ import com.apple.eawt.AppEvent.QuitEvent;
 import com.apple.eawt.AppReOpenedListener;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
-import java.awt.SystemTray;
 
 /**
  *
@@ -59,10 +58,12 @@ public class MacOSXApplicationAdapter {
              */
             @Override
             public void appReOpened(AppReOpenedEvent aroe) {
-                if (mainInterace == null)
+                if (mainInterace == null) {
                     return;
-//                if (mainInterace.getFrame().isDisplayable() && !mainInterace.getFrame().isVisible())
-//                    mainInterace.getFrame().setVisible(true);
+                }
+                if (mainInterace.isDisplayable() && !mainInterace.isVisible()) {
+                    mainInterace.setVisible(true);
+                }
 //                if (mainInterace.getReadView() == null)
 //                    return;
 //                if (mainInterace.getReadView().isDisplayable() && !mainInterace.getReadView().isVisible()) {
@@ -72,7 +73,16 @@ public class MacOSXApplicationAdapter {
 //                }
             }
         });
-//        ResourceMap resourceMap = Application.getInstance().getContext().getResourceMap();
-//        com.apple.eawt.Application.getApplication().setDockIconImage(resourceMap.getImageIcon("Application.logo").getImage());
+        com.apple.eawt.FullScreenUtilities.setWindowCanFullScreen(mainInterace, true);
+        com.apple.eawt.Application.getApplication().setDockIconImage(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/logo.png")).getImage());
+    }
+    
+    public static boolean isMac() {
+        return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
+    }
+    
+    public static void setMacInterfaceAndCommands() {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "BookNaviger");
     }
 }

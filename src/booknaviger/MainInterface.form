@@ -6,7 +6,9 @@
     </Component>
     <Component class="javax.swing.JFileChooser" name="booksFolderFileChooser">
       <Properties>
-        <Property name="dialogTitle" type="java.lang.String" value="Choose the folder where books series are..."/>
+        <Property name="dialogTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="books-folder_title_jdialog" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
         <Property name="fileSelectionMode" type="int" value="1"/>
       </Properties>
     </Component>
@@ -15,23 +17,29 @@
         <Menu class="javax.swing.JMenu" name="fileMenu">
           <Properties>
             <Property name="mnemonic" type="int" value="102"/>
-            <Property name="text" type="java.lang.String" value="File"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="file_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
+            <MenuItem class="javax.swing.JMenuItem" name="generateReportMenuItem">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/booknaviger/graphics/mainmenu/report.png"/>
+                  <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/report.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Generate a report"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="report-generate_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="bookFolderMenuItem">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/booknaviger/graphics/mainmenu/library.png"/>
+                  <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/library.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Folder of books series"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="books-folder_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bookFolderMenuItemActionPerformed"/>
@@ -43,10 +51,12 @@
                   <KeyStroke key="Meta+Q"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/booknaviger/graphics/mainmenu/quit.png"/>
+                  <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/quit.png"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="120"/>
-                <Property name="text" type="java.lang.String" value="Exit"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="exit_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exitMenuItemActionPerformed"/>
@@ -56,34 +66,42 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="optionMenu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Controls"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="controls_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="resumeMenuItem">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/booknaviger/graphics/mainmenu/resume.png"/>
+                  <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/resume.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Resume"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="resume_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="profileMenu">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/booknaviger/graphics/mainmenu/profile.png"/>
+                  <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/profile.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Profiles"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="profile-list_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="profilesMenuItem">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/booknaviger/graphics/mainmenu/profileBox.png"/>
+                      <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/profileBox.png"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Profiles"/>
+                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                      <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="profiles_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                    </Property>
                   </Properties>
                 </MenuItem>
-                <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
+                <MenuItem class="javax.swing.JPopupMenu$Separator" name="profileSeparator">
                 </MenuItem>
               </SubComponents>
             </Menu>
@@ -92,24 +110,36 @@
             <MenuItem class="javax.swing.JMenuItem" name="refreshAllMenuItem">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/booknaviger/graphics/mainmenu/refreshSeries.png"/>
+                  <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/refreshSeries.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Refresh all series"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="refresh-all-series_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshAllActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="refreshCurrentMenuItem">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/booknaviger/graphics/mainmenu/refreshAlbums.png"/>
+                  <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/refreshAlbums.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Refresh current album"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="refresh-current-album_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshCurrentAlbumActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="languageMenu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Language"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="language_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="defaultLanguageCheckBoxMenuItem">
@@ -118,9 +148,11 @@
                   <ComponentRef name="languageButtonGroup"/>
                 </Property>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Default"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="default-language_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/booknaviger/graphics/mainmenu/defaultLanguage.png"/>
+                  <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/defaultLanguage.png"/>
                 </Property>
               </Properties>
             </MenuItem>
@@ -131,9 +163,11 @@
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="languageButtonGroup"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="English"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="english-language_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/booknaviger/graphics/mainmenu/en_US.png"/>
+                  <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/en_US.png"/>
                 </Property>
               </Properties>
             </MenuItem>
@@ -142,9 +176,11 @@
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="languageButtonGroup"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="French"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="french-language_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/booknaviger/graphics/mainmenu/fr_FR.png"/>
+                  <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/fr_FR.png"/>
                 </Property>
               </Properties>
             </MenuItem>
@@ -152,21 +188,27 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="helpMenu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Help"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="help_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="autoUpdatesCheckBoxMenuItem">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Auto check for updates"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="auto-update_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="aboutMenuItem">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/booknaviger/graphics/mainmenu/aboutIcon.png"/>
+                  <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/aboutIcon.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="About"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="about_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </MenuItem>
           </SubComponents>
@@ -176,6 +218,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="title" type="java.lang.String" value="BookNaviger" noResource="true"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="toolBar"/>
@@ -215,7 +258,7 @@
         <Component class="javax.swing.JButton" name="resumeButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/booknaviger/graphics/mainmenu/resume.png"/>
+              <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/resume.png"/>
             </Property>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -228,12 +271,12 @@
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JToolBar$Separator" name="jSeparator1">
+        <Component class="javax.swing.JToolBar$Separator" name="toolbarSeparator1">
         </Component>
         <Component class="javax.swing.JButton" name="refreshAllButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/booknaviger/graphics/mainmenu/refreshSeries.png"/>
+              <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/refreshSeries.png"/>
             </Property>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -245,11 +288,14 @@
             </Property>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshAllActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="refreshCurrentButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/booknaviger/graphics/mainmenu/refreshAlbums.png"/>
+              <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/refreshAlbums.png"/>
             </Property>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -261,8 +307,11 @@
             </Property>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshCurrentAlbumActionPerformed"/>
+          </Events>
         </Component>
-        <Component class="javax.swing.JToolBar$Separator" name="jSeparator3">
+        <Component class="javax.swing.JToolBar$Separator" name="toolbarSeparator2">
         </Component>
         <Component class="javax.swing.JComboBox" name="profileComboBox">
           <Properties>
@@ -324,9 +373,13 @@
                   <JTableSelectionModel selectionMode="0"/>
                 </Property>
                 <Property name="showVerticalLines" type="boolean" value="false"/>
+                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                  <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
+                </Property>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="ListSelectionModel seriesListSelectionModel = seriesTable.getSelectionModel();&#xa;seriesListSelectionModel.addListSelectionListener(new javax.swing.event.ListSelectionListener() {&#xa;            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {&#xa;                seriesTableValueChanged(evt);&#xa;            }&#xa;        });"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="seriesTable.getColumnModel().getColumn(0).setHeaderValue(resourceBundle.getString(&quot;seriesTable.title&quot;));&#xa;seriesTable.getColumnModel().getColumn(1).setMaxWidth(50);&#xa;seriesTable.getColumnModel().getColumn(1).setMinWidth(25);"/>
               </AuxValues>
             </Component>
           </SubComponents>
@@ -361,9 +414,13 @@
                 </Property>
                 <Property name="showHorizontalLines" type="boolean" value="false"/>
                 <Property name="showVerticalLines" type="boolean" value="false"/>
+                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                  <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
+                </Property>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="ListSelectionModel albumsListSelectionModel = albumsTable.getSelectionModel();&#xa;albumsListSelectionModel.addListSelectionListener(new javax.swing.event.ListSelectionListener() {&#xa;            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {&#xa;                albumsTableValueChanged(evt);&#xa;            }&#xa;        });"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="albumsTable.getColumnModel().getColumn(1).setMinWidth(0);&#xa;albumsTable.getColumnModel().getColumn(1).setMaxWidth(0);"/>
               </AuxValues>
             </Component>
           </SubComponents>
