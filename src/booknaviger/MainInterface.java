@@ -9,6 +9,7 @@ import booknaviger.picturehandler.FolderHandler;
 import booknaviger.picturehandler.PdfHandler;
 import booknaviger.picturehandler.RarHandler;
 import booknaviger.picturehandler.ZipHandler;
+import booknaviger.readinterface.ReadInterface;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
@@ -103,7 +104,7 @@ public class MainInterface extends javax.swing.JFrame {
 
         languageButtonGroup = new javax.swing.ButtonGroup();
         booksFolderFileChooser = new javax.swing.JFileChooser();
-        aboutDialog = new javax.swing.JDialog();
+        aboutDialog = new javax.swing.JDialog(this);
         closeAboutDialogButton = new javax.swing.JButton();
         imageLabel = new javax.swing.JLabel();
         appTitleLabel = new javax.swing.JLabel();
@@ -156,8 +157,6 @@ public class MainInterface extends javax.swing.JFrame {
         booksFolderFileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
 
         aboutDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        aboutDialog.setAlwaysOnTop(true);
-        aboutDialog.setModal(true);
 
         closeAboutDialogButton.setText("Close");
         closeAboutDialogButton.addActionListener(new java.awt.event.ActionListener() {
@@ -373,6 +372,11 @@ public class MainInterface extends javax.swing.JFrame {
         albumsTable.getTableHeader().setReorderingAllowed(false);
         albumsTable.getColumnModel().getColumn(1).setMinWidth(0);
         albumsTable.getColumnModel().getColumn(1).setMaxWidth(0);
+        albumsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                albumsTableMouseClicked(evt);
+            }
+        });
         albumsScrollPane.setViewportView(albumsTable);
         ListSelectionModel albumsListSelectionModel = albumsTable.getSelectionModel();
         albumsListSelectionModel.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -552,6 +556,12 @@ public class MainInterface extends javax.swing.JFrame {
         InetBasics.openURI(appHomepageLabel.getText());
     }//GEN-LAST:event_homepageLabelMouseClicked
 
+    private void albumsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_albumsTableMouseClicked
+        if (evt.getClickCount() == 2 && album != null) {
+            startReading();
+        }
+    }//GEN-LAST:event_albumsTableMouseClicked
+
     private void setActionInProgress(boolean inProgress) {
         if (inProgress) {
             this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -605,6 +615,8 @@ public class MainInterface extends javax.swing.JFrame {
             @Override
             public void run() {
                 File[] allfiles = null;
+                serie = null;
+                album = null;
 
                 try {
                     allfiles = booksDirectory.listFiles();
@@ -683,6 +695,8 @@ public class MainInterface extends javax.swing.JFrame {
             @Override
             public void run() {
                 threadedPreviewLoader.stop();
+                serie = null;
+                album = null;
                 while (threadedPreviewLoader.isAlive() || isAdjusting) {
                     try {
                     Thread.sleep(1);
@@ -772,6 +786,7 @@ public class MainInterface extends javax.swing.JFrame {
      */
     @SuppressWarnings("deprecation")
     private synchronized void albumsTableValueChanged(javax.swing.event.ListSelectionEvent evt) {
+        album = null;
         if (booksDirectory == null) {
             return;
         }
@@ -790,6 +805,11 @@ public class MainInterface extends javax.swing.JFrame {
             threadedPreviewLoader.start();
         }
     }
+
+    private void startReading() {
+        ReadInterface readInterface = new ReadInterface(imageHandler);
+        readInterface.setVisible(true);
+    }
     
     private class PreviewImageLoader extends Thread {
         
@@ -805,7 +825,7 @@ public class MainInterface extends javax.swing.JFrame {
                 if (previewImage != null) {
                     previewComponent.setImage(previewImage);
                 } else {
-                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for direcory. album : {0}", album);
+                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for directory. album : {0}", album);
                 }
             }
             else if (album.getName().toLowerCase().endsWith(".zip") || album.getName().toLowerCase().endsWith(".cbz")) {
