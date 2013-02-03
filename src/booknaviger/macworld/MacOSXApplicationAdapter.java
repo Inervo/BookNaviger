@@ -83,6 +83,6 @@ public class MacOSXApplicationAdapter {
     
     public static void setMacInterfaceAndCommands() {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "BookNaviger");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "BookNaviger"); // <--Useless / --> -Xcode:name="BookNaviger"
     }
 }

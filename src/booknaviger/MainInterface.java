@@ -2,6 +2,7 @@
  */
 package booknaviger;
 
+import booknaviger.inet.InetBasics;
 import booknaviger.macworld.MacOSXApplicationAdapter;
 import booknaviger.picturehandler.AbstractImageHandler;
 import booknaviger.picturehandler.FolderHandler;
@@ -67,6 +68,11 @@ public class MainInterface extends javax.swing.JFrame {
         if (MacOSXApplicationAdapter.isMac()) {
             MacOSXApplicationAdapter.setMacInterfaceAndCommands();
         }
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private void setTimer() {
@@ -97,6 +103,17 @@ public class MainInterface extends javax.swing.JFrame {
 
         languageButtonGroup = new javax.swing.ButtonGroup();
         booksFolderFileChooser = new javax.swing.JFileChooser();
+        aboutDialog = new javax.swing.JDialog();
+        closeAboutDialogButton = new javax.swing.JButton();
+        imageLabel = new javax.swing.JLabel();
+        appTitleLabel = new javax.swing.JLabel();
+        appDescLabel = new javax.swing.JLabel();
+        productVersionLabel = new javax.swing.JLabel();
+        vendorLabel = new javax.swing.JLabel();
+        homepageLabel = new javax.swing.JLabel();
+        appVersionLabel = new javax.swing.JLabel();
+        appVendorLabel = new javax.swing.JLabel();
+        appHomepageLabel = new javax.swing.JLabel();
         mainToolBar = new javax.swing.JToolBar();
         resumeButton = new javax.swing.JButton();
         toolbarSeparator1 = new javax.swing.JToolBar.Separator();
@@ -137,6 +154,98 @@ public class MainInterface extends javax.swing.JFrame {
 
         booksFolderFileChooser.setDialogTitle(resourceBundle.getString("books-folder_title_jdialog")); // NOI18N
         booksFolderFileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
+
+        aboutDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        aboutDialog.setAlwaysOnTop(true);
+        aboutDialog.setModal(true);
+
+        closeAboutDialogButton.setText("Close");
+        closeAboutDialogButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeAboutBox(evt);
+            }
+        });
+
+        imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/about.png"))); // NOI18N
+
+        appTitleLabel.setFont(appTitleLabel.getFont().deriveFont(appTitleLabel.getFont().getStyle() | java.awt.Font.BOLD, appTitleLabel.getFont().getSize()+4));
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("booknaviger/resources/Application"); // NOI18N
+        appTitleLabel.setText(bundle.getString("appTitle")); // NOI18N
+
+        appDescLabel.setText(bundle.getString("appDesc")); // NOI18N
+
+        productVersionLabel.setFont(productVersionLabel.getFont().deriveFont(productVersionLabel.getFont().getStyle() | java.awt.Font.BOLD));
+        productVersionLabel.setText(bundle.getString("productVersion")); // NOI18N
+
+        vendorLabel.setFont(vendorLabel.getFont().deriveFont(vendorLabel.getFont().getStyle() | java.awt.Font.BOLD));
+        vendorLabel.setText(bundle.getString("vendor")); // NOI18N
+
+        homepageLabel.setFont(homepageLabel.getFont().deriveFont(homepageLabel.getFont().getStyle() | java.awt.Font.BOLD));
+        homepageLabel.setText(bundle.getString("homepage")); // NOI18N
+
+        appVersionLabel.setText(bundle.getString("appVersion")); // NOI18N
+
+        appVendorLabel.setText(bundle.getString("appVendor")); // NOI18N
+
+        appHomepageLabel.setText(bundle.getString("appHomepage")); // NOI18N
+        appHomepageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                homepageLabelMouseClicked(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout aboutDialogLayout = new org.jdesktop.layout.GroupLayout(aboutDialog.getContentPane());
+        aboutDialog.getContentPane().setLayout(aboutDialogLayout);
+        aboutDialogLayout.setHorizontalGroup(
+            aboutDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(aboutDialogLayout.createSequentialGroup()
+                .add(imageLabel)
+                .add(aboutDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(aboutDialogLayout.createSequentialGroup()
+                        .add(38, 38, 38)
+                        .add(aboutDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(appTitleLabel)
+                            .add(appDescLabel)
+                            .add(aboutDialogLayout.createSequentialGroup()
+                                .add(aboutDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(productVersionLabel)
+                                    .add(vendorLabel)
+                                    .add(homepageLabel))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(aboutDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(appHomepageLabel)
+                                    .add(appVersionLabel)
+                                    .add(appVendorLabel)))))
+                    .add(aboutDialogLayout.createSequentialGroup()
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(closeAboutDialogButton)))
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+        aboutDialogLayout.setVerticalGroup(
+            aboutDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(aboutDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(appTitleLabel)
+                .add(18, 18, 18)
+                .add(appDescLabel)
+                .add(18, 18, 18)
+                .add(aboutDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(aboutDialogLayout.createSequentialGroup()
+                        .add(appVersionLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(aboutDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(vendorLabel)
+                            .add(appVendorLabel)))
+                    .add(productVersionLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(aboutDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(appHomepageLabel)
+                    .add(homepageLabel))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(closeAboutDialogButton)
+                .addContainerGap())
+            .add(imageLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("BookNaviger"); // NOI18N
@@ -396,6 +505,11 @@ public class MainInterface extends javax.swing.JFrame {
 
         aboutMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/aboutIcon.png"))); // NOI18N
         aboutMenuItem.setText(resourceBundle.getString("about_menu")); // NOI18N
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openAboutDialog(evt);
+            }
+        });
         helpMenu.add(aboutMenuItem);
 
         toolBar.add(helpMenu);
@@ -423,6 +537,20 @@ public class MainInterface extends javax.swing.JFrame {
             listAlbums(selectedRow);
         }
     }//GEN-LAST:event_refreshCurrentAlbumActionPerformed
+
+    private void closeAboutBox(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeAboutBox
+        aboutDialog.setVisible(false);
+        aboutDialog.dispose();
+    }//GEN-LAST:event_closeAboutBox
+
+    private void openAboutDialog(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openAboutDialog
+        aboutDialog.pack();
+        aboutDialog.setVisible(true);
+    }//GEN-LAST:event_openAboutDialog
+
+    private void homepageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_homepageLabelMouseClicked
+        InetBasics.openURI(appHomepageLabel.getText());
+    }//GEN-LAST:event_homepageLabelMouseClicked
 
     private void setActionInProgress(boolean inProgress) {
         if (inProgress) {
@@ -729,11 +857,6 @@ public class MainInterface extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         preInterface();
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -744,13 +867,20 @@ public class MainInterface extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JDialog aboutDialog;
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JScrollPane albumsScrollPane;
     private javax.swing.JTable albumsTable;
+    private javax.swing.JLabel appDescLabel;
+    private javax.swing.JLabel appHomepageLabel;
+    private javax.swing.JLabel appTitleLabel;
+    private javax.swing.JLabel appVendorLabel;
+    private javax.swing.JLabel appVersionLabel;
     private javax.swing.JCheckBoxMenuItem autoUpdatesCheckBoxMenuItem;
     private javax.swing.JMenuItem bookFolderMenuItem;
     private javax.swing.JFileChooser booksFolderFileChooser;
     private javax.swing.JSplitPane booksPreviewSplitPane;
+    private javax.swing.JButton closeAboutDialogButton;
     private javax.swing.JCheckBoxMenuItem defaultLanguageCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem englishLanguageCheckBoxMenuItem;
     private javax.swing.JMenuItem exitMenuItem;
@@ -758,6 +888,8 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem frenchLanguageCheckBoxMenuItem;
     private javax.swing.JMenuItem generateReportMenuItem;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JLabel homepageLabel;
+    private javax.swing.JLabel imageLabel;
     private javax.swing.ButtonGroup languageButtonGroup;
     private javax.swing.JMenu languageMenu;
     private javax.swing.JPopupMenu.Separator languageSeparator;
@@ -765,6 +897,7 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JMenu optionMenu;
     private javax.swing.JPopupMenu.Separator optionsSeparator;
     private static booknaviger.PreviewComponent previewComponent;
+    private javax.swing.JLabel productVersionLabel;
     private javax.swing.JComboBox profileComboBox;
     private javax.swing.JMenu profileMenu;
     private javax.swing.JPopupMenu.Separator profileSeparator;
@@ -783,5 +916,6 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JMenuBar toolBar;
     private javax.swing.JToolBar.Separator toolbarSeparator1;
     private javax.swing.JToolBar.Separator toolbarSeparator2;
+    private javax.swing.JLabel vendorLabel;
     // End of variables declaration//GEN-END:variables
 }
