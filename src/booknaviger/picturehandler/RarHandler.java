@@ -57,7 +57,7 @@ public class RarHandler extends AbstractImageHandler {
     @Override
     public BufferedImage getImage(int pageNumber) {
         pageNumber--; // is now pageIndex
-        if (compressedFilesHeaders.isEmpty() || pageNumber >= (compressedFilesHeaders.size()) || pageNumber < 0) {
+        if (isImageInRange(pageNumber)) {
             return null;
         }
         PipedInputStream pis = new PipedInputStream();

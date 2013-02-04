@@ -58,7 +58,7 @@ public class ZipHandler extends AbstractImageHandler {
     @Override
     public BufferedImage getImage(int pageNumber) {
         pageNumber--; // is now pageIndex
-        if (imageEntries.isEmpty() || pageNumber >= (imageEntries.size()) || pageNumber < 0) {
+        if (isImageInRange(pageNumber)) {
             return null;
         }
         try {

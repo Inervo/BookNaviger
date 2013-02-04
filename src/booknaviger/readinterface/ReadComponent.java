@@ -5,12 +5,15 @@ package booknaviger.readinterface;
 
 import booknaviger.picturehandler.ImageReader;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.awt.image.PixelGrabber;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
@@ -22,8 +25,10 @@ public class ReadComponent extends JComponent {
     
     private BufferedImage readImage;
     private Color backgroundColor = new Color(140, 140, 140);
+    private ReadInterface readInterface = null;
 
-    public ReadComponent() {
+    public ReadComponent(ReadInterface readInterface) {
+        this.readInterface = readInterface;
         setLoadingImage();
     }
     
@@ -44,26 +49,45 @@ public class ReadComponent extends JComponent {
                 readImage = image;
 //                imageWidth = width;
 //                imageHeight = height;
-//                test de redimensionnement du component
                 setPreferredSize(new Dimension(width, height));
-//                revalidate();
-//                fin du test
-                forceRepaint();
+                revalidate();
+                setBackgroundColor();
+                readInterface.getReadInterfaceScrollPane().setBackground(backgroundColor);
+                scrollRectToVisible(new Rectangle(0, 0));
+                repaint();
+                readInterface.getReadInterfaceScrollPane().repaint();
+                setCursor(Cursor.getDefaultCursor()); // Started in readInterface.readPageNbrImage()
             }
         });
-    }
-    
-    /**
-     * Force le composant à se faire repeindre
-     */
-    private void forceRepaint() {
-//        paintComponent(getGraphics());
-//        repaint();
     }
     
     private void setLoadingImage() {
         Image image = new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/ReadComponent").getString("loading_image"))).getImage();
         setImage(new ImageReader(image).convertImageToBufferedImage());
+    }
+    
+    /**
+     * trouve la couleur de la bordure pour l'image courante
+     * @return la couleur des bordures
+     */
+    private void setBackgroundColor() {
+        int[] tempo = new int[1];
+
+        PixelGrabber pg = new PixelGrabber(readImage, 0, 0, 1, 1, tempo, 0, 1);
+        try {
+            pg.grabPixels();
+        } catch (InterruptedException ex) {
+            backgroundColor = new Color(140, 140, 140);
+        }
+        int alpha = (tempo[0] & 0xff000000) >> 24;
+        int red = (tempo[0] & 0x00ff0000) >> 16;
+        int green = (tempo[0] & 0x0000ff00) >> 8;
+        int blue = tempo[0] & 0x000000ff;
+        if (alpha != 0) {
+            backgroundColor = new Color(red, green, blue);
+        } else {
+            backgroundColor = new Color(140, 140, 140);
+        }
     }
 
     @Override
@@ -72,8 +96,8 @@ public class ReadComponent extends JComponent {
             return;
         }
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setColor(backgroundColor);
         
+        g2d.setColor(backgroundColor);
         g2d.fillRect(0, 0, this.getBounds().width + 1, this.getBounds().height + 1);
         
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

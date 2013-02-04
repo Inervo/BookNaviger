@@ -42,7 +42,7 @@ public class FolderHandler extends AbstractImageHandler {
     @Override
     public BufferedImage getImage(int pageNumber) {
         pageNumber--; // is  now pageIndex
-        if (imagefiles.isEmpty() || pageNumber >= (imagefiles.size()) || pageNumber < 0) {
+        if (isImageInRange(pageNumber)) {
             return null;
         }
         return new ImageReader(imagefiles.get(pageNumber)).readImage();

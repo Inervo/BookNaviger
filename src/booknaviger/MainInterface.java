@@ -49,6 +49,7 @@ public class MainInterface extends javax.swing.JFrame {
     private PreviewImageLoader threadedPreviewLoader = new PreviewImageLoader();
     private AbstractImageHandler imageHandler = null;
     private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
+    ReadInterface readInterface = null;
 
     /**
      * Creates new form MainInterface
@@ -807,8 +808,13 @@ public class MainInterface extends javax.swing.JFrame {
     }
 
     private void startReading() {
-        ReadInterface readInterface = new ReadInterface(imageHandler);
+        if (readInterface != null) {
+            readInterface.setVisible(false);
+            readInterface.dispose();
+        }
+        readInterface = new ReadInterface(imageHandler);
         readInterface.setVisible(true);
+        readInterface.readFirstImage();
     }
     
     private class PreviewImageLoader extends Thread {

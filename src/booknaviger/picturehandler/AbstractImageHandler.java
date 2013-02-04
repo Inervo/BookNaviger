@@ -20,5 +20,13 @@ public abstract class AbstractImageHandler {
         }
         return false;
     }
+    
+    public boolean isImageInRange(int pageNumber) {
+        pageNumber--;
+        if (pageNumber >= getNbrOfPages() || pageNumber < 0) {
+            return false;
+        }
+        return true;
+    }
 
 }

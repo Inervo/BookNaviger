@@ -33,7 +33,7 @@ public class PdfHandler extends AbstractImageHandler {
     @Override
     public BufferedImage getImage(int pageNumber) {
         pageNumber--; // is now pageIndex
-        if (pdfDocument.getNumberOfPages() == 0 || pageNumber >= (pdfDocument.getNumberOfPages()) || pageNumber < 0) {
+        if (pageNumber >= (pdfDocument.getNumberOfPages()) || pageNumber < 0) {
             return null;
         }
         BufferedImage bufferedImage;

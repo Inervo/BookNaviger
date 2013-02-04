@@ -3,9 +3,14 @@
 package booknaviger.readinterface;
 
 import booknaviger.picturehandler.AbstractImageHandler;
+import booknaviger.picturehandler.ImageReader;
+import java.awt.Cursor;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -14,6 +19,7 @@ import java.util.logging.Logger;
 public class ReadInterface extends javax.swing.JFrame {
     
     private AbstractImageHandler imageHandler = null;
+    private int pageNbr = 0;
 
     /**
      * Creates new form ReadInterface
@@ -21,12 +27,6 @@ public class ReadInterface extends javax.swing.JFrame {
     public ReadInterface(AbstractImageHandler abstractImageHandler) {
         this.imageHandler = abstractImageHandler;
         initComponents();
-        BufferedImage readImage = imageHandler.getImage(1); // rewrite this. It sux to be called in constructor
-            if (readImage != null) {
-                readComponent.setImage(readImage);
-            } else {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "can't read image");
-            }
     }
 
     /**
@@ -39,9 +39,14 @@ public class ReadInterface extends javax.swing.JFrame {
     private void initComponents() {
 
         readInterfaceScrollPane = new javax.swing.JScrollPane();
-        readComponent = new booknaviger.readinterface.ReadComponent();
+        readComponent = new booknaviger.readinterface.ReadComponent(this);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                readInterfaceKeyPressed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout readComponentLayout = new org.jdesktop.layout.GroupLayout(readComponent);
         readComponent.setLayout(readComponentLayout);
@@ -73,6 +78,62 @@ public class ReadInterface extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void readInterfaceKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_readInterfaceKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_RIGHT) {
+            readNextImage();
+        } else if (evt.getKeyCode() == KeyEvent.VK_LEFT) {
+            readPreviousImage();
+        } else if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.setVisible(false);
+            this.dispose();
+        }
+    }//GEN-LAST:event_readInterfaceKeyPressed
+    
+    public void readFirstImage() {
+        pageNbr = 1;
+        readPageNbrImage();
+    }
+    
+    private void readNextImage() {
+        pageNbr++;
+        if (!readPageNbrImage()) {
+            pageNbr--;
+            System.out.println("endpage"); // TODO : endpage, out of range
+        }
+    }
+    
+    private void readPreviousImage() {
+        pageNbr--;
+        if (!readPageNbrImage()) {
+            pageNbr++;
+            System.out.println("firstpage"); // TODO : endpage, out of range
+        }
+    }
+    
+    private boolean readPageNbrImage() {
+        if (!imageHandler.isImageInRange(pageNbr)) {
+            return false;
+        }
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                readComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // Ended in readComponent.setImage(...)
+            }
+        });
+        BufferedImage readImage = imageHandler.getImage(pageNbr);
+        if (readImage == null) {
+            readImage = new ImageReader(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/ReadComponent").getString("no_image"))).getImage()).convertImageToBufferedImage();
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "can't read image");
+        }
+        readComponent.setImage(readImage);
+        return true;
+    }
+
+    public JScrollPane getReadInterfaceScrollPane() {
+        return readInterfaceScrollPane;
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private booknaviger.readinterface.ReadComponent readComponent;
