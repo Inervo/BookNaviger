@@ -57,12 +57,11 @@ public class ZipHandler extends AbstractImageHandler {
 
     @Override
     public BufferedImage getImage(int pageNumber) {
-        pageNumber--; // is now pageIndex
-        if (isImageInRange(pageNumber)) {
+        if (!isImageInRange(pageNumber)) {
             return null;
         }
         try {
-            return new ImageReader(zipFile.getInputStream(imageEntries.get(pageNumber))).readImage();
+            return new ImageReader(zipFile.getInputStream(imageEntries.get(--pageNumber))).readImage();
         } catch (IOException | NullPointerException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
 //            new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Unsupported_Zip_Compression", currentEntry.getName());

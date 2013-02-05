@@ -38,7 +38,7 @@ public class ImageReader {
     }
     
     public BufferedImage convertImageToBufferedImage() {
-        if (imageObject.getClass().getName().contains("image") || imageObject.getClass().getName().contains("Image")) {
+        if (imageObject.getClass().getName().toLowerCase().contains("image")) {
             Image tampon = (Image) imageObject;
             image = new BufferedImage(tampon.getWidth(null), tampon.getHeight(null), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = image.createGraphics();
@@ -52,7 +52,7 @@ public class ImageReader {
     public BufferedImage readImage() {
 //        System.out.println(imageObject.getClass().getName());
         if (imageObject.getClass().getName().equals("java.io.File")) {
-            if (((File)imageObject).getName().endsWith(".jpg") || ((File)imageObject).getName().endsWith(".jpeg") || ((File)imageObject).getName().endsWith(".gif") || ((File)imageObject).getName().endsWith(".png")) {
+            if (((File)imageObject).getName().toLowerCase().endsWith(".jpg") || ((File)imageObject).getName().toLowerCase().endsWith(".jpeg") || ((File)imageObject).getName().toLowerCase().endsWith(".gif") || ((File)imageObject).getName().toLowerCase().endsWith(".png")) {
             readWithFileToolkit();
             } else {
                 readWithFileImageIO();

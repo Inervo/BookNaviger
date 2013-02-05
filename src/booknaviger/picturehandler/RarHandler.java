@@ -56,8 +56,7 @@ public class RarHandler extends AbstractImageHandler {
 
     @Override
     public BufferedImage getImage(int pageNumber) {
-        pageNumber--; // is now pageIndex
-        if (isImageInRange(pageNumber)) {
+        if (!isImageInRange(pageNumber)) {
             return null;
         }
         PipedInputStream pis = new PipedInputStream();
@@ -67,7 +66,7 @@ public class RarHandler extends AbstractImageHandler {
         } catch (IOException ex) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
         }
-        new ExtractFileFromRar(compressedFilesHeaders.get(pageNumber), pos).start();
+        new ExtractFileFromRar(compressedFilesHeaders.get(--pageNumber), pos).start();
         return new ImageReader(pis).readImage();
     }
     

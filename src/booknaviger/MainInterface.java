@@ -814,7 +814,7 @@ public class MainInterface extends javax.swing.JFrame {
         }
         readInterface = new ReadInterface(imageHandler);
         readInterface.setVisible(true);
-        readInterface.readFirstImage();
+        readInterface.goFirstImage();
     }
     
     private class PreviewImageLoader extends Thread {

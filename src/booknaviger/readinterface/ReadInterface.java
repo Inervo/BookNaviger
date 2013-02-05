@@ -39,12 +39,21 @@ public class ReadInterface extends javax.swing.JFrame {
     private void initComponents() {
 
         readInterfaceScrollPane = new javax.swing.JScrollPane();
-        readComponent = new booknaviger.readinterface.ReadComponent(this);
+        readComponent = new booknaviger.readinterface.ReadComponent();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setExtendedState(MAXIMIZED_BOTH);
+        setUndecorated(true);
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 readInterfaceKeyPressed(evt);
+            }
+        });
+
+        readComponent.initializeComponent(this);
+        readComponent.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                readComponentMouseClicked(evt);
             }
         });
 
@@ -81,21 +90,38 @@ public class ReadInterface extends javax.swing.JFrame {
 
     private void readInterfaceKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_readInterfaceKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_RIGHT) {
-            readNextImage();
+            goNextImage(); // TODO: image plus large que l'écran
         } else if (evt.getKeyCode() == KeyEvent.VK_LEFT) {
-            readPreviousImage();
+            goPreviousImage(); // TODO: image plus large que l'écran
+        } else if (evt.getKeyCode() == KeyEvent.VK_PAGE_UP) {
+            goPrevious10Image();
+        } else if (evt.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
+            goNext10Image();
+        } else if (evt.getKeyCode() == KeyEvent.VK_HOME) {
+            goFirstImage();
+        } else if (evt.getKeyCode() == KeyEvent.VK_END) {
+            goLastImage();
         } else if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
             this.setVisible(false);
             this.dispose();
         }
     }//GEN-LAST:event_readInterfaceKeyPressed
+
+    private void readComponentMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_readComponentMouseClicked
+        goNextImage();
+    }//GEN-LAST:event_readComponentMouseClicked
     
-    public void readFirstImage() {
+    public void goFirstImage() {
         pageNbr = 1;
         readPageNbrImage();
     }
     
-    private void readNextImage() {
+    private void goLastImage() {
+        pageNbr = imageHandler.getNbrOfPages();
+        readPageNbrImage();
+    }
+    
+    private void goNextImage() {
         pageNbr++;
         if (!readPageNbrImage()) {
             pageNbr--;
@@ -103,11 +129,27 @@ public class ReadInterface extends javax.swing.JFrame {
         }
     }
     
-    private void readPreviousImage() {
+    private void goPreviousImage() {
         pageNbr--;
         if (!readPageNbrImage()) {
             pageNbr++;
             System.out.println("firstpage"); // TODO : endpage, out of range
+        }
+    }
+    
+    private void goNext10Image() {
+        pageNbr += 10;
+        if (!readPageNbrImage()) {
+            System.out.println("endpage"); // TODO : endpage, out of range
+            goLastImage();
+        }
+    }
+    
+    private void goPrevious10Image() {
+        pageNbr -= 10;
+        if (!readPageNbrImage()) {
+            System.out.println("firstpage"); // TODO : endpage, out of range
+            goFirstImage();
         }
     }
     

@@ -27,7 +27,10 @@ public class ReadComponent extends JComponent {
     private Color backgroundColor = new Color(140, 140, 140);
     private ReadInterface readInterface = null;
 
-    public ReadComponent(ReadInterface readInterface) {
+    public ReadComponent() {
+    }
+    
+    public void initializeComponent(ReadInterface readInterface) {
         this.readInterface = readInterface;
         setLoadingImage();
     }
@@ -92,9 +95,6 @@ public class ReadComponent extends JComponent {
 
     @Override
     protected void paintComponent(Graphics g) {
-        if (readImage == null) {
-            return;
-        }
         Graphics2D g2d = (Graphics2D) g.create();
         
         g2d.setColor(backgroundColor);
@@ -105,7 +105,13 @@ public class ReadComponent extends JComponent {
         g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-        g2d.drawImage(readImage, 0, 0, readImage.getWidth(), readImage.getHeight(), this);
+        
+        if (readImage != null) {
+            g2d.drawImage(readImage, 0, 0, readImage.getWidth(), readImage.getHeight(), this);
+        }
+        
+        // TODO: firstpage / endpage
+        
         g2d.dispose();
     }
 

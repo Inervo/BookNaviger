@@ -22,7 +22,7 @@ public abstract class AbstractImageHandler {
     }
     
     public boolean isImageInRange(int pageNumber) {
-        pageNumber--;
+        pageNumber--; // is now pageIndex
         if (pageNumber >= getNbrOfPages() || pageNumber < 0) {
             return false;
         }
