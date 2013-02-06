@@ -51,6 +51,7 @@ public class ReadInterface extends javax.swing.JFrame {
         });
 
         readComponent.initializeComponent(this);
+        readComponent.setDoubleBuffered(true);
         readComponent.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 readComponentMouseClicked(evt);
@@ -101,6 +102,12 @@ public class ReadInterface extends javax.swing.JFrame {
             goFirstImage();
         } else if (evt.getKeyCode() == KeyEvent.VK_END) {
             goLastImage();
+        } else if (evt.getKeyChar() == '-') {
+            readComponent.zoomOut();
+        } else if (evt.getKeyChar() == '+') {
+            readComponent.zoomIn();
+        } else if (evt.getKeyCode() == KeyEvent.VK_0) {
+            readComponent.normalZoom();
         } else if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
             this.setVisible(false);
             this.dispose();

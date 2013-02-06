@@ -390,6 +390,7 @@ public class MainInterface extends javax.swing.JFrame {
 
         getContentPane().add(booksPreviewSplitPane, java.awt.BorderLayout.CENTER);
 
+        previewComponent.setDoubleBuffered(true);
         previewComponent.setMinimumSize(new java.awt.Dimension(100, 400));
 
         org.jdesktop.layout.GroupLayout previewComponentLayout = new org.jdesktop.layout.GroupLayout(previewComponent);

@@ -607,6 +607,7 @@
     </Container>
     <Container class="booknaviger.PreviewComponent" name="previewComponent">
       <Properties>
+        <Property name="doubleBuffered" type="boolean" value="true"/>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[100, 400]"/>
         </Property>

@@ -79,6 +79,7 @@ public final class PreviewComponent extends JComponent {
         if (previewImage == null) {
             return;
         }
+        // TODO: use ComponentResizedListener to calculate the picture and compoent size and to fasten the drawing ?
         if (imageWidth > (maxWidth)) {
             newWidth = maxWidth;
             float scale = (float) newWidth / (float) imageWidth;

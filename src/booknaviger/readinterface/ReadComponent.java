@@ -23,25 +23,41 @@ import javax.swing.SwingUtilities;
  */
 public class ReadComponent extends JComponent {
     
+    private ReadInterface readInterface = null;
     private BufferedImage readImage;
     private Color backgroundColor = new Color(140, 140, 140);
-    private ReadInterface readInterface = null;
+    /**
+     * Dimension du rendu de l'image
+     */
+    private int drawingImageWidth = 0;
+    private int drawingImageHeigh = 0;
+    /**
+     * Unité utilisé pour définir le zoom sur l'image
+     */
+    private float zoom = 1;
+    /**
+     * Unité du modificateur de zoom
+     */
+    private final float zoomModifier = 0.1F;
 
     public ReadComponent() {
     }
     
-    public void initializeComponent(ReadInterface readInterface) {
+    protected void initializeComponent(ReadInterface readInterface) {
         this.readInterface = readInterface;
         setLoadingImage();
+    }
+    
+    private void setLoadingImage() {
+        Image image = new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/ReadComponent").getString("loading_image"))).getImage();
+        setImage(new ImageReader(image).convertImageToBufferedImage());
     }
     
     /**
      * Dessine la nouvelle image pour le preview
      * @param image L'Image à charger
      */
-    public void setImage(final BufferedImage image) {
-        final int width = image.getWidth();
-        final int height = image.getHeight();
+    protected void setImage(final BufferedImage image) {
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
@@ -50,23 +66,31 @@ public class ReadComponent extends JComponent {
                     readImage.flush();
                 }
                 readImage = image;
-//                imageWidth = width;
-//                imageHeight = height;
-                setPreferredSize(new Dimension(width, height));
-                revalidate();
-                setBackgroundColor();
-                readInterface.getReadInterfaceScrollPane().setBackground(backgroundColor);
-                scrollRectToVisible(new Rectangle(0, 0));
-                repaint();
-                readInterface.getReadInterfaceScrollPane().repaint();
+                renderImage();
                 setCursor(Cursor.getDefaultCursor()); // Started in readInterface.readPageNbrImage()
             }
         });
     }
     
-    private void setLoadingImage() {
-        Image image = new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/ReadComponent").getString("loading_image"))).getImage();
-        setImage(new ImageReader(image).convertImageToBufferedImage());
+    private void renderImage() {
+        resizeComponentToRenderImageDimension();
+        setBackgroundColor();
+        readInterface.getReadInterfaceScrollPane().setBackground(backgroundColor);
+        scrollRectToVisible(new Rectangle(0, 0));
+        repaint();
+        readInterface.getReadInterfaceScrollPane().repaint();
+    }
+    
+    private void resizeComponentToRenderImageDimension() {
+        calculateRenderImageSize();
+        setPreferredSize(new Dimension(drawingImageWidth, drawingImageHeigh));
+        revalidate();
+    }
+    
+    protected void calculateRenderImageSize() {
+        // drawnImage on paintComponent seems to take care of the scale. To verify
+        drawingImageWidth = (int) (readImage.getWidth() * zoom);
+        drawingImageHeigh = (int) (readImage.getHeight() * zoom);
     }
     
     /**
@@ -92,6 +116,45 @@ public class ReadComponent extends JComponent {
             backgroundColor = new Color(140, 140, 140);
         }
     }
+    
+    protected void zoomIn() {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                zoom += zoomModifier;
+                resizeComponentToRenderImageDimension();
+                repaint();
+            }
+        });
+    }
+    
+    protected void zoomOut() {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                zoom -= zoomModifier;
+                if (zoom < zoomModifier) {
+                    zoom = zoomModifier;
+                }
+                resizeComponentToRenderImageDimension();
+                repaint();
+            }
+        });
+    }
+    
+    protected void normalZoom() {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                zoom = 1;
+                resizeComponentToRenderImageDimension();
+                repaint();
+            }
+        });
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -107,7 +170,7 @@ public class ReadComponent extends JComponent {
         g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
         
         if (readImage != null) {
-            g2d.drawImage(readImage, 0, 0, readImage.getWidth(), readImage.getHeight(), this);
+            g2d.drawImage(readImage, 0, 0, drawingImageWidth, drawingImageHeigh, this); // TODO: center this
         }
         
         // TODO: firstpage / endpage
