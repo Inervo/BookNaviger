@@ -108,6 +108,14 @@ public class ReadInterface extends javax.swing.JFrame {
             readComponent.zoomIn();
         } else if (evt.getKeyCode() == KeyEvent.VK_0) {
             readComponent.normalZoom();
+        } else if (evt.getKeyCode() == KeyEvent.VK_Z || evt.getKeyCode() == KeyEvent.VK_A) {
+            readComponent.rotateImage(180);
+        } else if (evt.getKeyCode() == KeyEvent.VK_Q) {
+            readComponent.rotateImage(90);
+        } else if (evt.getKeyCode() == KeyEvent.VK_D) {
+            readComponent.rotateImage(270);
+        } else if (evt.getKeyCode() == KeyEvent.VK_S) {
+            readComponent.rotateImage(0);
         } else if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
             this.setVisible(false);
             this.dispose();
@@ -176,7 +184,7 @@ public class ReadInterface extends javax.swing.JFrame {
             readImage = new ImageReader(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/ReadComponent").getString("no_image"))).getImage()).convertImageToBufferedImage();
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "can't read image");
         }
-        readComponent.setImage(readImage);
+        readComponent.setImage(readImage, true);
         return true;
     }
 

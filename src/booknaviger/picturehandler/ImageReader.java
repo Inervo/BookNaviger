@@ -7,6 +7,7 @@ import booknaviger.MainInterface;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -53,7 +54,7 @@ public class ImageReader {
 //        System.out.println(imageObject.getClass().getName());
         if (imageObject.getClass().getName().equals("java.io.File")) {
             if (((File)imageObject).getName().toLowerCase().endsWith(".jpg") || ((File)imageObject).getName().toLowerCase().endsWith(".jpeg") || ((File)imageObject).getName().toLowerCase().endsWith(".gif") || ((File)imageObject).getName().toLowerCase().endsWith(".png")) {
-            readWithFileToolkit();
+                readWithFileToolkit();
             } else {
                 readWithFileImageIO();
             }
@@ -68,6 +69,40 @@ public class ImageReader {
             return image;
         }
         
+        return null;
+    }
+    
+    public static BufferedImage rotatePicture(BufferedImage originalImage, int rotationDegree) {
+        if (originalImage != null) {
+            BufferedImage rotatedBufferedImage;
+            if(rotationDegree == 180) {
+                rotatedBufferedImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            } else if (rotationDegree == 90 || rotationDegree == 270) {
+                rotatedBufferedImage = new BufferedImage(originalImage.getHeight(), originalImage.getWidth(), BufferedImage.TYPE_INT_ARGB);
+            } else if (rotationDegree == 0) {
+                return originalImage;
+            } else {
+                return null;
+            }
+            Graphics2D g2d = rotatedBufferedImage.createGraphics();
+            g2d.rotate(Math.toRadians(rotationDegree), 0, 0);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+            if (rotationDegree == 180) {
+                g2d.drawImage(originalImage, -originalImage.getWidth(), -originalImage.getHeight(), originalImage.getWidth(), originalImage.getHeight(), null);
+            }
+            else if (rotationDegree == 90) {
+                g2d.drawImage(originalImage, 0, -originalImage.getHeight(), originalImage.getWidth(), originalImage.getHeight(), null);
+            }
+            else if (rotationDegree == 270) {
+                g2d.drawImage(originalImage, -originalImage.getWidth(), 0, originalImage.getWidth(), originalImage.getHeight(), null);
+            }
+            g2d.dispose();
+            return rotatedBufferedImage;
+        }
         return null;
     }
     

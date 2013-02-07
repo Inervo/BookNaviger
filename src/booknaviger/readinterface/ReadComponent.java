@@ -24,7 +24,7 @@ import javax.swing.SwingUtilities;
 public class ReadComponent extends JComponent {
     
     private ReadInterface readInterface = null;
-    private BufferedImage readImage;
+    private BufferedImage readImage = null;
     private Color backgroundColor = new Color(140, 140, 140);
     /**
      * Dimension du rendu de l'image
@@ -39,6 +39,10 @@ public class ReadComponent extends JComponent {
      * Unité du modificateur de zoom
      */
     private final float zoomModifier = 0.1F;
+    /**
+     * Current orientation of the image
+     */
+    private int currentOrientation = 0;
 
     public ReadComponent() {
     }
@@ -58,6 +62,18 @@ public class ReadComponent extends JComponent {
      * @param image L'Image à charger
      */
     protected void setImage(final BufferedImage image) {
+        setImage(image, false);
+    }
+    
+    /**
+     * Dessine la nouvelle image pour le preview
+     * @param image L'Image à charger
+     * @param reinitializeOrientation Reinitialisation de la valeur de l'orientation actuelle de l'image
+     */
+    protected void setImage(final BufferedImage image, boolean reinitializeOrientation) {
+        if (reinitializeOrientation) {
+            currentOrientation = 0;
+        }
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
@@ -82,15 +98,26 @@ public class ReadComponent extends JComponent {
     }
     
     private void resizeComponentToRenderImageDimension() {
-        calculateRenderImageSize();
+        drawingImageWidth = (int) (readImage.getWidth() * zoom);
+        drawingImageHeigh = (int) (readImage.getHeight() * zoom);
         setPreferredSize(new Dimension(drawingImageWidth, drawingImageHeigh));
         revalidate();
     }
     
-    protected void calculateRenderImageSize() {
-        // drawnImage on paintComponent seems to take care of the scale. To verify
-        drawingImageWidth = (int) (readImage.getWidth() * zoom);
-        drawingImageHeigh = (int) (readImage.getHeight() * zoom);
+    protected void rotateImage(int rotationWanted) {
+        int rotationDegree = rotationWanted - currentOrientation;
+        if (rotationDegree < 0) {
+            rotationDegree += 360;
+        }
+        currentOrientation = rotationWanted;
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // Ended in readComponent.setImage(...)
+            }
+        });
+        setImage(ImageReader.rotatePicture(readImage, rotationDegree));
     }
     
     /**
