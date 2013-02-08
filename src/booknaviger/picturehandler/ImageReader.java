@@ -4,12 +4,14 @@
 package booknaviger.picturehandler;
 
 import booknaviger.MainInterface;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.PixelGrabber;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,9 +103,61 @@ public class ImageReader {
                 g2d.drawImage(originalImage, -originalImage.getWidth(), 0, originalImage.getWidth(), originalImage.getHeight(), null);
             }
             g2d.dispose();
+            originalImage.flush();
             return rotatedBufferedImage;
         }
         return null;
+    }
+    
+    public static BufferedImage combine2Images(BufferedImage imageLeft, BufferedImage imageRight) {
+        if (imageLeft == null || imageRight == null) {
+            return null;
+        }
+        int totalWidth = imageLeft.getWidth() + imageRight.getWidth();
+        int totalHeigh = (imageLeft.getHeight() < imageRight.getHeight()) ? imageRight.getHeight() : imageLeft.getHeight();
+        BufferedImage imageCombined = new BufferedImage(totalWidth, totalHeigh, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = imageCombined.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+        g2d.setColor(findColor(imageLeft));
+        g2d.fillRect(0, 0, totalWidth, totalHeigh);
+        g2d.drawImage(imageLeft, 0, 0, imageLeft.getWidth(), imageLeft.getHeight(), null);
+        g2d.drawImage(imageRight, imageLeft.getWidth(), 0, imageRight.getWidth(), imageRight.getHeight(), null);
+        g2d.dispose();
+        imageRight.flush();
+        imageLeft.flush();
+        return imageCombined;
+    }
+    
+    /**
+     * trouve la couleur de la bordure pour l'image passée en paramètre
+     * @param image l'image sur laquelle trouver la couleur du premier pixel
+     * @return la couleur trouvée
+     */
+    public static Color findColor(BufferedImage image) {
+        int[] tempo = new int[1];
+        Color color;
+
+        PixelGrabber pg = new PixelGrabber(image, 0, 0, 1, 1, tempo, 0, 1);
+        try {
+            pg.grabPixels();
+        } catch (InterruptedException ex) {
+            color = new Color(140, 140, 140);
+            return color;
+        }
+        int alpha = (tempo[0] & 0xff000000) >> 24;
+        int red = (tempo[0] & 0x00ff0000) >> 16;
+        int green = (tempo[0] & 0x0000ff00) >> 8;
+        int blue = tempo[0] & 0x000000ff;
+        if (alpha != 0) {
+            color = new Color(red, green, blue);
+        } else {
+            color = new Color(140, 140, 140);
+        }
+        return color;
     }
     
     private void readWithFileImageIO() {
@@ -139,7 +193,5 @@ public class ImageReader {
             //previewComponent.setNoPreviewImage();
         }
     }
-    
-    
 
 }

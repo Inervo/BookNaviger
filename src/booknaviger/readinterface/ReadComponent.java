@@ -13,7 +13,6 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.awt.image.PixelGrabber;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
@@ -23,7 +22,6 @@ import javax.swing.SwingUtilities;
  */
 public class ReadComponent extends JComponent {
     
-    private ReadInterface readInterface = null;
     private BufferedImage readImage = null;
     private Color backgroundColor = new Color(140, 140, 140);
     /**
@@ -31,6 +29,12 @@ public class ReadComponent extends JComponent {
      */
     private int drawingImageWidth = 0;
     private int drawingImageHeigh = 0;
+    /**
+     * Zone de début de dessin de l'image (pour centrage sur l'écran
+     */
+    private Dimension readInterfaceDimension = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+    private int startXDrawingPoint = 0;
+    private int startYDrawingPoint = 0;
     /**
      * Unité utilisé pour définir le zoom sur l'image
      */
@@ -45,10 +49,6 @@ public class ReadComponent extends JComponent {
     private int currentOrientation = 0;
 
     public ReadComponent() {
-    }
-    
-    protected void initializeComponent(ReadInterface readInterface) {
-        this.readInterface = readInterface;
         setLoadingImage();
     }
     
@@ -62,7 +62,7 @@ public class ReadComponent extends JComponent {
      * @param image L'Image à charger
      */
     protected void setImage(final BufferedImage image) {
-        setImage(image, false);
+        setImage(image, false, null);
     }
     
     /**
@@ -70,7 +70,7 @@ public class ReadComponent extends JComponent {
      * @param image L'Image à charger
      * @param reinitializeOrientation Reinitialisation de la valeur de l'orientation actuelle de l'image
      */
-    protected void setImage(final BufferedImage image, boolean reinitializeOrientation) {
+    protected void setImage(final BufferedImage image, boolean reinitializeOrientation, final Dimension readInterfaceScrollPaneDimension) {
         if (reinitializeOrientation) {
             currentOrientation = 0;
         }
@@ -81,6 +81,9 @@ public class ReadComponent extends JComponent {
                 if (readImage != null) {
                     readImage.flush();
                 }
+                if (readInterfaceScrollPaneDimension != null) {
+                    readInterfaceDimension = readInterfaceScrollPaneDimension;
+                }
                 readImage = image;
                 renderImage();
                 setCursor(Cursor.getDefaultCursor()); // Started in readInterface.readPageNbrImage()
@@ -90,18 +93,24 @@ public class ReadComponent extends JComponent {
     
     private void renderImage() {
         resizeComponentToRenderImageDimension();
-        setBackgroundColor();
-        readInterface.getReadInterfaceScrollPane().setBackground(backgroundColor);
+        backgroundColor = ImageReader.findColor(readImage);
         scrollRectToVisible(new Rectangle(0, 0));
         repaint();
-        readInterface.getReadInterfaceScrollPane().repaint();
     }
     
     private void resizeComponentToRenderImageDimension() {
         drawingImageWidth = (int) (readImage.getWidth() * zoom);
         drawingImageHeigh = (int) (readImage.getHeight() * zoom);
+        getStartingPointToDrawCenteredImage();
         setPreferredSize(new Dimension(drawingImageWidth, drawingImageHeigh));
         revalidate();
+    }
+    
+    private void getStartingPointToDrawCenteredImage() {
+        if (readInterfaceDimension != null) {
+            startXDrawingPoint = (int) ((drawingImageWidth > readInterfaceDimension.getWidth()) ? 0 : (readInterfaceDimension.getWidth() - drawingImageWidth) / 2);
+            startYDrawingPoint = (int) ((drawingImageHeigh > readInterfaceDimension.getHeight()) ? 0 : (readInterfaceDimension.getHeight() - drawingImageHeigh) / 2);
+        }
     }
     
     protected void rotateImage(int rotationWanted) {
@@ -118,30 +127,6 @@ public class ReadComponent extends JComponent {
             }
         });
         setImage(ImageReader.rotatePicture(readImage, rotationDegree));
-    }
-    
-    /**
-     * trouve la couleur de la bordure pour l'image courante
-     * @return la couleur des bordures
-     */
-    private void setBackgroundColor() {
-        int[] tempo = new int[1];
-
-        PixelGrabber pg = new PixelGrabber(readImage, 0, 0, 1, 1, tempo, 0, 1);
-        try {
-            pg.grabPixels();
-        } catch (InterruptedException ex) {
-            backgroundColor = new Color(140, 140, 140);
-        }
-        int alpha = (tempo[0] & 0xff000000) >> 24;
-        int red = (tempo[0] & 0x00ff0000) >> 16;
-        int green = (tempo[0] & 0x0000ff00) >> 8;
-        int blue = tempo[0] & 0x000000ff;
-        if (alpha != 0) {
-            backgroundColor = new Color(red, green, blue);
-        } else {
-            backgroundColor = new Color(140, 140, 140);
-        }
     }
     
     protected void zoomIn() {
@@ -197,7 +182,7 @@ public class ReadComponent extends JComponent {
         g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
         
         if (readImage != null) {
-            g2d.drawImage(readImage, 0, 0, drawingImageWidth, drawingImageHeigh, this); // TODO: center this
+            g2d.drawImage(readImage, startXDrawingPoint, startYDrawingPoint, drawingImageWidth, drawingImageHeigh, this);
         }
         
         // TODO: firstpage / endpage

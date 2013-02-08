@@ -20,6 +20,7 @@ public class ReadInterface extends javax.swing.JFrame {
     
     private AbstractImageHandler imageHandler = null;
     private int pageNbr = 0;
+    private boolean dualPageReadMode = false;
 
     /**
      * Creates new form ReadInterface
@@ -50,7 +51,8 @@ public class ReadInterface extends javax.swing.JFrame {
             }
         });
 
-        readComponent.initializeComponent(this);
+        readInterfaceScrollPane.setBorder(null);
+
         readComponent.setDoubleBuffered(true);
         readComponent.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -62,11 +64,11 @@ public class ReadInterface extends javax.swing.JFrame {
         readComponent.setLayout(readComponentLayout);
         readComponentLayout.setHorizontalGroup(
             readComponentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 396, Short.MAX_VALUE)
+            .add(0, 400, Short.MAX_VALUE)
         );
         readComponentLayout.setVerticalGroup(
             readComponentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 296, Short.MAX_VALUE)
+            .add(0, 300, Short.MAX_VALUE)
         );
 
         readInterfaceScrollPane.setViewportView(readComponent);
@@ -108,7 +110,7 @@ public class ReadInterface extends javax.swing.JFrame {
             readComponent.zoomIn();
         } else if (evt.getKeyCode() == KeyEvent.VK_0) {
             readComponent.normalZoom();
-        } else if (evt.getKeyCode() == KeyEvent.VK_Z || evt.getKeyCode() == KeyEvent.VK_A) {
+        } else if (evt.getKeyCode() == KeyEvent.VK_Z) { // TODO: change shortcuts. For fr keyboard only
             readComponent.rotateImage(180);
         } else if (evt.getKeyCode() == KeyEvent.VK_Q) {
             readComponent.rotateImage(90);
@@ -116,6 +118,12 @@ public class ReadInterface extends javax.swing.JFrame {
             readComponent.rotateImage(270);
         } else if (evt.getKeyCode() == KeyEvent.VK_S) {
             readComponent.rotateImage(0);
+        } else if (evt.getKeyCode() == KeyEvent.VK_1) {
+            dualPageReadMode = false;
+            readPageNbrImage();
+        } else if (evt.getKeyCode() == KeyEvent.VK_2) {
+            dualPageReadMode = true;
+            readPageNbrImage();
         } else if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
             this.setVisible(false);
             this.dispose();
@@ -137,17 +145,30 @@ public class ReadInterface extends javax.swing.JFrame {
     }
     
     private void goNextImage() {
-        pageNbr++;
+        if (dualPageReadMode) {
+            pageNbr += 2;
+        } else {
+            pageNbr++;
+        }
         if (!readPageNbrImage()) {
-            pageNbr--;
+            if (dualPageReadMode) {
+                pageNbr = imageHandler.getNbrOfPages() - 1;
+            } else {
+                pageNbr--;
+            }
+            readPageNbrImage();
             System.out.println("endpage"); // TODO : endpage, out of range
         }
     }
     
     private void goPreviousImage() {
-        pageNbr--;
+        if (dualPageReadMode) {
+            pageNbr -= 2;
+        } else {
+            pageNbr--;
+        }
         if (!readPageNbrImage()) {
-            pageNbr++;
+            goFirstImage();
             System.out.println("firstpage"); // TODO : endpage, out of range
         }
     }
@@ -172,6 +193,9 @@ public class ReadInterface extends javax.swing.JFrame {
         if (!imageHandler.isImageInRange(pageNbr)) {
             return false;
         }
+        if (dualPageReadMode && !imageHandler.isImageInRange(pageNbr+1)) {
+            return false;
+        }
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
@@ -179,12 +203,17 @@ public class ReadInterface extends javax.swing.JFrame {
                 readComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // Ended in readComponent.setImage(...)
             }
         });
-        BufferedImage readImage = imageHandler.getImage(pageNbr);
+        BufferedImage readImage;
+        if (dualPageReadMode) {
+            readImage = ImageReader.combine2Images(imageHandler.getImage(pageNbr), imageHandler.getImage(pageNbr+1));
+        } else {
+            readImage = imageHandler.getImage(pageNbr);
+        }
         if (readImage == null) {
             readImage = new ImageReader(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/ReadComponent").getString("no_image"))).getImage()).convertImageToBufferedImage();
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "can't read image");
         }
-        readComponent.setImage(readImage, true);
+        readComponent.setImage(readImage, true, readInterfaceScrollPane.getSize());
         return true;
     }
 

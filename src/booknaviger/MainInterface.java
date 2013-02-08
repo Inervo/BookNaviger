@@ -815,6 +815,7 @@ public class MainInterface extends javax.swing.JFrame {
         }
         readInterface = new ReadInterface(imageHandler);
         readInterface.setVisible(true);
+        readInterface.revalidate();
         readInterface.goFirstImage();
     }
     
