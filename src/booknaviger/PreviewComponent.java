@@ -56,7 +56,7 @@ public final class PreviewComponent extends JComponent {
                 previewImage = image;
                 imageWidth = width;
                 imageHeight = height;
-                sizeChanged();
+                refresh();
             }
         });
     }
@@ -66,7 +66,7 @@ public final class PreviewComponent extends JComponent {
         setImage(new ImageReader(image).convertImageToBufferedImage());
     }
     
-    protected void sizeChanged() {
+    protected void refresh() {
         int width = getParent().getWidth();
         int height = getParent().getHeight() - statusToolBarHeigh;
         int maxWidth = (width / 5) + (width / 2);

@@ -571,7 +571,7 @@ public class MainInterface extends javax.swing.JFrame {
     }//GEN-LAST:event_albumsTableMouseClicked
 
     private void previewComponentComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_previewComponentComponentResized
-        previewComponent.sizeChanged();
+        previewComponent.refresh();
     }//GEN-LAST:event_previewComponentComponentResized
 
     private void setActionInProgress(boolean inProgress) {

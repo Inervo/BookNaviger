@@ -3,6 +3,7 @@
 
 package booknaviger.macworld;
 
+import booknaviger.readinterface.ReadInterface;
 import com.apple.eawt.event.GestureAdapter;
 import com.apple.eawt.event.GesturePhaseEvent;
 import com.apple.eawt.event.GestureUtilities;
@@ -19,11 +20,11 @@ public class TrackPadAdapter extends GestureAdapter {
 
     double value = 0;
     boolean actionPerformed = false;
-//    BookNavigerReadView bnrv = null;
+    ReadInterface readInterface = null;
 
-//    public TrackPadAdapter(BookNavigerReadView bnrv) {
-//        this.bnrv = bnrv;
-//    }
+    public TrackPadAdapter(ReadInterface readInterface) {
+        this.readInterface = readInterface;
+    }
 
     public void addListenerOn(JComponent jc) {
         GestureUtilities.addGestureListenerTo(jc, this);
@@ -35,48 +36,55 @@ public class TrackPadAdapter extends GestureAdapter {
 
     @Override
     public void gestureBegan(GesturePhaseEvent gpe) {
+        System.out.println("gesture began");
         value = 0;
         actionPerformed = false;
     }
 
     @Override
     public void magnify(MagnificationEvent me) {
-        if (actionPerformed)
+        System.out.println("magnify");
+        if (actionPerformed) {
             return;
+        }
         value += me.getMagnification();
         if (value >= 0.7) {
             actionPerformed = true;
-//            bnrv.increaseZoom();
+            readInterface.getReadComponent().zoomIn();
         }
         if (value <= -0.7) {
             actionPerformed = true;
-//            bnrv.decreaseZoom();
+            readInterface.getReadComponent().zoomOut();
         }
     }
 
     @Override
     public void rotate(RotationEvent re) {
-        if (actionPerformed)
+        System.out.println("rotate");
+        if (actionPerformed) {
             return;
+        }
         value += re.getRotation();
         if (value >= 60) {
             actionPerformed = true;
-//            bnrv.getReadComponent().rotateCCW();
+            readInterface.getReadComponent().rotateImage(readInterface.getReadComponent().getCurrentOrientation() - 90);
         }
         if (value <= -60) {
             actionPerformed = true;
-//            bnrv.getReadComponent().rotateCW();
+            readInterface.getReadComponent().rotateImage(readInterface.getReadComponent().getCurrentOrientation() + 90);
         }
     }
 
     @Override
     public void swipedLeft(SwipeEvent se) {
-//        bnrv.goNextPage();
+        System.out.println("swipe left");
+        readInterface.goNextImage();
     }
 
     @Override
     public void swipedRight(SwipeEvent se) {
-//        bnrv.goPreviousPage();
+        System.out.println("swipe right");
+        readInterface.goPreviousImage();
     }
 
 }

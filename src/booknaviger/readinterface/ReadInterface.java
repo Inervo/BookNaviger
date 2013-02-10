@@ -2,6 +2,8 @@
  */
 package booknaviger.readinterface;
 
+import booknaviger.macworld.MacOSXApplicationAdapter;
+import booknaviger.macworld.TrackPadAdapter;
 import booknaviger.picturehandler.AbstractImageHandler;
 import booknaviger.picturehandler.ImageReader;
 import java.awt.Cursor;
@@ -10,7 +12,6 @@ import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 
 /**
  *
@@ -21,6 +22,7 @@ public class ReadInterface extends javax.swing.JFrame {
     private AbstractImageHandler imageHandler = null;
     private int pageNbr = 0;
     private boolean dualPageReadMode = false;
+    TrackPadAdapter tpa = null;
 
     /**
      * Creates new form ReadInterface
@@ -28,6 +30,11 @@ public class ReadInterface extends javax.swing.JFrame {
     public ReadInterface(AbstractImageHandler abstractImageHandler) {
         this.imageHandler = abstractImageHandler;
         initComponents();
+        if (MacOSXApplicationAdapter.isMac()) {
+            System.out.println("add Mac Gesture adapter - doesn't work...");
+            tpa = new TrackPadAdapter(this); // TODO : don't work !! WHYYYYY ???
+            tpa.addListenerOn(getRootPane());
+        }
     }
 
     /**
@@ -55,7 +62,6 @@ public class ReadInterface extends javax.swing.JFrame {
         readInterfaceScrollPane.setBorder(null);
 
         readComponent.setDoubleBuffered(true);
-        readComponent.setOpaque(true);
         readComponent.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 readComponentMouseClicked(evt);
@@ -150,7 +156,7 @@ public class ReadInterface extends javax.swing.JFrame {
         readPageNbrImage();
     }
     
-    private void goNextImage() {
+    public void goNextImage() {
         if (dualPageReadMode) {
             pageNbr += 2;
         } else {
@@ -163,11 +169,11 @@ public class ReadInterface extends javax.swing.JFrame {
                 pageNbr--;
             }
             readPageNbrImage();
-            System.out.println("endpage"); // TODO : endpage, out of range
+            readComponent.setLastPageReached();
         }
     }
     
-    private void goPreviousImage() {
+    public void goPreviousImage() {
         if (dualPageReadMode) {
             pageNbr -= 2;
         } else {
@@ -175,14 +181,13 @@ public class ReadInterface extends javax.swing.JFrame {
         }
         if (!readPageNbrImage()) {
             goFirstImage();
-            System.out.println("firstpage"); // TODO : endpage, out of range
+            readComponent.setFirstPageReached();
         }
     }
     
     private void goNext10Image() {
         pageNbr += 10;
         if (!readPageNbrImage()) {
-            System.out.println("endpage"); // TODO : endpage, out of range
             goLastImage();
         }
     }
@@ -190,7 +195,6 @@ public class ReadInterface extends javax.swing.JFrame {
     private void goPrevious10Image() {
         pageNbr -= 10;
         if (!readPageNbrImage()) {
-            System.out.println("firstpage"); // TODO : endpage, out of range
             goFirstImage();
         }
     }
@@ -202,13 +206,7 @@ public class ReadInterface extends javax.swing.JFrame {
         if (dualPageReadMode && !imageHandler.isImageInRange(pageNbr+1)) {
             return false;
         }
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                readComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // Ended in readComponent.setImage(...)
-            }
-        }); // Nécessité de le mettre en invokeLater ???
+        readComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // Ended in readComponent.setImage(...)
         BufferedImage readImage;
         if (dualPageReadMode) {
             readImage = ImageReader.combine2Images(imageHandler.getImage(pageNbr), imageHandler.getImage(pageNbr+1));
@@ -226,6 +224,10 @@ public class ReadInterface extends javax.swing.JFrame {
     public JScrollPane getReadInterfaceScrollPane() {
         return readInterfaceScrollPane;
     }
+
+    public ReadComponent getReadComponent() {
+        return readComponent;
+    }    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private booknaviger.readinterface.ReadComponent readComponent;

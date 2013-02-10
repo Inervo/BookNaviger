@@ -7,12 +7,14 @@ import booknaviger.picturehandler.ImageReader;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.font.FontRenderContext;
 import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -54,6 +56,11 @@ public class ReadComponent extends JComponent {
      */
     private boolean fitToScreenVertically = false;
     private boolean fitToScreenHorizontally = false;
+    /**
+     * First & last page reached
+     */
+    private boolean firstPageReached = false;
+    private boolean lastPageReached = false;
 
     public ReadComponent() {
         setLoadingImage();
@@ -81,6 +88,8 @@ public class ReadComponent extends JComponent {
         if (reinitializeOrientation) {
             currentOrientation = 0;
         }
+        firstPageReached = false;
+        lastPageReached = false;
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
@@ -155,7 +164,7 @@ public class ReadComponent extends JComponent {
         }
     }
     
-    protected void rotateImage(int rotationWanted) {
+    public void rotateImage(int rotationWanted) {
         int rotationDegree = rotationWanted - currentOrientation;
         if (rotationDegree < 0) {
             rotationDegree += 360;
@@ -171,7 +180,7 @@ public class ReadComponent extends JComponent {
         setImage(ImageReader.rotatePicture(readImage, rotationDegree));
     }
     
-    protected void zoomIn() {
+    public void zoomIn() {
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
@@ -183,7 +192,7 @@ public class ReadComponent extends JComponent {
         });
     }
     
-    protected void zoomOut() {
+    public void zoomOut() {
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
@@ -198,7 +207,7 @@ public class ReadComponent extends JComponent {
         });
     }
     
-    protected void normalZoom() {
+    public void normalZoom() {
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
@@ -220,6 +229,18 @@ public class ReadComponent extends JComponent {
         renderImage();
     }
 
+    public void setFirstPageReached() {
+        this.firstPageReached = true;
+    }
+
+    public void setLastPageReached() {
+        this.lastPageReached = true;
+    }
+
+    public int getCurrentOrientation() {
+        return currentOrientation;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
@@ -237,7 +258,28 @@ public class ReadComponent extends JComponent {
             g2d.drawImage(readImage, startXDrawingPoint, startYDrawingPoint, drawingImageWidth, drawingImageHeigh, this);
         }
         
-        // TODO: firstpage / endpage
+        if (firstPageReached || lastPageReached) {
+            Font font = new Font(g2d.getFont().getName(), Font.BOLD, 15);
+            FontRenderContext frc = new FontRenderContext(null, false, false);
+            g2d.setFont(font);
+            String text;
+            if (firstPageReached) {
+                text = java.util.ResourceBundle.getBundle("booknaviger/resources/ReadComponent").getString("firstPage.text");
+            } else {
+                text = java.util.ResourceBundle.getBundle("booknaviger/resources/ReadComponent").getString("lastPage.text");
+            }
+            int fontWidth = (int) font.getStringBounds(text, frc).getWidth();
+            g2d.setColor(Color.BLACK);
+            g2d.fillRect(5, 5, fontWidth + 10, 20);
+            g2d.fillRect(this.getWidth() - fontWidth - 15, 5, fontWidth + 10, 20);
+            g2d.fillRect(5, this.getHeight() - 25, fontWidth + 10, 20);
+            g2d.fillRect(this.getWidth() - fontWidth - 15, this.getHeight() - 25, fontWidth + 10, 20);
+            g2d.setColor(Color.YELLOW);
+            g2d.drawString(text, 10, 20);
+            g2d.drawString(text, this.getWidth() - fontWidth - 10, 20);
+            g2d.drawString(text, 10, this.getHeight() - 10);
+            g2d.drawString(text, this.getWidth() - fontWidth - 10, this.getHeight() - 10);
+        }
         
         g2d.dispose();
     }
