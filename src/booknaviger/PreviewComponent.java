@@ -24,6 +24,9 @@ public final class PreviewComponent extends JComponent {
     private BufferedImage previewImage;
     private int imageWidth;
     private int imageHeight;
+    private int newWidth;
+    private int newHeight;
+    private int statusToolBarHeigh;
 
     /**
      * Initialisation du composant
@@ -32,11 +35,15 @@ public final class PreviewComponent extends JComponent {
         setNoPreviewImage();
     }
 
+    protected void setStatusToolBarHeigh(int statusToolBarHeigh) {
+        this.statusToolBarHeigh = statusToolBarHeigh;
+    }
+
     /**
      * Dessine la nouvelle image pour le preview
      * @param image L'Image à charger
      */
-    public void setImage(final BufferedImage image) {
+    protected void setImage(final BufferedImage image) {
         final int width = image.getWidth();
         final int height = image.getHeight();
         SwingUtilities.invokeLater(new Runnable() {
@@ -49,37 +56,24 @@ public final class PreviewComponent extends JComponent {
                 previewImage = image;
                 imageWidth = width;
                 imageHeight = height;
-                forceRepaint();
+                sizeChanged();
             }
         });
     }
 
-    /**
-     * Force le composant à se faire repeindre
-     */
-    public void forceRepaint() {
-        paintComponent(getGraphics());
-    }
-
-    public void setNoPreviewImage() {
+    protected void setNoPreviewImage() {
         Image image = new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/PreviewComponent").getString("no-preview_image"))).getImage();
         setImage(new ImageReader(image).convertImageToBufferedImage());
     }
-
-    @Override
-    public void paintComponent(Graphics g) {
+    
+    protected void sizeChanged() {
         int width = getParent().getWidth();
-        int height = getParent().getHeight() - 50; // size of the 2 jtoolbar
+        int height = getParent().getHeight() - statusToolBarHeigh;
         int maxWidth = (width / 5) + (width / 2);
-        int newWidth;
-        int newHeight;
-        
-        
 
         if (previewImage == null) {
             return;
         }
-        // TODO: use ComponentResizedListener to calculate the picture and compoent size and to fasten the drawing ?
         if (imageWidth > (maxWidth)) {
             newWidth = maxWidth;
             float scale = (float) newWidth / (float) imageWidth;
@@ -99,37 +93,16 @@ public final class PreviewComponent extends JComponent {
                 newHeight = (int) ((float) imageHeight * scale);
             }
         }
-
-        /*if (imageHeight > height) {
-            newHeight = height;
-            float scale = (float) newHeight / (float) imageHeight;
-            newWidth = (int) ((float) imageWidth * scale);
-        }
-        if (imageWidth > maxWidth) {
-            newWidth = maxWidth;
-            float scale = (float) newWidth / (float) imageWidth;
-            newHeight = (int) ((float) imageHeight * scale);
-        }
-        if (newHeight > height) {
-            float scale = (float) height / (float) newHeight;
-            newHeight = height;
-            newWidth = (int) ((float) newWidth * scale);
-        }
-        if (newHeight == 0) {
-            newHeight = height;
-            float scale = (float) newHeight / (float) imageHeight;
-            newWidth = (int) ((float) imageWidth * scale);
-        }
-        if (newWidth > maxWidth) {
-            newWidth = maxWidth;
-            float scale = (float) newWidth / (float) imageWidth;
-            newHeight = (int) ((float) imageHeight * scale);
-        }*/
-
         
         this.setPreferredSize(new Dimension(newWidth, getHeight()));
+        repaint();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.clearRect(0, 0, width, height);
+        g2d.setColor(getBackground());
+        g2d.fillRect(0, 0, getWidth(), getHeight());
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
         g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);

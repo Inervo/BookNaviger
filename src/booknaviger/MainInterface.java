@@ -49,7 +49,7 @@ public class MainInterface extends javax.swing.JFrame {
     private PreviewImageLoader threadedPreviewLoader = new PreviewImageLoader();
     private AbstractImageHandler imageHandler = null;
     private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
-    ReadInterface readInterface = null;
+    private ReadInterface readInterface = null;
 
     /**
      * Creates new form MainInterface
@@ -57,6 +57,7 @@ public class MainInterface extends javax.swing.JFrame {
     public MainInterface() {
         macInit();
         initComponents();
+        previewComponent.setStatusToolBarHeigh(statusToolBar.getHeight() + mainToolBar.getHeight());
         setTimer();
     }
     
@@ -392,6 +393,11 @@ public class MainInterface extends javax.swing.JFrame {
 
         previewComponent.setDoubleBuffered(true);
         previewComponent.setMinimumSize(new java.awt.Dimension(100, 400));
+        previewComponent.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                previewComponentComponentResized(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout previewComponentLayout = new org.jdesktop.layout.GroupLayout(previewComponent);
         previewComponent.setLayout(previewComponentLayout);
@@ -563,6 +569,10 @@ public class MainInterface extends javax.swing.JFrame {
             startReading();
         }
     }//GEN-LAST:event_albumsTableMouseClicked
+
+    private void previewComponentComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_previewComponentComponentResized
+        previewComponent.sizeChanged();
+    }//GEN-LAST:event_previewComponentComponentResized
 
     private void setActionInProgress(boolean inProgress) {
         if (inProgress) {
@@ -809,14 +819,20 @@ public class MainInterface extends javax.swing.JFrame {
     }
 
     private void startReading() {
-        if (readInterface != null) {
-            readInterface.setVisible(false);
-            readInterface.dispose();
-        }
-        readInterface = new ReadInterface(imageHandler);
-        readInterface.setVisible(true);
-        readInterface.revalidate();
-        readInterface.goFirstImage();
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                if (readInterface != null) {
+                    readInterface.setVisible(false);
+                    readInterface.dispose();
+                }
+                readInterface = new ReadInterface(imageHandler);
+                readInterface.setVisible(true);
+                readInterface.revalidate();
+                readInterface.goFirstImage();
+            }
+        }).start();
     }
     
     private class PreviewImageLoader extends Thread {
@@ -879,7 +895,7 @@ public class MainInterface extends javax.swing.JFrame {
    public static Component getPreviewComponent() {
        return previewComponent;
    }
-    
+
     /**
      * @param args the command line arguments
      */

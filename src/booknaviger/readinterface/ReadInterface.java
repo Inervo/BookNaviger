@@ -43,6 +43,7 @@ public class ReadInterface extends javax.swing.JFrame {
         readComponent = new booknaviger.readinterface.ReadComponent();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setBackground(new java.awt.Color(0, 0, 0));
         setExtendedState(MAXIMIZED_BOTH);
         setUndecorated(true);
         addKeyListener(new java.awt.event.KeyAdapter() {
@@ -54,6 +55,7 @@ public class ReadInterface extends javax.swing.JFrame {
         readInterfaceScrollPane.setBorder(null);
 
         readComponent.setDoubleBuffered(true);
+        readComponent.setOpaque(true);
         readComponent.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 readComponentMouseClicked(evt);
@@ -64,11 +66,11 @@ public class ReadInterface extends javax.swing.JFrame {
         readComponent.setLayout(readComponentLayout);
         readComponentLayout.setHorizontalGroup(
             readComponentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 400, Short.MAX_VALUE)
+            .add(0, 500, Short.MAX_VALUE)
         );
         readComponentLayout.setVerticalGroup(
             readComponentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 300, Short.MAX_VALUE)
+            .add(0, 285, Short.MAX_VALUE)
         );
 
         readInterfaceScrollPane.setViewportView(readComponent);
@@ -79,13 +81,13 @@ public class ReadInterface extends javax.swing.JFrame {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(0, 400, Short.MAX_VALUE)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(readInterfaceScrollPane))
+                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(0, 300, Short.MAX_VALUE)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(readInterfaceScrollPane))
+                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
         );
 
         pack();
@@ -124,6 +126,10 @@ public class ReadInterface extends javax.swing.JFrame {
         } else if (evt.getKeyCode() == KeyEvent.VK_2) {
             dualPageReadMode = true;
             readPageNbrImage();
+        } else if (evt.getKeyCode() == KeyEvent.VK_H) {
+            readComponent.changeFitToScreenHorizontally();
+        } else if (evt.getKeyCode() == KeyEvent.VK_V) {
+            readComponent.changeFitToScreenVertically();
         } else if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
             this.setVisible(false);
             this.dispose();
@@ -202,7 +208,7 @@ public class ReadInterface extends javax.swing.JFrame {
             public void run() {
                 readComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // Ended in readComponent.setImage(...)
             }
-        });
+        }); // Nécessité de le mettre en invokeLater ???
         BufferedImage readImage;
         if (dualPageReadMode) {
             readImage = ImageReader.combine2Images(imageHandler.getImage(pageNbr), imageHandler.getImage(pageNbr+1));
@@ -213,7 +219,7 @@ public class ReadInterface extends javax.swing.JFrame {
             readImage = new ImageReader(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/ReadComponent").getString("no_image"))).getImage()).convertImageToBufferedImage();
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "can't read image");
         }
-        readComponent.setImage(readImage, true, readInterfaceScrollPane.getSize());
+        readComponent.setImage(readImage, true, readInterfaceScrollPane);
         return true;
     }
 

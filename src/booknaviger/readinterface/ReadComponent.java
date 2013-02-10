@@ -12,8 +12,10 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 /**
@@ -23,7 +25,7 @@ import javax.swing.SwingUtilities;
 public class ReadComponent extends JComponent {
     
     private BufferedImage readImage = null;
-    private Color backgroundColor = new Color(140, 140, 140);
+    private Color backgroundColor = new Color(0, 0, 0);
     /**
      * Dimension du rendu de l'image
      */
@@ -32,7 +34,7 @@ public class ReadComponent extends JComponent {
     /**
      * Zone de début de dessin de l'image (pour centrage sur l'écran
      */
-    private Dimension readInterfaceDimension = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+    private JScrollPane readInterfaceScrollPane = null;
     private int startXDrawingPoint = 0;
     private int startYDrawingPoint = 0;
     /**
@@ -47,6 +49,11 @@ public class ReadComponent extends JComponent {
      * Current orientation of the image
      */
     private int currentOrientation = 0;
+    /**
+     * Fit to screen
+     */
+    private boolean fitToScreenVertically = false;
+    private boolean fitToScreenHorizontally = false;
 
     public ReadComponent() {
         setLoadingImage();
@@ -70,7 +77,7 @@ public class ReadComponent extends JComponent {
      * @param image L'Image à charger
      * @param reinitializeOrientation Reinitialisation de la valeur de l'orientation actuelle de l'image
      */
-    protected void setImage(final BufferedImage image, boolean reinitializeOrientation, final Dimension readInterfaceScrollPaneDimension) {
+    protected void setImage(final BufferedImage image, boolean reinitializeOrientation, final JScrollPane readInterfaceScroll) {
         if (reinitializeOrientation) {
             currentOrientation = 0;
         }
@@ -81,10 +88,9 @@ public class ReadComponent extends JComponent {
                 if (readImage != null) {
                     readImage.flush();
                 }
-                if (readInterfaceScrollPaneDimension != null) {
-                    readInterfaceDimension = readInterfaceScrollPaneDimension;
-                }
+                readInterfaceScrollPane = readInterfaceScroll;
                 readImage = image;
+                image.flush();
                 renderImage();
                 setCursor(Cursor.getDefaultCursor()); // Started in readInterface.readPageNbrImage()
             }
@@ -101,15 +107,51 @@ public class ReadComponent extends JComponent {
     private void resizeComponentToRenderImageDimension() {
         drawingImageWidth = (int) (readImage.getWidth() * zoom);
         drawingImageHeigh = (int) (readImage.getHeight() * zoom);
+        checkScreenFit();
         getStartingPointToDrawCenteredImage();
         setPreferredSize(new Dimension(drawingImageWidth, drawingImageHeigh));
         revalidate();
     }
     
     private void getStartingPointToDrawCenteredImage() {
-        if (readInterfaceDimension != null) {
-            startXDrawingPoint = (int) ((drawingImageWidth > readInterfaceDimension.getWidth()) ? 0 : (readInterfaceDimension.getWidth() - drawingImageWidth) / 2);
-            startYDrawingPoint = (int) ((drawingImageHeigh > readInterfaceDimension.getHeight()) ? 0 : (readInterfaceDimension.getHeight() - drawingImageHeigh) / 2);
+        if (readInterfaceScrollPane != null) {
+            if (drawingImageHeigh > readInterfaceScrollPane.getHeight()) {
+                startXDrawingPoint = (int) ((drawingImageWidth > readInterfaceScrollPane.getWidth() - readInterfaceScrollPane.getVerticalScrollBar().getWidth()) ? 0 : (readInterfaceScrollPane.getWidth() - drawingImageWidth - readInterfaceScrollPane.getVerticalScrollBar().getWidth()) / 2);
+            } else {
+                startXDrawingPoint = (int) ((drawingImageWidth > readInterfaceScrollPane.getWidth()) ? 0 : (readInterfaceScrollPane.getWidth() - drawingImageWidth) / 2);
+            }
+            if (drawingImageWidth > readInterfaceScrollPane.getWidth()) {
+                startYDrawingPoint = (int) ((drawingImageHeigh > readInterfaceScrollPane.getHeight() - readInterfaceScrollPane.getHorizontalScrollBar().getHeight()) ? 0 : (readInterfaceScrollPane.getHeight() - drawingImageHeigh - readInterfaceScrollPane.getHorizontalScrollBar().getHeight()) / 2);
+            } else {
+                startYDrawingPoint = (int) ((drawingImageHeigh > readInterfaceScrollPane.getHeight()) ? 0 : (readInterfaceScrollPane.getHeight() - drawingImageHeigh) / 2);
+            }
+        } else {
+            startXDrawingPoint = (int) ((drawingImageWidth > Toolkit.getDefaultToolkit().getScreenSize().getWidth()) ? 0 : (Toolkit.getDefaultToolkit().getScreenSize().getWidth() - drawingImageWidth) / 2);
+            startYDrawingPoint = (int) ((drawingImageHeigh > Toolkit.getDefaultToolkit().getScreenSize().getHeight()) ? 0 : (Toolkit.getDefaultToolkit().getScreenSize().getHeight() - drawingImageHeigh) / 2);
+        }
+    }
+    
+    private void checkScreenFit() {
+        float ratio = 0;
+        if (fitToScreenHorizontally && drawingImageWidth > readInterfaceScrollPane.getWidth()) {
+            ratio = (float)readInterfaceScrollPane.getWidth() / (float)drawingImageWidth;
+            drawingImageWidth = (int) readInterfaceScrollPane.getWidth();
+            drawingImageHeigh = (int) (drawingImageHeigh * ratio);
+        }
+        if (fitToScreenVertically && drawingImageHeigh > readInterfaceScrollPane.getHeight()) {
+            ratio = (float)readInterfaceScrollPane.getHeight() / (float)drawingImageHeigh;
+            drawingImageHeigh = (int) readInterfaceScrollPane.getHeight();
+            drawingImageWidth = (int) (drawingImageWidth * ratio);
+        }
+        if (fitToScreenHorizontally || fitToScreenVertically) {
+            if (drawingImageHeigh > readInterfaceScrollPane.getHeight()) {
+                drawingImageWidth -= readInterfaceScrollPane.getVerticalScrollBar().getWidth();
+                drawingImageHeigh -= (readInterfaceScrollPane.getVerticalScrollBar().getWidth() * ratio);
+            }
+            if (drawingImageWidth > readInterfaceScrollPane.getWidth()) {
+                drawingImageHeigh -= readInterfaceScrollPane.getHorizontalScrollBar().getHeight();
+                drawingImageWidth -= (readInterfaceScrollPane.getHorizontalScrollBar().getHeight() * ratio);
+            }
         }
     }
     
@@ -166,6 +208,16 @@ public class ReadComponent extends JComponent {
                 repaint();
             }
         });
+    }
+    
+    protected void changeFitToScreenVertically() {
+        this.fitToScreenVertically = !fitToScreenVertically;
+        renderImage();
+    }
+
+    protected void changeFitToScreenHorizontally() {
+        this.fitToScreenHorizontally = !fitToScreenHorizontally;
+        renderImage();
     }
 
     @Override
