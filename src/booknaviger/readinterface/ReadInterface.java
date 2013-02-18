@@ -9,6 +9,7 @@ import booknaviger.picturehandler.ImageReader;
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JScrollPane;
@@ -118,9 +119,13 @@ public class ReadInterface extends javax.swing.JFrame {
             readComponent.zoomIn();
         } else if (evt.getKeyCode() == KeyEvent.VK_0) {
             readComponent.normalZoom();
-        } else if (evt.getKeyCode() == KeyEvent.VK_Z) { // TODO: change shortcuts. For fr keyboard only
+        } else if (Locale.getDefault() == Locale.FRENCH && evt.getKeyCode() == KeyEvent.VK_Z) {
             readComponent.rotateImage(180);
-        } else if (evt.getKeyCode() == KeyEvent.VK_Q) {
+        } else if (Locale.getDefault() == Locale.FRENCH && evt.getKeyCode() == KeyEvent.VK_Q) {
+            readComponent.rotateImage(90);
+        } else if (Locale.getDefault() != Locale.FRENCH && evt.getKeyCode() == KeyEvent.VK_W) {
+            readComponent.rotateImage(180);
+        } else if (Locale.getDefault() != Locale.FRENCH && evt.getKeyCode() == KeyEvent.VK_A) {
             readComponent.rotateImage(90);
         } else if (evt.getKeyCode() == KeyEvent.VK_D) {
             readComponent.rotateImage(270);

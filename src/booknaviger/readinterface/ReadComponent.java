@@ -101,7 +101,7 @@ public class ReadComponent extends JComponent {
                 readImage = image;
                 image.flush();
                 renderImage();
-                setCursor(Cursor.getDefaultCursor()); // Started in readInterface.readPageNbrImage()
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Started in readInterface.readPageNbrImage()
             }
         });
     }
