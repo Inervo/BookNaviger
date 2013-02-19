@@ -117,13 +117,14 @@ public class ReadComponent extends JComponent {
         drawingImageWidth = (int) (readImage.getWidth() * zoom);
         drawingImageHeigh = (int) (readImage.getHeight() * zoom);
         checkScreenFit();
-        getStartingPointToDrawCenteredImage();
         setPreferredSize(new Dimension(drawingImageWidth, drawingImageHeigh));
         revalidate();
+        getStartingPointToDrawCenteredImage();
     }
     
     private void getStartingPointToDrawCenteredImage() {
         if (readInterfaceScrollPane != null) {
+            readInterfaceScrollPane.validate();
             if (drawingImageHeigh > readInterfaceScrollPane.getHeight()) {
                 startXDrawingPoint = (int) ((drawingImageWidth > readInterfaceScrollPane.getWidth() - readInterfaceScrollPane.getVerticalScrollBar().getWidth()) ? 0 : (readInterfaceScrollPane.getWidth() - drawingImageWidth - readInterfaceScrollPane.getVerticalScrollBar().getWidth()) / 2);
             } else {
@@ -152,7 +153,7 @@ public class ReadComponent extends JComponent {
             drawingImageHeigh = (int) readInterfaceScrollPane.getHeight();
             drawingImageWidth = (int) (drawingImageWidth * ratio);
         }
-        if (fitToScreenHorizontally || fitToScreenVertically) {
+        if ((fitToScreenHorizontally || fitToScreenVertically) && ratio != 0) {
             if (drawingImageHeigh > readInterfaceScrollPane.getHeight()) {
                 drawingImageWidth -= readInterfaceScrollPane.getVerticalScrollBar().getWidth();
                 drawingImageHeigh -= (readInterfaceScrollPane.getVerticalScrollBar().getWidth() * ratio);

@@ -74,7 +74,7 @@ public class MacOSXApplicationAdapter {
             }
         });
         com.apple.eawt.FullScreenUtilities.setWindowCanFullScreen(mainInterace, true);
-        com.apple.eawt.Application.getApplication().setDockIconImage(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/logo.png")).getImage());
+        com.apple.eawt.Application.getApplication().setDockIconImage(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/Application").getString("appLogoIcon"))).getImage());
     }
     
     public static boolean isMac() {
