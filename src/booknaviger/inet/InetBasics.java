@@ -3,7 +3,6 @@
 
 package booknaviger.inet;
 
-import booknaviger.MainInterface;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
@@ -27,7 +26,7 @@ public class InetBasics {
             try {
                 desktop.browse(new URI(URIString));
             } catch (IOException | URISyntaxException ex) {
-                Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(InetBasics.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }

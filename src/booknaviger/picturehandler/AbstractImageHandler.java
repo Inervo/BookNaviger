@@ -15,7 +15,7 @@ public abstract class AbstractImageHandler {
     public abstract int getNbrOfPages();
     
     protected boolean isAnImage(String path) {
-        if (path.endsWith(".jpg") || path.endsWith(".jpeg") || path.endsWith(".gif") || path.endsWith(".png") || path.endsWith(".bmp")) {
+        if (path.toLowerCase().endsWith(".jpg") || path.toLowerCase().endsWith(".jpeg") || path.toLowerCase().endsWith(".gif") || path.toLowerCase().endsWith(".png") || path.toLowerCase().endsWith(".bmp")) {
             return true;
         }
         return false;

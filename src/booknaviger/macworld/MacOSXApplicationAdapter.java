@@ -13,6 +13,7 @@ import com.apple.eawt.AppEvent.QuitEvent;
 import com.apple.eawt.AppReOpenedListener;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
+import java.awt.SystemTray;
 
 /**
  *
@@ -20,14 +21,12 @@ import com.apple.eawt.QuitResponse;
  */
 public class MacOSXApplicationAdapter {
 
-    MainInterface mainInterace = null;
 
     /**
      * Constructeur de l'adapteur de l'application pour Mac OS X
      * @param mainInterace instance de BookNavigerApp
      */
-    public MacOSXApplicationAdapter(final MainInterface mainInterface) {
-        this.mainInterace = mainInterface;
+    public MacOSXApplicationAdapter() {
         com.apple.eawt.Application.getApplication().setAboutHandler(new AboutHandler() {
 
             /**
@@ -47,7 +46,7 @@ public class MacOSXApplicationAdapter {
              */
             @Override
             public void handleQuitRequestWith(QuitEvent qe, QuitResponse qr) {
-                mainInterface.exit();
+                MainInterface.getInstance().exit();
             }
         });
         com.apple.eawt.Application.getApplication().addAppEventListener(new AppReOpenedListener() {
@@ -58,22 +57,20 @@ public class MacOSXApplicationAdapter {
              */
             @Override
             public void appReOpened(AppReOpenedEvent aroe) {
-                if (mainInterace == null) {
+                if (MainInterface.getInstance().isDisplayable() && !MainInterface.getInstance().isVisible()) {
+                    MainInterface.getInstance().setVisible(true);
+                }
+                if (MainInterface.getInstance().getReadInterface() == null) {
                     return;
                 }
-                if (mainInterace.isDisplayable() && !mainInterace.isVisible()) {
-                    mainInterace.setVisible(true);
+                if (MainInterface.getInstance().getReadInterface().isDisplayable() && !MainInterface.getInstance().getReadInterface().isVisible()) {
+                    MainInterface.getInstance().getReadInterface().setVisible(true);
+                    SystemTray sysTray = SystemTray.getSystemTray();
+                    sysTray.remove(sysTray.getTrayIcons()[0]);
                 }
-//                if (mainInterace.getReadView() == null)
-//                    return;
-//                if (mainInterace.getReadView().isDisplayable() && !mainInterace.getReadView().isVisible()) {
-//                    mainInterace.getReadView().setVisible(true);
-//                    SystemTray sysTray = SystemTray.getSystemTray();
-//                    sysTray.remove(sysTray.getTrayIcons()[0]);
-//                }
             }
         });
-        com.apple.eawt.FullScreenUtilities.setWindowCanFullScreen(mainInterace, true);
+        com.apple.eawt.FullScreenUtilities.setWindowCanFullScreen(MainInterface.getInstance(), true);
         com.apple.eawt.Application.getApplication().setDockIconImage(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/Application").getString("appLogoIcon"))).getImage());
     }
     

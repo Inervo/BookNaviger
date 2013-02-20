@@ -2,6 +2,7 @@
  */
 package booknaviger.readinterface;
 
+import booknaviger.MainInterface;
 import booknaviger.macworld.MacOSXApplicationAdapter;
 import booknaviger.macworld.TrackPadAdapter;
 import booknaviger.picturehandler.AbstractImageHandler;
@@ -471,7 +472,6 @@ public class ReadInterface extends javax.swing.JFrame {
     }
     
     private void minimize() {
-        // TODO: cacher aussi la MainInterface
         // TODO: la restauration des fenetres doit aussi pouvoir se faire via un clic dans le dock
         if (SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
@@ -481,7 +481,7 @@ public class ReadInterface extends javax.swing.JFrame {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-//                    bnv.getFrame().setVisible(true);
+                    MainInterface.getInstance().setVisible(true);
                     setVisible(true);
                     toFront();
                     SystemTray sysTray = SystemTray.getSystemTray();
@@ -494,10 +494,10 @@ public class ReadInterface extends javax.swing.JFrame {
                 Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Exception with the creation of the systray", ex);
             }
             this.setVisible(false);
-//            bnv.getFrame().setVisible(false);
+            MainInterface.getInstance().setVisible(false);
         } else {
             this.setExtendedState(javax.swing.JFrame.ICONIFIED);
-//            bnv.getFrame().setExtendedState(JFrame.ICONIFIED);
+            MainInterface.getInstance().setExtendedState(javax.swing.JFrame.ICONIFIED);
         }
     }
     

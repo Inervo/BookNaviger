@@ -49,12 +49,24 @@ public class MainInterface extends javax.swing.JFrame {
     private PreviewImageLoader threadedPreviewLoader = new PreviewImageLoader();
     private AbstractImageHandler imageHandler = null;
     private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
-    private ReadInterface readInterface = null;
+    private volatile ReadInterface readInterface = null;
+    private static volatile MainInterface instance = null;
 
+    public static MainInterface getInstance() {
+        if (instance == null) {
+            synchronized(MainInterface.class) {
+                if (instance == null) {
+                    instance = new MainInterface();
+                }
+            }
+        }
+        return instance;
+    }
+    
     /**
      * Creates new form MainInterface
      */
-    public MainInterface() {
+    private MainInterface() {
         macInit();
         initComponents();
         previewComponent.setStatusToolBarHeigh(statusToolBar.getHeight() + mainToolBar.getHeight());
@@ -63,7 +75,7 @@ public class MainInterface extends javax.swing.JFrame {
     
     private void macInit() {
         if (MacOSXApplicationAdapter.isMac()) {
-            new MacOSXApplicationAdapter(this);
+            new MacOSXApplicationAdapter();
         }
     }
     
@@ -896,6 +908,10 @@ public class MainInterface extends javax.swing.JFrame {
        return previewComponent;
    }
 
+    public ReadInterface getReadInterface() {
+        return readInterface;
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -906,7 +922,7 @@ public class MainInterface extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new MainInterface().setVisible(true);
+                MainInterface.getInstance().setVisible(true);
             }
         });
     }
