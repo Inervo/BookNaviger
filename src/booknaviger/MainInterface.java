@@ -50,7 +50,7 @@ public class MainInterface extends javax.swing.JFrame {
     private AbstractImageHandler imageHandler = null;
     private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
     private volatile ReadInterface readInterface = null;
-    private static volatile MainInterface instance = null;
+    private static MainInterface instance = null;
 
     public static MainInterface getInstance() {
         if (instance == null) {
@@ -75,7 +75,7 @@ public class MainInterface extends javax.swing.JFrame {
     
     private void macInit() {
         if (MacOSXApplicationAdapter.isMac()) {
-            new MacOSXApplicationAdapter();
+            new MacOSXApplicationAdapter(this);
         }
     }
     

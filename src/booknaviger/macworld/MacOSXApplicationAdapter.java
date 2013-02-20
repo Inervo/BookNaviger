@@ -26,7 +26,7 @@ public class MacOSXApplicationAdapter {
      * Constructeur de l'adapteur de l'application pour Mac OS X
      * @param mainInterace instance de BookNavigerApp
      */
-    public MacOSXApplicationAdapter() {
+    public MacOSXApplicationAdapter(final MainInterface mainInterface) {
         com.apple.eawt.Application.getApplication().setAboutHandler(new AboutHandler() {
 
             /**
@@ -70,7 +70,7 @@ public class MacOSXApplicationAdapter {
                 }
             }
         });
-        com.apple.eawt.FullScreenUtilities.setWindowCanFullScreen(MainInterface.getInstance(), true);
+        com.apple.eawt.FullScreenUtilities.setWindowCanFullScreen(mainInterface, true);
         com.apple.eawt.Application.getApplication().setDockIconImage(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/Application").getString("appLogoIcon"))).getImage());
     }
     
