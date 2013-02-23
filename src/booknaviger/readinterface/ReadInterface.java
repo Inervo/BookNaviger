@@ -472,7 +472,6 @@ public class ReadInterface extends javax.swing.JFrame {
     }
     
     private void minimize() {
-        // TODO: la restauration des fenetres doit aussi pouvoir se faire via un clic dans le dock
         if (SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
             TrayIcon trayIcon = new TrayIcon(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/Application").getString("appLogoIcon"))).getImage(), java.util.ResourceBundle.getBundle("booknaviger/resources/Application").getString("appTitle"));
@@ -517,7 +516,7 @@ public class ReadInterface extends javax.swing.JFrame {
         } else {
             pageNbr++;
         }
-        if (!readPageNbrImage()) {
+        if (!readPageNbrImage(true)) {
             if (dualPageReadMode) {
                 pageNbr = imageHandler.getNbrOfPages() - 1;
             } else {
@@ -555,6 +554,10 @@ public class ReadInterface extends javax.swing.JFrame {
     }
     
     private boolean readPageNbrImage() {
+        return readPageNbrImage(false);
+    }
+    
+    private boolean readPageNbrImage(boolean usePreloadImage) {
         if (!imageHandler.isImageInRange(pageNbr)) {
             return false;
         }
@@ -562,18 +565,23 @@ public class ReadInterface extends javax.swing.JFrame {
             return false;
         }
         readComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // Ended in readComponent.setImage(...)
-        BufferedImage readImage;
-        if (dualPageReadMode) {
-            readImage = ImageReader.combine2Images(imageHandler.getImage(pageNbr), imageHandler.getImage(pageNbr+1));
-        } else {
-            readImage = imageHandler.getImage(pageNbr);
+        BufferedImage readImage = null;
+        if (usePreloadImage) {
+            readImage = imageHandler.getPreloadedImage();
+        }
+        if (readImage == null) {
+            if (dualPageReadMode) {
+                readImage = ImageReader.combine2Images(imageHandler.getImage(pageNbr), imageHandler.getImage(pageNbr+1));
+            } else {
+                readImage = imageHandler.getImage(pageNbr);
+            }
         }
         if (readImage == null) {
             readImage = new ImageReader(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/ReadComponent").getString("no_image"))).getImage()).convertImageToBufferedImage();
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "can't read image");
         }
         readComponent.setImage(readImage, true, readInterfaceScrollPane);
-        // TODO: preload next page
+        imageHandler.preloadNextImage(pageNbr+1, dualPageReadMode);
         return true;
     }
 
