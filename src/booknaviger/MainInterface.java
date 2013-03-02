@@ -2,6 +2,7 @@
  */
 package booknaviger;
 
+import booknaviger.exceptioninterface.LogInterface;
 import booknaviger.inet.InetBasics;
 import booknaviger.macworld.MacOSXApplicationAdapter;
 import booknaviger.picturehandler.AbstractImageHandler;
@@ -53,11 +54,9 @@ public class MainInterface extends javax.swing.JFrame {
     private static MainInterface instance = null;
 
     public static MainInterface getInstance() {
-        if (instance == null) {
-            synchronized(MainInterface.class) {
-                if (instance == null) {
-                    instance = new MainInterface();
-                }
+        synchronized(MainInterface.class) {
+            if (instance == null) {
+                instance = new MainInterface();
             }
         }
         return instance;
@@ -841,6 +840,7 @@ public class MainInterface extends javax.swing.JFrame {
                 }
                 readInterface = new ReadInterface(imageHandler);
                 readInterface.setVisible(true);
+                readInterface.requestFocus();
                 readInterface.revalidate();
                 readInterface.goFirstImage();
             }
@@ -900,6 +900,7 @@ public class MainInterface extends javax.swing.JFrame {
     
    public void exit() {
        this.setVisible(false);
+       LogInterface.getInstance().dispose();
        this.dispose();
        System.exit(0);
    }

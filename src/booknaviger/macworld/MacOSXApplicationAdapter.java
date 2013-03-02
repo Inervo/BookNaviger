@@ -65,6 +65,7 @@ public class MacOSXApplicationAdapter {
                 }
                 if (MainInterface.getInstance().getReadInterface().isDisplayable() && !MainInterface.getInstance().getReadInterface().isVisible()) {
                     MainInterface.getInstance().getReadInterface().setVisible(true);
+                    MainInterface.getInstance().getReadInterface().requestFocus();
                     SystemTray sysTray = SystemTray.getSystemTray();
                     sysTray.remove(sysTray.getTrayIcons()[0]);
                 }

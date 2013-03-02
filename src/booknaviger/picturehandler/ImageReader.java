@@ -4,6 +4,7 @@
 package booknaviger.picturehandler;
 
 import booknaviger.MainInterface;
+import booknaviger.exceptioninterface.ExceptionHandler;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -29,14 +30,17 @@ public class ImageReader {
     Object imageObject = null;
     
     public ImageReader(Image image) {
+        ExceptionHandler.registerExceptionHandler(ImageReader.class.getName());
         imageObject = image;
     }
 
     public ImageReader(File imageFile) {
+        ExceptionHandler.registerExceptionHandler(ImageReader.class.getName());
         imageObject = imageFile;
     }
 
     public ImageReader(InputStream imageIS) {
+        ExceptionHandler.registerExceptionHandler(ImageReader.class.getName());
         imageObject = imageIS;
     }
     
@@ -56,11 +60,11 @@ public class ImageReader {
     }
     
     public BufferedImage readImage() {
-//        System.out.println(imageObject.getClass().getName());
+        Logger.getLogger(ImageReader.class.getName()).log(Level.FINE, "Read the image. Type : {0}", imageObject.getClass().getName());
         if (image != null) {
             image.flush();
         }
-        if (imageObject.getClass().getName().equals("java.io.File")) {
+        if (imageObject instanceof File) {
             if (((File)imageObject).getName().toLowerCase().endsWith(".jpg") || ((File)imageObject).getName().toLowerCase().endsWith(".jpeg") || ((File)imageObject).getName().toLowerCase().endsWith(".gif") || ((File)imageObject).getName().toLowerCase().endsWith(".png")) {
                 readWithFileToolkit();
             } else {
@@ -68,15 +72,14 @@ public class ImageReader {
             }
             return image;
         }
-        if (imageObject.getClass().getName().equals("java.util.zip.ZipFile$ZipFileInflaterInputStream")) {
+        if (imageObject instanceof java.util.zip.InflaterInputStream) {
             readWithInputStreamImageIO();
             return image;
         }
-        if (imageObject.getClass().getName().equals("java.io.PipedInputStream")) {
+        if (imageObject instanceof java.io.PipedInputStream) {
             readWithInputStreamImageIO();
             return image;
         }
-        
         return null;
     }
     
