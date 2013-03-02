@@ -13,6 +13,7 @@ import booknaviger.picturehandler.ZipHandler;
 import booknaviger.readinterface.ReadInterface;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -629,12 +630,25 @@ public class MainInterface extends javax.swing.JFrame {
      * Modification du dossier contenant les bouquins
      */
     private void changeFolder() {
-        booksFolderFileChooser.setCurrentDirectory((booksDirectory == null) ? null : booksDirectory.getParentFile());
-        if (booksFolderFileChooser.showOpenDialog(this) == javax.swing.JFileChooser.APPROVE_OPTION) {
-            booksDirectory = booksFolderFileChooser.getSelectedFile();
-            // profiles[currentProfile][1] = directory.toString();
-            listSeries();
-        }
+//        if (MacOSXApplicationAdapter.isMac()) { // Set inactive (don't work anyway) until Java7 make it work.
+//            FileDialog booksFolderMacFileChooser = new FileDialog(this, "test", FileDialog.LOAD);
+//            booksFolderMacFileChooser.setDirectory(System.getProperty("user.home"));
+//            booksFolderMacFileChooser.setLocation(50,50);
+//            booksFolderMacFileChooser.setVisible(true);
+//            if (booksFolderMacFileChooser.getDirectory() != null) {
+//                String folderName = booksFolderMacFileChooser.getDirectory();
+//                System.out.println("folderName = " + folderName);
+//                folderName += booksFolderMacFileChooser.getFile();
+//                System.out.println("folderName2 = " + folderName);
+//            }
+//        } else {
+            booksFolderFileChooser.setCurrentDirectory((booksDirectory == null) ? null : booksDirectory.getParentFile());
+            if (booksFolderFileChooser.showOpenDialog(this) == javax.swing.JFileChooser.APPROVE_OPTION) {
+                booksDirectory = booksFolderFileChooser.getSelectedFile();
+                // profiles[currentProfile][1] = directory.toString();
+                listSeries();
+            }
+//        }
     }
     
     /**
