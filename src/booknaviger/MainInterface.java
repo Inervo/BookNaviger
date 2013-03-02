@@ -404,17 +404,23 @@ public class MainInterface extends javax.swing.JFrame {
 
         previewComponent.setDoubleBuffered(true);
         previewComponent.setMinimumSize(new java.awt.Dimension(100, 400));
+        previewComponent.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                previewComponentMouseClicked(evt);
+            }
+        });
         previewComponent.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 previewComponentComponentResized(evt);
             }
         });
+        previewComponent.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         org.jdesktop.layout.GroupLayout previewComponentLayout = new org.jdesktop.layout.GroupLayout(previewComponent);
         previewComponent.setLayout(previewComponentLayout);
         previewComponentLayout.setHorizontalGroup(
             previewComponentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 236, Short.MAX_VALUE)
+            .add(0, 266, Short.MAX_VALUE)
         );
         previewComponentLayout.setVerticalGroup(
             previewComponentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -585,10 +591,15 @@ public class MainInterface extends javax.swing.JFrame {
         previewComponent.refresh();
     }//GEN-LAST:event_previewComponentComponentResized
 
+    private void previewComponentMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_previewComponentMouseClicked
+        if (album != null) {
+            startReading();
+        }
+    }//GEN-LAST:event_previewComponentMouseClicked
+
     private void setActionInProgress(boolean inProgress) {
         if (inProgress) {
             this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            //previewComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             if (!busyIconTimer.isRunning()) {
                 statusAnimationLabel.setIcon(busyIcons[0]);
                 busyIconIndex = 0;
@@ -596,7 +607,6 @@ public class MainInterface extends javax.swing.JFrame {
             }
         } else {
             this.setCursor(Cursor.getDefaultCursor());
-            //previewComponent.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             busyIconTimer.stop();
             statusAnimationLabel.setIcon(idleIcon);
         }
