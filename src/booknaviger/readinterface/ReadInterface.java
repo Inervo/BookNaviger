@@ -41,7 +41,6 @@ public class ReadInterface extends javax.swing.JFrame {
         this.imageHandler = abstractImageHandler;
         initComponents();
         if (MacOSXApplicationAdapter.isMac()) {
-            System.out.println("add Mac Gesture adapter - doesn't work...");
             tpa = new TrackPadAdapter(this); // TODO : don't work !! WHYYYYY ???
             tpa.addListenerOn(getRootPane());
         }

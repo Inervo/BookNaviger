@@ -16,6 +16,7 @@ import java.awt.Cursor;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
@@ -332,6 +333,11 @@ public class MainInterface extends javax.swing.JFrame {
         seriesTable.getColumnModel().getColumn(0).setHeaderValue(resourceBundle.getString("seriesTable.title"));
         seriesTable.getColumnModel().getColumn(1).setMaxWidth(50);
         seriesTable.getColumnModel().getColumn(1).setMinWidth(25);
+        seriesTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                seriesTableKeyPressed(evt);
+            }
+        });
         seriesScrollPane.setViewportView(seriesTable);
         ListSelectionModel seriesListSelectionModel = seriesTable.getSelectionModel();
         seriesListSelectionModel.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -376,6 +382,11 @@ public class MainInterface extends javax.swing.JFrame {
         albumsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 albumsTableMouseClicked(evt);
+            }
+        });
+        albumsTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                albumsTableKeyPressed(evt);
             }
         });
         albumsScrollPane.setViewportView(albumsTable);
@@ -584,6 +595,23 @@ public class MainInterface extends javax.swing.JFrame {
             startReading();
         }
     }//GEN-LAST:event_previewComponentMouseClicked
+
+    private void seriesTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_seriesTableKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_TAB) {
+            evt.consume();
+            albumsTable.requestFocusInWindow();
+        }
+    }//GEN-LAST:event_seriesTableKeyPressed
+
+    private void albumsTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_albumsTableKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_TAB) {
+            evt.consume();
+            seriesTable.requestFocusInWindow();
+        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            evt.consume();
+            startReading();
+        }
+    }//GEN-LAST:event_albumsTableKeyPressed
 
     private void setActionInProgress(boolean inProgress) {
         if (inProgress) {

@@ -552,6 +552,9 @@
                   <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="seriesTableKeyPressed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="ListSelectionModel seriesListSelectionModel = seriesTable.getSelectionModel();&#xa;seriesListSelectionModel.addListSelectionListener(new javax.swing.event.ListSelectionListener() {&#xa;            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {&#xa;                seriesTableValueChanged(evt);&#xa;            }&#xa;        });"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="seriesTable.getColumnModel().getColumn(0).setHeaderValue(resourceBundle.getString(&quot;seriesTable.title&quot;));&#xa;seriesTable.getColumnModel().getColumn(1).setMaxWidth(50);&#xa;seriesTable.getColumnModel().getColumn(1).setMinWidth(25);"/>
@@ -595,6 +598,7 @@
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="albumsTableMouseClicked"/>
+                <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="albumsTableKeyPressed"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="ListSelectionModel albumsListSelectionModel = albumsTable.getSelectionModel();&#xa;albumsListSelectionModel.addListSelectionListener(new javax.swing.event.ListSelectionListener() {&#xa;            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {&#xa;                albumsTableValueChanged(evt);&#xa;            }&#xa;        });"/>
