@@ -30,8 +30,6 @@ import javax.swing.Icon;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -76,17 +74,6 @@ public class MainInterface extends javax.swing.JFrame {
     private void macInit() {
         if (MacOSXApplicationAdapter.isMac()) {
             new MacOSXApplicationAdapter(this);
-        }
-    }
-    
-    private static void preInterface() {
-        if (MacOSXApplicationAdapter.isMac()) {
-            MacOSXApplicationAdapter.setMacInterfaceAndCommands();
-        }
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -936,21 +923,7 @@ public class MainInterface extends javax.swing.JFrame {
     public ReadInterface getReadInterface() {
         return readInterface;
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        preInterface();
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                MainInterface.getInstance().setVisible(true);
-            }
-        });
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDialog aboutDialog;
     private javax.swing.JMenuItem aboutMenuItem;
