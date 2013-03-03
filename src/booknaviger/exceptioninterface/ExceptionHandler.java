@@ -5,6 +5,7 @@ package booknaviger.exceptioninterface;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -21,6 +22,7 @@ public class ExceptionHandler extends Handler {
     
     private ExceptionHandler() {
         setFormatter(new ExceptionHandlerFormatter());
+        setLevel(Level.SEVERE);
     }
     
     class ExceptionHandlerFormatter extends Formatter {
@@ -38,7 +40,9 @@ public class ExceptionHandler extends Handler {
 
     @Override
     public void publish(LogRecord record) {
-        logInterface.publishNewLog(getFormatter().format(record));
+        if (isLoggable(record)) {
+            logInterface.publishNewLog(getFormatter().format(record));
+        }
     }
 
     @Override
@@ -58,7 +62,13 @@ public class ExceptionHandler extends Handler {
             }
         }
         if (registerHandler) {
-            Logger.getLogger(className).setLevel(Level.SEVERE);
+            Logger.getLogger(className).setLevel(Level.SEVERE); // Min level to accept log message
+            handlers = Logger.getLogger("").getHandlers();
+            for (Handler handler : handlers) {
+                if (handler instanceof ConsoleHandler) {
+                    handler.setLevel(Level.SEVERE); // could be set from config file
+                }
+            }
             Logger.getLogger(className).addHandler(new ExceptionHandler());
         }
     }

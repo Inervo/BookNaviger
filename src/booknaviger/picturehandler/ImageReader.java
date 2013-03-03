@@ -45,6 +45,7 @@ public class ImageReader {
     }
     
     public BufferedImage convertImageToBufferedImage() {
+        Logger.getLogger(ImageReader.class.getName()).entering(ImageReader.class.getName(), "convertImageToBufferedImage");
         if (imageObject.getClass().getName().toLowerCase().contains("image")) {
             Image tampon = (Image) imageObject;
             if (image != null) {
@@ -54,13 +55,16 @@ public class ImageReader {
             Graphics2D g2d = image.createGraphics();
             g2d.drawImage(tampon, 0, 0, tampon.getWidth(null), tampon.getHeight(null), null);
             g2d.dispose();
+            Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "convertImageToBufferedImage");
             return image;
         }
+        Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "convertImageToBufferedImage");
         return null;
     }
     
     public BufferedImage readImage() {
-        Logger.getLogger(ImageReader.class.getName()).log(Level.FINE, "Read the image. Type : {0}", imageObject.getClass().getName());
+        Logger.getLogger(ImageReader.class.getName()).entering(ImageReader.class.getName(), "readImage");
+        Logger.getLogger(ImageReader.class.getName()).log(Level.FINE, "Searching imageObject type : {0}", imageObject.getClass().getName());
         if (image != null) {
             image.flush();
         }
@@ -70,20 +74,25 @@ public class ImageReader {
             } else {
                 readWithFileImageIO();
             }
+            Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readImage");
             return image;
         }
         if (imageObject instanceof java.util.zip.InflaterInputStream) {
             readWithInputStreamImageIO();
+            Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readImage");
             return image;
         }
         if (imageObject instanceof java.io.PipedInputStream) {
             readWithInputStreamImageIO();
+            Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readImage");
             return image;
         }
+        Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readImage");
         return null;
     }
     
     public static BufferedImage rotatePicture(BufferedImage originalImage, int rotationDegree) {
+        Logger.getLogger(ImageReader.class.getName()).entering(ImageReader.class.getName(), "rotatePicture");
         if (originalImage != null) {
             BufferedImage rotatedBufferedImage;
             if(rotationDegree == 180) {
@@ -93,6 +102,7 @@ public class ImageReader {
             } else if (rotationDegree == 0) {
                 return originalImage;
             } else {
+                Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "rotatePicture");
                 return null;
             }
             Graphics2D g2d = rotatedBufferedImage.createGraphics();
@@ -113,13 +123,17 @@ public class ImageReader {
             }
             g2d.dispose();
             originalImage.flush();
+            Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "rotatePicture");
             return rotatedBufferedImage;
         }
+        Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "rotatePicture");
         return null;
     }
     
     public static BufferedImage combine2Images(BufferedImage imageLeft, BufferedImage imageRight) {
+        Logger.getLogger(ImageReader.class.getName()).entering(ImageReader.class.getName(), "combine2Images");
         if (imageLeft == null || imageRight == null) {
+            Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "combine2Images");
             return null;
         }
         int totalWidth = imageLeft.getWidth() + imageRight.getWidth();
@@ -138,6 +152,7 @@ public class ImageReader {
         g2d.dispose();
         imageRight.flush();
         imageLeft.flush();
+        Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "combine2Images");
         return imageCombined;
     }
     
@@ -147,6 +162,7 @@ public class ImageReader {
      * @return la couleur trouvée
      */
     public static Color findColor(BufferedImage image) {
+        Logger.getLogger(ImageReader.class.getName()).entering(ImageReader.class.getName(), "findColor");
         int[] tempo = new int[1];
         Color color;
 
@@ -155,6 +171,7 @@ public class ImageReader {
             pg.grabPixels();
         } catch (InterruptedException ex) {
             color = new Color(140, 140, 140);
+            Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "findColor");
             return color;
         }
         int alpha = (tempo[0] & 0xff000000) >> 24;
@@ -166,10 +183,12 @@ public class ImageReader {
         } else {
             color = new Color(140, 140, 140);
         }
+        Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "findColor");
         return color;
     }
     
     private void readWithFileImageIO() {
+        Logger.getLogger(ImageReader.class.getName()).entering(ImageReader.class.getName(), "readWithFileImageIO");
         try {
             image = ImageIO.read((File)imageObject);
         } catch (IOException ex) {
@@ -177,9 +196,11 @@ public class ImageReader {
             //new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Reading_Image", imagePath.toString());
             //previewComponent.setNoPreviewImage();
         }
+        Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readWithFileImageIO");
     }
     
     private void readWithFileToolkit() {
+        Logger.getLogger(ImageReader.class.getName()).entering(ImageReader.class.getName(), "readWithFileToolkit");
         Image tampon = Toolkit.getDefaultToolkit().createImage(((File)imageObject).toString());
         MediaTracker mt = new MediaTracker(MainInterface.getPreviewComponent());
         mt.addImage(tampon, 0);
@@ -190,9 +211,11 @@ public class ImageReader {
             //Logger.getLogger(PreviewComponent.class.getName()).log(Level.SEVERE, "wait for image loading interrupted", ex);
         }
         image = new ImageReader(tampon).convertImageToBufferedImage();
+        Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readWithFileToolkit");
     }
 
     private void readWithInputStreamImageIO() {
+        Logger.getLogger(ImageReader.class.getName()).entering(ImageReader.class.getName(), "readWithInputStreamImageIO");
         try {
             image = ImageIO.read((InputStream)imageObject);
             ((InputStream)imageObject).close();
@@ -201,6 +224,7 @@ public class ImageReader {
             //new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Reading_Image", imagePath.toString());
             //previewComponent.setNoPreviewImage();
         }
+        Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readWithInputStreamImageIO");
     }
 
 }
