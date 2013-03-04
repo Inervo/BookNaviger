@@ -69,6 +69,15 @@ public class RarHandler extends AbstractImageHandler {
         new ExtractFileFromRar(compressedFilesHeaders.get(--pageNumber), pos).start();
         return new ImageReader(pis).readImage();
     }
+
+    @Override
+    public List<String> getPagesTitle() {
+        List<String> pagesTitle = new ArrayList<>(compressedFilesHeaders.size());
+        for (int i = 0; i < compressedFilesHeaders.size(); i++) {
+            pagesTitle.add(compressedFilesHeaders.get(i).getFileNameString());
+        }
+        return pagesTitle;
+    }
     
     private class ExtractFileFromRar extends Thread {
         Archive a = null;

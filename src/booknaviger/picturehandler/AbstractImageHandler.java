@@ -4,6 +4,7 @@
 package booknaviger.picturehandler;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +19,7 @@ public abstract class AbstractImageHandler {
     
     public abstract int getNbrOfPages();
     public abstract BufferedImage getImage(int pageNumber);
+    public abstract List<String> getPagesTitle();
     
     protected boolean isAnImage(String path) {
         if (path.toLowerCase().endsWith(".jpg") || path.toLowerCase().endsWith(".jpeg") || path.toLowerCase().endsWith(".gif") || path.toLowerCase().endsWith(".png") || path.toLowerCase().endsWith(".bmp")) {

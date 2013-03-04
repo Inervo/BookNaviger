@@ -7,6 +7,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.icepdf.core.exceptions.PDFException;
@@ -49,6 +51,15 @@ public class PdfHandler extends AbstractImageHandler {
     @Override
     public int getNbrOfPages() {
         return pdfDocument.getNumberOfPages();
+    }
+
+    @Override
+    public List<String> getPagesTitle() {
+        List<String> pagesTitle = new ArrayList<>(pdfDocument.getNumberOfPages());
+        for (int i = 0; i < pdfDocument.getNumberOfPages(); i++) {
+            pagesTitle.add("Page " + i);
+        }
+        return pagesTitle;
     }
 
 }
