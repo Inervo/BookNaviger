@@ -53,7 +53,7 @@ public class FolderHandler extends AbstractImageHandler {
     }
 
     @Override
-    public List<String> getPagesTitle() {
+    public List<String> getPagesName() {
         List<String> pagesTitle = new ArrayList<>(imagefiles.size());
         for (int i = 0; i < imagefiles.size(); i++) {
             pagesTitle.add(imagefiles.get(i).getName());

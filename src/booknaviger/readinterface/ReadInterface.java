@@ -65,6 +65,8 @@ public class ReadInterface extends javax.swing.JFrame {
         navigationReadInterfaceSeparator2 = new javax.swing.JPopupMenu.Separator();
         firstPageReadInterfaceMenuItem = new javax.swing.JMenuItem();
         lastPageReadInterfaceMenuItem = new javax.swing.JMenuItem();
+        navigationReadInterfaceSeparator3 = new javax.swing.JPopupMenu.Separator();
+        listPagesReadInterfaceMenuItem = new javax.swing.JMenuItem();
         displayReadInterfaceMenu = new javax.swing.JMenu();
         zoomMenu = new javax.swing.JMenu();
         zoomDefaultReadInterfaceMenuItem = new javax.swing.JMenuItem();
@@ -143,6 +145,16 @@ public class ReadInterface extends javax.swing.JFrame {
             }
         });
         navigationReadInterfaceMenu.add(lastPageReadInterfaceMenuItem);
+        navigationReadInterfaceMenu.add(navigationReadInterfaceSeparator3);
+
+        listPagesReadInterfaceMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/listOfPages.png"))); // NOI18N
+        listPagesReadInterfaceMenuItem.setText(resourceBundle.getString("listPagesReadInterfaceMenuItemText")); // NOI18N
+        listPagesReadInterfaceMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                listPagesReadInterfaceMenuItemActionPerformed(evt);
+            }
+        });
+        navigationReadInterfaceMenu.add(listPagesReadInterfaceMenuItem);
 
         readInterfacePopupMenu.add(navigationReadInterfaceMenu);
 
@@ -383,6 +395,8 @@ public class ReadInterface extends javax.swing.JFrame {
             exit();
         } else if (evt.getKeyCode() == KeyEvent.VK_M) {
             minimize();
+        }else if (evt.getKeyCode() == KeyEvent.VK_L) {
+            listPages();
         }
     }//GEN-LAST:event_readInterfaceKeyPressed
 
@@ -464,6 +478,10 @@ public class ReadInterface extends javax.swing.JFrame {
     private void rotate270RadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rotate270RadioButtonMenuItemActionPerformed
         readComponent.rotateImage(270);
     }//GEN-LAST:event_rotate270RadioButtonMenuItemActionPerformed
+
+    private void listPagesReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listPagesReadInterfaceMenuItemActionPerformed
+        listPages();
+    }//GEN-LAST:event_listPagesReadInterfaceMenuItemActionPerformed
     
     private void exit() {
         this.setVisible(false);
@@ -497,6 +515,13 @@ public class ReadInterface extends javax.swing.JFrame {
             this.setExtendedState(javax.swing.JFrame.ICONIFIED);
             MainInterface.getInstance().setExtendedState(javax.swing.JFrame.ICONIFIED);
         }
+    }
+    
+    private void listPages() {
+        ListPagesDialog listPagesDialog = new ListPagesDialog(this);
+        listPagesDialog.fillPagesName(imageHandler.getPagesName(), pageNbr-1);
+        listPagesDialog.setLocationRelativeTo(this);
+        listPagesDialog.setVisible(true);
     }
     
     public void goFirstImage() {
@@ -552,6 +577,13 @@ public class ReadInterface extends javax.swing.JFrame {
         }
     }
     
+    protected void goPage(int pageNbr) {
+        if (imageHandler.isImageInRange(pageNbr)) {
+            this.pageNbr = pageNbr;
+            readPageNbrImage();
+        }
+    }
+    
     private boolean readPageNbrImage() {
         return readPageNbrImage(false);
     }
@@ -600,10 +632,12 @@ public class ReadInterface extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem fitHorizontallyReadInterfaceCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem fitVerticallyReadInterfaceCheckBoxMenuItem;
     private javax.swing.JMenuItem lastPageReadInterfaceMenuItem;
+    private javax.swing.JMenuItem listPagesReadInterfaceMenuItem;
     private javax.swing.JMenuItem minimizeReadInterfaceMenuItem;
     private javax.swing.JMenu navigationReadInterfaceMenu;
     private javax.swing.JPopupMenu.Separator navigationReadInterfaceSeparator1;
     private javax.swing.JPopupMenu.Separator navigationReadInterfaceSeparator2;
+    private javax.swing.JPopupMenu.Separator navigationReadInterfaceSeparator3;
     private javax.swing.JMenuItem nextPageReadInterfaceMenuItem;
     private javax.swing.JMenuItem previousPageReadInterfaceMenuItem;
     private booknaviger.readinterface.ReadComponent readComponent;

@@ -19,7 +19,7 @@ public abstract class AbstractImageHandler {
     
     public abstract int getNbrOfPages();
     public abstract BufferedImage getImage(int pageNumber);
-    public abstract List<String> getPagesTitle();
+    public abstract List<String> getPagesName();
     
     protected boolean isAnImage(String path) {
         if (path.toLowerCase().endsWith(".jpg") || path.toLowerCase().endsWith(".jpeg") || path.toLowerCase().endsWith(".gif") || path.toLowerCase().endsWith(".png") || path.toLowerCase().endsWith(".bmp")) {

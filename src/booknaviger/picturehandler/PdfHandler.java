@@ -54,7 +54,7 @@ public class PdfHandler extends AbstractImageHandler {
     }
 
     @Override
-    public List<String> getPagesTitle() {
+    public List<String> getPagesName() {
         List<String> pagesTitle = new ArrayList<>(pdfDocument.getNumberOfPages());
         for (int i = 0; i < pdfDocument.getNumberOfPages(); i++) {
             pagesTitle.add("Page " + i);

@@ -71,7 +71,7 @@ public class RarHandler extends AbstractImageHandler {
     }
 
     @Override
-    public List<String> getPagesTitle() {
+    public List<String> getPagesName() {
         List<String> pagesTitle = new ArrayList<>(compressedFilesHeaders.size());
         for (int i = 0; i < compressedFilesHeaders.size(); i++) {
             pagesTitle.add(compressedFilesHeaders.get(i).getFileNameString());

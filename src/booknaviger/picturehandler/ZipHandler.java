@@ -83,7 +83,7 @@ public class ZipHandler extends AbstractImageHandler {
     }
 
     @Override
-    public List<String> getPagesTitle() {
+    public List<String> getPagesName() {
         List<String> pagesTitle = new ArrayList<>(imageEntries.size());
         for (int i = 0; i < imageEntries.size(); i++) {
             pagesTitle.add(imageEntries.get(i).getName());
