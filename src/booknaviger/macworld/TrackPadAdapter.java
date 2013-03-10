@@ -22,18 +22,34 @@ public class TrackPadAdapter extends GestureAdapter {
     boolean actionPerformed = false;
     ReadInterface readInterface = null;
 
+    /**
+     *
+     * @param readInterface
+     */
     public TrackPadAdapter(ReadInterface readInterface) {
         this.readInterface = readInterface;
     }
 
+    /**
+     *
+     * @param jc
+     */
     public void addListenerOn(JComponent jc) {
         GestureUtilities.addGestureListenerTo(jc, this);
     }
 
+    /**
+     *
+     * @param jc
+     */
     public void removeListenerFrom(JComponent jc) {
         GestureUtilities.removeGestureListenerFrom(jc, this);
     }
 
+    /**
+     *
+     * @param gpe
+     */
     @Override
     public void gestureBegan(GesturePhaseEvent gpe) {
         System.out.println("gesture began");
@@ -41,6 +57,10 @@ public class TrackPadAdapter extends GestureAdapter {
         actionPerformed = false;
     }
 
+    /**
+     *
+     * @param me
+     */
     @Override
     public void magnify(MagnificationEvent me) {
         System.out.println("magnify");
@@ -58,6 +78,10 @@ public class TrackPadAdapter extends GestureAdapter {
         }
     }
 
+    /**
+     *
+     * @param re
+     */
     @Override
     public void rotate(RotationEvent re) {
         System.out.println("rotate");
@@ -75,12 +99,20 @@ public class TrackPadAdapter extends GestureAdapter {
         }
     }
 
+    /**
+     *
+     * @param se
+     */
     @Override
     public void swipedLeft(SwipeEvent se) {
         System.out.println("swipe left");
         readInterface.goNextImage();
     }
 
+    /**
+     *
+     * @param se
+     */
     @Override
     public void swipedRight(SwipeEvent se) {
         System.out.println("swipe right");

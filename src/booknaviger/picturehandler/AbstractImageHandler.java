@@ -17,10 +17,28 @@ public abstract class AbstractImageHandler {
     private BufferedImage preloadedImage = null;
     private boolean preloadingInProgress = false;
     
+    /**
+     *
+     * @return
+     */
     public abstract int getNbrOfPages();
+    /**
+     *
+     * @param pageNumber
+     * @return
+     */
     public abstract BufferedImage getImage(int pageNumber);
+    /**
+     *
+     * @return
+     */
     public abstract List<String> getPagesName();
     
+    /**
+     *
+     * @param path
+     * @return
+     */
     protected boolean isAnImage(String path) {
         if (path.toLowerCase().endsWith(".jpg") || path.toLowerCase().endsWith(".jpeg") || path.toLowerCase().endsWith(".gif") || path.toLowerCase().endsWith(".png") || path.toLowerCase().endsWith(".bmp")) {
             return true;
@@ -28,6 +46,11 @@ public abstract class AbstractImageHandler {
         return false;
     }
     
+    /**
+     *
+     * @param pageNumber
+     * @return
+     */
     public boolean isImageInRange(int pageNumber) {
         pageNumber--; // is now pageIndex
         if (pageNumber >= getNbrOfPages() || pageNumber < 0) {
@@ -36,6 +59,10 @@ public abstract class AbstractImageHandler {
         return true;
     }
 
+    /**
+     *
+     * @return
+     */
     public BufferedImage getPreloadedImage() {
         while (preloadingInProgress) {
             try {
@@ -47,6 +74,11 @@ public abstract class AbstractImageHandler {
         return preloadedImage;
     }
     
+    /**
+     *
+     * @param nextPageNumber
+     * @param dualPageReadMode
+     */
     public synchronized void preloadNextImage(final int nextPageNumber, final boolean dualPageReadMode) {
         preloadingInProgress = true;
         new Thread(new Runnable() {

@@ -28,6 +28,10 @@ public class RarHandler extends AbstractImageHandler {
     Archive archive = null;
     List<FileHeader> compressedFilesHeaders = new ArrayList<>();
 
+    /**
+     *
+     * @param album
+     */
     public RarHandler(File album) {
         try {
             archive = new Archive(album);
@@ -54,6 +58,11 @@ public class RarHandler extends AbstractImageHandler {
         }
     }
 
+    /**
+     *
+     * @param pageNumber
+     * @return
+     */
     @Override
     public BufferedImage getImage(int pageNumber) {
         if (!isImageInRange(pageNumber)) {
@@ -70,6 +79,10 @@ public class RarHandler extends AbstractImageHandler {
         return new ImageReader(pis).readImage();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<String> getPagesName() {
         List<String> pagesTitle = new ArrayList<>(compressedFilesHeaders.size());
@@ -107,6 +120,10 @@ public class RarHandler extends AbstractImageHandler {
         
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getNbrOfPages() {
         return compressedFilesHeaders.size();

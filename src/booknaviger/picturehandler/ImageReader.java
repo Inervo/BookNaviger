@@ -29,21 +29,37 @@ public class ImageReader {
     BufferedImage image = null;
     Object imageObject = null;
     
+    /**
+     *
+     * @param image
+     */
     public ImageReader(Image image) {
         ExceptionHandler.registerExceptionHandler(ImageReader.class.getName());
         imageObject = image;
     }
 
+    /**
+     *
+     * @param imageFile
+     */
     public ImageReader(File imageFile) {
         ExceptionHandler.registerExceptionHandler(ImageReader.class.getName());
         imageObject = imageFile;
     }
 
+    /**
+     *
+     * @param imageIS
+     */
     public ImageReader(InputStream imageIS) {
         ExceptionHandler.registerExceptionHandler(ImageReader.class.getName());
         imageObject = imageIS;
     }
     
+    /**
+     *
+     * @return
+     */
     public BufferedImage convertImageToBufferedImage() {
         Logger.getLogger(ImageReader.class.getName()).entering(ImageReader.class.getName(), "convertImageToBufferedImage");
         if (imageObject.getClass().getName().toLowerCase().contains("image")) {
@@ -62,6 +78,10 @@ public class ImageReader {
         return null;
     }
     
+    /**
+     *
+     * @return
+     */
     public BufferedImage readImage() {
         Logger.getLogger(ImageReader.class.getName()).entering(ImageReader.class.getName(), "readImage");
         Logger.getLogger(ImageReader.class.getName()).log(Level.FINE, "Searching imageObject type : {0}", imageObject.getClass().getName());
@@ -91,6 +111,12 @@ public class ImageReader {
         return null;
     }
     
+    /**
+     *
+     * @param originalImage
+     * @param rotationDegree
+     * @return
+     */
     public static BufferedImage rotatePicture(BufferedImage originalImage, int rotationDegree) {
         Logger.getLogger(ImageReader.class.getName()).entering(ImageReader.class.getName(), "rotatePicture");
         if (originalImage != null) {
@@ -130,6 +156,12 @@ public class ImageReader {
         return null;
     }
     
+    /**
+     *
+     * @param imageLeft
+     * @param imageRight
+     * @return
+     */
     public static BufferedImage combine2Images(BufferedImage imageLeft, BufferedImage imageRight) {
         Logger.getLogger(ImageReader.class.getName()).entering(ImageReader.class.getName(), "combine2Images");
         if (imageLeft == null || imageRight == null) {

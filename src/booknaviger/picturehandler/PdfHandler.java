@@ -23,6 +23,10 @@ public class PdfHandler extends AbstractImageHandler {
     
     Document pdfDocument = null;
 
+    /**
+     *
+     * @param album
+     */
     public PdfHandler(File album) {
         pdfDocument = new Document();
         try {
@@ -32,6 +36,11 @@ public class PdfHandler extends AbstractImageHandler {
         }
     }
 
+    /**
+     *
+     * @param pageNumber
+     * @return
+     */
     @Override
     public BufferedImage getImage(int pageNumber) {
         if (!isImageInRange(pageNumber)) {
@@ -48,11 +57,19 @@ public class PdfHandler extends AbstractImageHandler {
         return bufferedImage;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getNbrOfPages() {
         return pdfDocument.getNumberOfPages();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<String> getPagesName() {
         List<String> pagesTitle = new ArrayList<>(pdfDocument.getNumberOfPages());

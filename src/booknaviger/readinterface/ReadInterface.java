@@ -23,8 +23,8 @@ import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 
 /**
- *
  * @author Inervo
+ * Form of the reading interface
  */
 public class ReadInterface extends javax.swing.JFrame {
     
@@ -36,6 +36,9 @@ public class ReadInterface extends javax.swing.JFrame {
 
     /**
      * Creates new form ReadInterface
+     * @param abstractImageHandler The imageHandler for this reading session.
+     * Could be {@link booknaviger.picturehandler.ZipHandler}, {@link booknaviger.picturehandler.RarHandler},
+     * {@link booknaviger.picturehandler.PdfHandler} or {@link booknaviger.picturehandler.FolderHandler}
      */
     public ReadInterface(AbstractImageHandler abstractImageHandler) {
         this.imageHandler = abstractImageHandler;
@@ -293,6 +296,7 @@ public class ReadInterface extends javax.swing.JFrame {
         setBackground(new java.awt.Color(0, 0, 0));
         setExtendedState(MAXIMIZED_BOTH);
         setUndecorated(true);
+        setPreferredSize(new java.awt.Dimension(1, 1));
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 readInterfaceKeyPressed(evt);
@@ -524,16 +528,25 @@ public class ReadInterface extends javax.swing.JFrame {
         listPagesDialog.setVisible(true);
     }
     
+    /**
+     * Read the first image of the current album
+     */
     public void goFirstImage() {
         pageNbr = 1;
         readPageNbrImage();
     }
     
+    /**
+     * Read the last image of the current album
+     */
     private void goLastImage() {
         pageNbr = imageHandler.getNbrOfPages();
         readPageNbrImage();
     }
     
+    /**
+     * Read the next image of the current album
+     */
     public void goNextImage() {
         if (dualPageReadMode) {
             pageNbr += 2;
@@ -551,6 +564,9 @@ public class ReadInterface extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Read the previous image of the current album
+     */
     public void goPreviousImage() {
         if (dualPageReadMode) {
             pageNbr -= 2;
@@ -563,6 +579,9 @@ public class ReadInterface extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Jump 10 images forward in the current album
+     */
     private void goNext10Image() {
         pageNbr += 10;
         if (!readPageNbrImage()) {
@@ -570,6 +589,9 @@ public class ReadInterface extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Jump 10 images backward in the current album
+     */
     private void goPrevious10Image() {
         pageNbr -= 10;
         if (!readPageNbrImage()) {
@@ -577,6 +599,10 @@ public class ReadInterface extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Go to the specified page in the current album
+     * @param pageNbr the page number to jump to
+     */
     protected void goPage(int pageNbr) {
         if (imageHandler.isImageInRange(pageNbr)) {
             this.pageNbr = pageNbr;
@@ -616,10 +642,18 @@ public class ReadInterface extends javax.swing.JFrame {
         return true;
     }
 
+    /**
+     * Getter for the scrollPane of the reading interface
+     * @return the scrollPane of the reading interface
+     */
     public JScrollPane getReadInterfaceScrollPane() {
         return readInterfaceScrollPane;
     }
 
+    /**
+     * Getter for the reading/drawing component of the reading interface
+     * @return the reading/drawing component of the reading interface
+     */
     public ReadComponent getReadComponent() {
         return readComponent;
     }    

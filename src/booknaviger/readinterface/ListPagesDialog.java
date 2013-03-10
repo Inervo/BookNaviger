@@ -20,6 +20,7 @@ public class ListPagesDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form ListPagesDialog
+     * @param readInterface 
      */
     public ListPagesDialog(ReadInterface readInterface) {
         super(readInterface, true);
@@ -27,6 +28,11 @@ public class ListPagesDialog extends javax.swing.JDialog {
         initComponents();
     }
     
+    /**
+     *
+     * @param pagesName
+     * @param currentPage
+     */
     protected void fillPagesName(final List<String> pagesName, final int currentPage) {
         final DefaultTableModel dtm = (DefaultTableModel) pagesListTable.getModel();
         List<Thread> rows = new ArrayList<>();

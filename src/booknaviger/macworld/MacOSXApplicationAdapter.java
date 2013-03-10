@@ -24,7 +24,7 @@ public class MacOSXApplicationAdapter {
 
     /**
      * Constructeur de l'adapteur de l'application pour Mac OS X
-     * @param mainInterace instance de BookNavigerApp
+     * @param mainInterface 
      */
     public MacOSXApplicationAdapter(final MainInterface mainInterface) {
         com.apple.eawt.Application.getApplication().setAboutHandler(new AboutHandler() {
@@ -75,10 +75,17 @@ public class MacOSXApplicationAdapter {
         com.apple.eawt.Application.getApplication().setDockIconImage(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/Application").getString("appLogoIcon"))).getImage());
     }
     
+    /**
+     *
+     * @return
+     */
     public static boolean isMac() {
         return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
     }
     
+    /**
+     *
+     */
     public static void setMacInterfaceAndCommands() {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "BookNaviger"); // <--Useless / --> -Xcode:name="BookNaviger"

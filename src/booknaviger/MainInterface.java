@@ -2,6 +2,7 @@
  */
 package booknaviger;
 
+import booknaviger.booksfolder.BooksFolderSelector;
 import booknaviger.exceptioninterface.LogInterface;
 import booknaviger.inet.InetBasics;
 import booknaviger.macworld.MacOSXApplicationAdapter;
@@ -10,10 +11,11 @@ import booknaviger.picturehandler.FolderHandler;
 import booknaviger.picturehandler.PdfHandler;
 import booknaviger.picturehandler.RarHandler;
 import booknaviger.picturehandler.ZipHandler;
+import booknaviger.profiles.ProfileDialog;
+import booknaviger.profiles.Profiles;
 import booknaviger.readinterface.ReadInterface;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -27,7 +29,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -37,8 +41,10 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Inervo
  */
-public class MainInterface extends javax.swing.JFrame {
+public final class MainInterface extends javax.swing.JFrame {
     
+    private Profiles profiles = new Profiles();
+    private List<JRadioButtonMenuItem> profilesListRadioButtonMenuItem = new ArrayList<>();
     private File booksDirectory = null;
     private Timer busyIconTimer;
     private int busyIconIndex = 0;
@@ -53,6 +59,10 @@ public class MainInterface extends javax.swing.JFrame {
     private volatile ReadInterface readInterface = null;
     private static MainInterface instance = null;
 
+    /**
+     *
+     * @return
+     */
     public static MainInterface getInstance() {
         synchronized(MainInterface.class) {
             if (instance == null) {
@@ -68,8 +78,9 @@ public class MainInterface extends javax.swing.JFrame {
     private MainInterface() {
         macInit();
         initComponents();
-        previewComponent.setStatusToolBarHeigh(statusToolBar.getHeight() + mainToolBar.getHeight());
         setTimer();
+        refreshProfilesList();
+        previewComponent.setStatusToolBarHeigh(statusToolBar.getHeight() + mainToolBar.getHeight());
     }
     
     private void macInit() {
@@ -105,7 +116,7 @@ public class MainInterface extends javax.swing.JFrame {
     private void initComponents() {
 
         languageButtonGroup = new javax.swing.ButtonGroup();
-        booksFolderFileChooser = new javax.swing.JFileChooser();
+        profileButtonGroup = new javax.swing.ButtonGroup();
         aboutDialog = new javax.swing.JDialog(this);
         closeAboutDialogButton = new javax.swing.JButton();
         imageLabel = new javax.swing.JLabel();
@@ -123,7 +134,7 @@ public class MainInterface extends javax.swing.JFrame {
         refreshAllButton = new javax.swing.JButton();
         refreshCurrentButton = new javax.swing.JButton();
         toolbarSeparator2 = new javax.swing.JToolBar.Separator();
-        profileComboBox = new javax.swing.JComboBox();
+        profileComboBox = new javax.swing.JComboBox<>();
         booksPreviewSplitPane = new javax.swing.JSplitPane();
         seriesScrollPane = new javax.swing.JScrollPane();
         seriesTable = new javax.swing.JTable();
@@ -154,9 +165,6 @@ public class MainInterface extends javax.swing.JFrame {
         helpMenu = new javax.swing.JMenu();
         autoUpdatesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
-
-        booksFolderFileChooser.setDialogTitle(resourceBundle.getString("books-folder_title_jdialog")); // NOI18N
-        booksFolderFileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
 
         aboutDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -293,6 +301,11 @@ public class MainInterface extends javax.swing.JFrame {
 
         profileComboBox.setMaximumSize(new java.awt.Dimension(200, 20));
         profileComboBox.setMinimumSize(new java.awt.Dimension(96, 20));
+        profileComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                profileComboBoxActionPerformed(evt);
+            }
+        });
         mainToolBar.add(profileComboBox);
 
         getContentPane().add(mainToolBar, java.awt.BorderLayout.PAGE_START);
@@ -478,6 +491,11 @@ public class MainInterface extends javax.swing.JFrame {
 
         profilesMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/profileBox.png"))); // NOI18N
         profilesMenuItem.setText(resourceBundle.getString("profiles_menu")); // NOI18N
+        profilesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                profilesMenuItemActionPerformed(evt);
+            }
+        });
         profileMenu.add(profilesMenuItem);
         profileMenu.add(profileSeparator);
 
@@ -552,7 +570,11 @@ public class MainInterface extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void bookFolderMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bookFolderMenuItemActionPerformed
-        changeFolder();
+        BooksFolderSelector booksFolderselector = new BooksFolderSelector(this, true);
+        String selectedFolder = booksFolderselector.selectFolder();
+        if (selectedFolder != null) {
+            getProfiles().setCurrentProfileFolder(selectedFolder);
+        }
     }//GEN-LAST:event_bookFolderMenuItemActionPerformed
 
     private void refreshAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshAllActionPerformed
@@ -613,6 +635,18 @@ public class MainInterface extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_albumsTableKeyPressed
 
+    private void profileComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profileComboBoxActionPerformed
+        String profileName = profileComboBox.getSelectedItem().toString();
+        if (!profileName.equals(profiles.getCurrentProfileName())) {
+            profiles.setNewCurrentProfile(profileName);
+            refreshProfilesList();
+        }
+    }//GEN-LAST:event_profileComboBoxActionPerformed
+
+    private void profilesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profilesMenuItemActionPerformed
+        new ProfileDialog(this, true).setVisible(true);
+    }//GEN-LAST:event_profilesMenuItemActionPerformed
+
     private void setActionInProgress(boolean inProgress) {
         if (inProgress) {
             this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -641,29 +675,62 @@ public class MainInterface extends javax.swing.JFrame {
         }
     }
     
-    /**
-     * Modification du dossier contenant les bouquins
-     */
-    private void changeFolder() {
-//        if (MacOSXApplicationAdapter.isMac()) { // Set inactive (don't work anyway) until Java7 make it work.
-//            FileDialog booksFolderMacFileChooser = new FileDialog(this, "test", FileDialog.LOAD);
-//            booksFolderMacFileChooser.setDirectory(System.getProperty("user.home"));
-//            booksFolderMacFileChooser.setLocation(50,50);
-//            booksFolderMacFileChooser.setVisible(true);
-//            if (booksFolderMacFileChooser.getDirectory() != null) {
-//                String folderName = booksFolderMacFileChooser.getDirectory();
-//                System.out.println("folderName = " + folderName);
-//                folderName += booksFolderMacFileChooser.getFile();
-//                System.out.println("folderName2 = " + folderName);
-//            }
-//        } else {
-            booksFolderFileChooser.setCurrentDirectory((booksDirectory == null) ? null : booksDirectory.getParentFile());
-            if (booksFolderFileChooser.showOpenDialog(this) == javax.swing.JFileChooser.APPROVE_OPTION) {
-                booksDirectory = booksFolderFileChooser.getSelectedFile();
-                // profiles[currentProfile][1] = directory.toString();
+    public void refreshProfilesList() {
+        refreshProfileComboBox();
+        refreshProfileRadioButtonMenuItem();
+        if (booksDirectory == null) {
+            if (!profiles.getCurrentProfileFolder().equals("")) {
+                booksDirectory = new File(profiles.getCurrentProfileFolder());
                 listSeries();
             }
-//        }
+        } else if (!booksDirectory.toString().equals(profiles.getCurrentProfileFolder())) {
+            booksDirectory = new File(profiles.getCurrentProfileFolder());
+            listSeries();
+        }
+    }
+    
+    private void refreshProfileComboBox() {
+        profileComboBox.setModel(new DefaultComboBoxModel<>(profiles.getProfilesNames()));
+        profileComboBox.setSelectedItem(profiles.getCurrentProfileName());
+    }
+    
+    /**
+     * Crée un nouveau radiobuttonmenuitem pour un nouveau profil
+     * @param text le titre du profil à mettre sur le button
+     * @return le button créé
+     */
+    private void refreshProfileRadioButtonMenuItem() {
+        for (JRadioButtonMenuItem profileRadioButtonMenuItem : profilesListRadioButtonMenuItem) {
+            profileButtonGroup.remove(profileRadioButtonMenuItem);
+            profileMenu.remove(profileRadioButtonMenuItem);
+        }
+        profilesListRadioButtonMenuItem.clear();
+        for (String profileName : profiles.getProfilesNames()) {
+            JRadioButtonMenuItem profileRadioButtonMenuItem = new JRadioButtonMenuItem();
+            profileRadioButtonMenuItem.setText(profileName);
+            profileRadioButtonMenuItem.setName(profileName.concat("ProfileRadioButtonMenuItem"));
+            if (profiles.getCurrentProfileName().equals(profileName)) {
+                profileRadioButtonMenuItem.setSelected(true);
+            }
+            profileRadioButtonMenuItem.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    for (int i = 0; i < profilesListRadioButtonMenuItem.size(); i++) {
+                        if (profilesListRadioButtonMenuItem.get(i).isSelected()) {
+                            String profileName = profilesListRadioButtonMenuItem.get(i).getText();
+                            if (!profileName.equals(profiles.getCurrentProfileName())) {
+                                profiles.setNewCurrentProfile(profileName);
+                            }
+                        }
+                    }
+                    refreshProfilesList();
+                }
+            });
+            profileButtonGroup.add(profileRadioButtonMenuItem);
+            profileMenu.add(profileRadioButtonMenuItem);
+            profilesListRadioButtonMenuItem.add(profileRadioButtonMenuItem);
+        }
     }
     
     /**
@@ -679,18 +746,7 @@ public class MainInterface extends javax.swing.JFrame {
                 File[] allfiles = null;
                 serie = null;
                 album = null;
-
-                try {
-                    allfiles = booksDirectory.listFiles();
-                } catch(SecurityException ex) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                    //new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Read_Rights", directory.toString());
-                }
-                if (allfiles == null) {
-                    return;
-                }
-                Arrays.sort(allfiles);
-                final File[] allFilesValue = allfiles;
+                
                 final DefaultTableModel seriesTableModel = (DefaultTableModel) seriesTable.getModel();
                 final DefaultTableModel albumsTableModel = (DefaultTableModel) albumsTable.getModel();
                 try {
@@ -705,6 +761,22 @@ public class MainInterface extends javax.swing.JFrame {
                 } catch (InterruptedException | InvocationTargetException ex) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 }
+                if (booksDirectory == null) {
+                    setActionInProgress(false);
+                    return;
+                }
+                try {
+                    allfiles = booksDirectory.listFiles();
+                } catch(SecurityException ex) {
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                    //new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Read_Rights", directory.toString());
+                }
+                if (allfiles == null) {
+                    setActionInProgress(false);
+                    return;
+                }
+                Arrays.sort(allfiles);
+                final File[] allFilesValue = allfiles;
                 final List<Thread> rows = new ArrayList<>();
                 for (int i = 0; allFilesValue.length > i; i++) {
                     if (allFilesValue[i].isDirectory() && !allFilesValue[i].isHidden()) {
@@ -775,12 +847,6 @@ public class MainInterface extends javax.swing.JFrame {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                     // new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Read_Rights", serie.toString());
                 }
-                if (allfiles == null) {
-                    previewComponent.setNoPreviewImage();
-                    return;
-                }
-                Arrays.sort(allfiles);
-                final File[] allFilesValue = allfiles;
                 final DefaultTableModel albumsTableModel = (DefaultTableModel) albumsTable.getModel();
                 try {
                     SwingUtilities.invokeAndWait(new Runnable() {
@@ -793,6 +859,13 @@ public class MainInterface extends javax.swing.JFrame {
                 } catch (InterruptedException | InvocationTargetException ex) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 }
+                if (allfiles == null) {
+                    previewComponent.setNoPreviewImage();
+                    setActionInProgress(false);
+                    return;
+                }
+                Arrays.sort(allfiles);
+                final File[] allFilesValue = allfiles;
                 List<Thread> rows = new ArrayList<>();
                 for (int i = 0; i < allFilesValue.length; i++) {
                     String name = allFilesValue[i].getName();
@@ -937,19 +1010,34 @@ public class MainInterface extends javax.swing.JFrame {
         }
     }
     
-   public void exit() {
+    /**
+     *
+     */
+    public void exit() {
        this.setVisible(false);
        LogInterface.getInstance().dispose();
        this.dispose();
        System.exit(0);
    }
    
-   public static Component getPreviewComponent() {
+    /**
+     *
+     * @return
+     */
+    public static Component getPreviewComponent() {
        return previewComponent;
    }
 
+    /**
+     *
+     * @return
+     */
     public ReadInterface getReadInterface() {
         return readInterface;
+    }
+
+    public Profiles getProfiles() {
+        return profiles;
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -964,7 +1052,6 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JLabel appVersionLabel;
     private javax.swing.JCheckBoxMenuItem autoUpdatesCheckBoxMenuItem;
     private javax.swing.JMenuItem bookFolderMenuItem;
-    private javax.swing.JFileChooser booksFolderFileChooser;
     private javax.swing.JSplitPane booksPreviewSplitPane;
     private javax.swing.JButton closeAboutDialogButton;
     private javax.swing.JCheckBoxMenuItem defaultLanguageCheckBoxMenuItem;
@@ -984,7 +1071,8 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator optionsSeparator;
     private static booknaviger.PreviewComponent previewComponent;
     private javax.swing.JLabel productVersionLabel;
-    private javax.swing.JComboBox profileComboBox;
+    private javax.swing.ButtonGroup profileButtonGroup;
+    private javax.swing.JComboBox<String> profileComboBox;
     private javax.swing.JMenu profileMenu;
     private javax.swing.JPopupMenu.Separator profileSeparator;
     private javax.swing.JMenuItem profilesMenuItem;

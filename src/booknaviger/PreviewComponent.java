@@ -35,6 +35,10 @@ public final class PreviewComponent extends JComponent {
         setNoPreviewImage();
     }
 
+    /**
+     *
+     * @param statusToolBarHeigh
+     */
     protected void setStatusToolBarHeigh(int statusToolBarHeigh) {
         this.statusToolBarHeigh = statusToolBarHeigh;
     }
@@ -61,11 +65,17 @@ public final class PreviewComponent extends JComponent {
         });
     }
 
+    /**
+     *
+     */
     protected void setNoPreviewImage() {
         Image image = new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/PreviewComponent").getString("no-preview_image"))).getImage();
         setImage(new ImageReader(image).convertImageToBufferedImage());
     }
     
+    /**
+     *
+     */
     protected void refresh() {
         int width = getParent().getWidth();
         int height = getParent().getHeight() - statusToolBarHeigh;

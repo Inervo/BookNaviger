@@ -4,13 +4,7 @@
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="languageButtonGroup">
     </Component>
-    <Component class="javax.swing.JFileChooser" name="booksFolderFileChooser">
-      <Properties>
-        <Property name="dialogTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="books-folder_title_jdialog" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
-        </Property>
-        <Property name="fileSelectionMode" type="int" value="1"/>
-      </Properties>
+    <Component class="javax.swing.ButtonGroup" name="profileButtonGroup">
     </Component>
     <Container class="javax.swing.JDialog" name="aboutDialog">
       <Properties>
@@ -272,6 +266,9 @@
                       <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="profiles_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="profilesMenuItemActionPerformed"/>
+                  </Events>
                 </MenuItem>
                 <MenuItem class="javax.swing.JPopupMenu$Separator" name="profileSeparator">
                 </MenuItem>
@@ -497,6 +494,13 @@
               <Dimension value="[96, 20]"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="profileComboBoxActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox&lt;&gt;()"/>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

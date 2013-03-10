@@ -20,6 +20,10 @@ public class FolderHandler extends AbstractImageHandler {
     
     List<File>  imagefiles = new ArrayList<>();
 
+    /**
+     *
+     * @param album
+     */
     public FolderHandler(File album) {
         File[] allfiles = album.listFiles();
         try {
@@ -39,6 +43,11 @@ public class FolderHandler extends AbstractImageHandler {
         }
     }
     
+    /**
+     *
+     * @param pageNumber
+     * @return
+     */
     @Override
     public BufferedImage getImage(int pageNumber) {
         if (!isImageInRange(pageNumber)) {
@@ -47,11 +56,19 @@ public class FolderHandler extends AbstractImageHandler {
         return new ImageReader(imagefiles.get(--pageNumber)).readImage();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getNbrOfPages() {
         return imagefiles.size();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<String> getPagesName() {
         List<String> pagesTitle = new ArrayList<>(imagefiles.size());

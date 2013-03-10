@@ -53,6 +53,10 @@ public class ExceptionHandler extends Handler {
     public void close() throws SecurityException {
     }
     
+    /**
+     *
+     * @param className
+     */
     public static void registerExceptionHandler(String className) {
         Handler[] handlers = Logger.getLogger(className).getHandlers();
         boolean registerHandler = true;

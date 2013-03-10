@@ -16,9 +16,16 @@ import java.util.logging.Logger;
  */
 public class InetBasics {
 
+    /**
+     *
+     */
     public InetBasics() {
     }
     
+    /**
+     *
+     * @param URIString
+     */
     public static void openURI(String URIString) {
         if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();

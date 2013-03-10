@@ -27,6 +27,10 @@ public class ZipHandler extends AbstractImageHandler {
     ZipFile zipFile = null;
     List<ZipEntry> imageEntries = new ArrayList<>();
 
+    /**
+     *
+     * @param album
+     */
     public ZipHandler(File album) {
         try {
             zipFile = new ZipFile(album, Charset.forName("IBM437"));
@@ -55,6 +59,11 @@ public class ZipHandler extends AbstractImageHandler {
         }
     }
 
+    /**
+     *
+     * @param pageNumber
+     * @return
+     */
     @Override
     public BufferedImage getImage(int pageNumber) {
         if (!isImageInRange(pageNumber)) {
@@ -70,6 +79,10 @@ public class ZipHandler extends AbstractImageHandler {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getNbrOfPages() {
         return imageEntries.size();
@@ -82,6 +95,10 @@ public class ZipHandler extends AbstractImageHandler {
         super.finalize();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<String> getPagesName() {
         List<String> pagesTitle = new ArrayList<>(imageEntries.size());

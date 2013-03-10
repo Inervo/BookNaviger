@@ -17,6 +17,10 @@ public class LogInterface extends javax.swing.JDialog {
     private static LogInterface instance = null;
     StyledDocument doc = null;
     
+    /**
+     *
+     * @return
+     */
     public static LogInterface getInstance() {
         synchronized(LogInterface.class) {
             if (instance == null) {
@@ -68,6 +72,10 @@ public class LogInterface extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     *
+     * @param newLog
+     */
     protected synchronized void publishNewLog(String newLog) {
         logTextPane.setText(logTextPane.getText());
         try {

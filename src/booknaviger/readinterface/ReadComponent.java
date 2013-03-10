@@ -62,6 +62,9 @@ public class ReadComponent extends JComponent {
     private boolean firstPageReached = false;
     private boolean lastPageReached = false;
 
+    /**
+     *
+     */
     public ReadComponent() {
         setLoadingImage();
     }
@@ -83,6 +86,7 @@ public class ReadComponent extends JComponent {
      * Dessine la nouvelle image pour le preview
      * @param image L'Image à charger
      * @param reinitializeOrientation Reinitialisation de la valeur de l'orientation actuelle de l'image
+     * @param readInterfaceScroll Le scrollPane de ce composant 
      */
     protected void setImage(final BufferedImage image, boolean reinitializeOrientation, final JScrollPane readInterfaceScroll) {
         if (reinitializeOrientation) {
@@ -165,6 +169,10 @@ public class ReadComponent extends JComponent {
         }
     }
     
+    /**
+     *
+     * @param rotationWanted
+     */
     public void rotateImage(int rotationWanted) {
         int rotationDegree = rotationWanted - currentOrientation;
         if (rotationDegree < 0) {
@@ -181,6 +189,9 @@ public class ReadComponent extends JComponent {
         setImage(ImageReader.rotatePicture(readImage, rotationDegree));
     }
     
+    /**
+     *
+     */
     public void zoomIn() {
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -193,6 +204,9 @@ public class ReadComponent extends JComponent {
         });
     }
     
+    /**
+     *
+     */
     public void zoomOut() {
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -208,6 +222,9 @@ public class ReadComponent extends JComponent {
         });
     }
     
+    /**
+     *
+     */
     public void normalZoom() {
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -220,24 +237,40 @@ public class ReadComponent extends JComponent {
         });
     }
     
+    /**
+     *
+     */
     protected void changeFitToScreenVertically() {
         this.fitToScreenVertically = !fitToScreenVertically;
         renderImage();
     }
 
+    /**
+     *
+     */
     protected void changeFitToScreenHorizontally() {
         this.fitToScreenHorizontally = !fitToScreenHorizontally;
         renderImage();
     }
 
+    /**
+     *
+     */
     public void setFirstPageReached() {
         this.firstPageReached = true;
     }
 
+    /**
+     *
+     */
     public void setLastPageReached() {
         this.lastPageReached = true;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getCurrentOrientation() {
         return currentOrientation;
     }
