@@ -32,7 +32,7 @@ public class BooksFolderSelector extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("booknaviger/resources/ProfileDialog"); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("booknaviger/resources/BooksFolderSelector"); // NOI18N
         booksFolderFileChooser.setDialogTitle(bundle.getString("books-folder_title_jdialog")); // NOI18N
         booksFolderFileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
 

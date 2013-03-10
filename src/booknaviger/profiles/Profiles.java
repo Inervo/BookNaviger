@@ -6,6 +6,7 @@ package booknaviger.profiles;
 import booknaviger.MainInterface;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * @author Inervo
@@ -17,23 +18,7 @@ public final class Profiles {
     private int currentProfile = 0;
 
     public Profiles() {
-        setNewProfile("Default", "");
-    }
-    
-    public void setNewProfile(String name, String folder) {
-        profiles.add(new String[]{name, folder});
-    }
-    
-    public void deleteProfile(String profileName) {
-        for (int i = 0; i < profiles.size(); i++) {
-            if (profiles.get(i)[0].equals(profileName)) {
-                profiles.remove(i);
-                if (i == currentProfile) {
-                    currentProfile = 0;
-                    MainInterface.getInstance().refreshProfilesList();
-                }
-            }
-        }
+        profiles.add(new String[]{"Default", ""});
     }
 
     public String getCurrentProfileName() {
@@ -42,10 +27,6 @@ public final class Profiles {
     
     public String getCurrentProfileFolder() {
         return profiles.get(currentProfile)[1];
-    }
-    
-    public void setCurrentProfileName(String profileName) {
-        profiles.get(currentProfile)[0] = profileName;
     }
     
     public void setCurrentProfileFolder(String profileFolder) {
@@ -59,16 +40,22 @@ public final class Profiles {
         }
     }
     
-    public void setProfileName(String profileName, String profileFolder) {
-        profiles.set(getIndexFromProfileFolder(profileFolder), new String[] {profileName, profileFolder});
-        if (profileFolder.equals(getCurrentProfileFolder())) {
-            MainInterface.getInstance().refreshProfilesList();
-        }
-    }
-    
     public String setNewCurrentProfile(String profileName) {
         currentProfile = getIndexFromProfileName(profileName);
         return getCurrentProfileFolder();
+    }
+    
+    public void setProfiles(Vector<Vector<String>> profiles) {
+        String currentProfileName = getCurrentProfileName();
+        this.profiles.clear();
+        currentProfile = 0;
+        for (Vector<String> profile : profiles) {
+            this.profiles.add(new String[] {profile.get(0), profile.get(1)});
+            if (profile.get(0).equals(currentProfileName)) {
+                setNewCurrentProfile(currentProfileName);
+            }
+        }
+        MainInterface.getInstance().refreshProfilesList();
     }
     
     public String[] getProfilesNames() {
@@ -95,16 +82,6 @@ public final class Profiles {
         int profileIndex = -1;
         for (int i = 0; i < profiles.size(); i++) {
             if (profiles.get(i)[0].equals(profileName)) {
-                profileIndex = i;
-            }
-        }
-        return profileIndex;
-    }
-    
-    private int getIndexFromProfileFolder(String profileFolder) {
-        int profileIndex = -1;
-        for (int i = 0; i < profiles.size(); i++) {
-            if (profiles.get(i)[1].equals(profileFolder)) {
                 profileIndex = i;
             }
         }

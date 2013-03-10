@@ -57,19 +57,18 @@ public final class MainInterface extends javax.swing.JFrame {
     private AbstractImageHandler imageHandler = null;
     private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
     private volatile ReadInterface readInterface = null;
-    private static MainInterface instance = null;
 
     /**
      *
      * @return
      */
+    private static class MainInterfaceHolder {
+
+        private static final MainInterface INSTANCE = new MainInterface();
+    }
+    
     public static MainInterface getInstance() {
-        synchronized(MainInterface.class) {
-            if (instance == null) {
-                instance = new MainInterface();
-            }
-        }
-        return instance;
+        return MainInterfaceHolder.INSTANCE;
     }
     
     /**
@@ -958,7 +957,7 @@ public final class MainInterface extends javax.swing.JFrame {
             }
         }).start();
     }
-    
+  
     private class PreviewImageLoader extends Thread {
         
         public PreviewImageLoader() {

@@ -4,8 +4,7 @@ package booknaviger.profiles;
 
 import booknaviger.MainInterface;
 import booknaviger.booksfolder.BooksFolderSelector;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import java.util.ResourceBundle;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -13,6 +12,8 @@ import javax.swing.table.DefaultTableModel;
  * @author Inervo
  */
 public class ProfileDialog extends javax.swing.JDialog {
+    
+    private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/ProfileDialog");
 
     /**
      * Creates new form ProfileDialog
@@ -24,19 +25,6 @@ public class ProfileDialog extends javax.swing.JDialog {
         for (int i = 0; i < MainInterface.getInstance().getProfiles().getProfilesCount(); i++) {
             dtm.addRow(new String[] {MainInterface.getInstance().getProfiles().getProfilesNames()[i], MainInterface.getInstance().getProfiles().getProfilesFolders()[i]});
         }
-        dtm.addTableModelListener(new TableModelListener() {
-
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                if (e.getType() == TableModelEvent.UPDATE) {
-                    if (e.getColumn() == 1) {
-                        MainInterface.getInstance().getProfiles().setProfileFolder(dtm.getValueAt(e.getFirstRow(), 1).toString(), dtm.getValueAt(e.getFirstRow(), 0).toString());
-                    } else {
-                        MainInterface.getInstance().getProfiles().setProfileName(dtm.getValueAt(e.getFirstRow(), 0).toString(), dtm.getValueAt(e.getFirstRow(), 1).toString());
-                    }
-                }
-            }
-        });
     }
 
     /**
@@ -55,15 +43,16 @@ public class ProfileDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle(resourceBundle.getString("profileDialogString")); // NOI18N
 
-        newProfileButton.setText("New profile");
+        newProfileButton.setText(resourceBundle.getString("newProfileButtonString")); // NOI18N
         newProfileButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newProfileButtonActionPerformed(evt);
             }
         });
 
-        deleteProfileButton.setText("Delete profile");
+        deleteProfileButton.setText(resourceBundle.getString("deleteProfileButtonString")); // NOI18N
         deleteProfileButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteProfileButtonActionPerformed(evt);
@@ -144,8 +133,8 @@ public class ProfileDialog extends javax.swing.JDialog {
         DefaultTableModel dtm = (DefaultTableModel) profileTable.getModel();
         String profileName = "profile " + profileTable.getRowCount();
         dtm.addRow(new String[] {profileName, ""});
-        MainInterface.getInstance().getProfiles().setNewProfile(profileName, "");
         profileTable.requestFocusInWindow();
+        profileTable.editCellAt(profileTable.getRowCount() - 1, 0);
     }//GEN-LAST:event_newProfileButtonActionPerformed
 
     private void deleteProfileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteProfileButtonActionPerformed
@@ -157,12 +146,13 @@ public class ProfileDialog extends javax.swing.JDialog {
             return;
         }
         DefaultTableModel dtm = (DefaultTableModel) profileTable.getModel();
-        MainInterface.getInstance().getProfiles().deleteProfile(dtm.getValueAt(selectedRow, 0).toString());
         dtm.removeRow(selectedRow);
     }//GEN-LAST:event_deleteProfileButtonActionPerformed
 
+    @SuppressWarnings("unchecked")
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        MainInterface.getInstance().refreshProfilesList();
+        DefaultTableModel dtm = (DefaultTableModel) profileTable.getModel();
+        MainInterface.getInstance().getProfiles().setProfiles(dtm.getDataVector());
         setVisible(false);
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
