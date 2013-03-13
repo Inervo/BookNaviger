@@ -13,6 +13,7 @@ import booknaviger.picturehandler.RarHandler;
 import booknaviger.picturehandler.ZipHandler;
 import booknaviger.profiles.ProfileDialog;
 import booknaviger.profiles.Profiles;
+import booknaviger.properties.PropertiesManager;
 import booknaviger.readinterface.ReadInterface;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -57,7 +58,7 @@ public final class MainInterface extends javax.swing.JFrame {
     private AbstractImageHandler imageHandler = null;
     private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
     private volatile ReadInterface readInterface = null;
-
+    
     /**
      *
      * @return
@@ -79,6 +80,7 @@ public final class MainInterface extends javax.swing.JFrame {
         initComponents();
         setTimer();
         refreshProfilesList();
+        restoreLastSelectedBook();
         previewComponent.setStatusToolBarHeigh(statusToolBar.getHeight() + mainToolBar.getHeight());
     }
     
@@ -648,6 +650,7 @@ public final class MainInterface extends javax.swing.JFrame {
 
     private void setActionInProgress(boolean inProgress) {
         if (inProgress) {
+            isAdjusting = true;
             this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             if (!busyIconTimer.isRunning()) {
                 statusAnimationLabel.setIcon(busyIcons[0]);
@@ -655,6 +658,7 @@ public final class MainInterface extends javax.swing.JFrame {
                 busyIconTimer.start();
             }
         } else {
+            isAdjusting = false;
             this.setCursor(Cursor.getDefaultCursor());
             busyIconTimer.stop();
             statusAnimationLabel.setIcon(idleIcon);
@@ -673,6 +677,61 @@ public final class MainInterface extends javax.swing.JFrame {
             listAlbums(selectedRow);
         }
     }
+    
+    private void restoreLastSelectedBook() {
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    while (isAdjusting) {
+                        Thread.sleep(1);
+                    }
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (PropertiesManager.getInstance().getKey("lastSelectedSerie") != null) {
+                    serie = new File(PropertiesManager.getInstance().getKey("lastSelectedSerie"));
+                    if (!serie.exists()) {
+                        serie = null;
+                        return;
+                    }
+                    for (int i = 0; i < seriesTable.getRowCount(); i++) {
+                        String rowValue = (String) seriesTable.getValueAt(i, 0);
+                        if (rowValue.equals(serie.getName())) {
+                            seriesTable.getSelectionModel().setSelectionInterval(i, i);
+                            seriesTable.scrollRectToVisible(seriesTable.getCellRect(i, 0, true));
+                            break;
+                        }
+                    }
+                    try {
+                        while (isAdjusting) {
+                            Thread.sleep(1);
+                        }
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    if (PropertiesManager.getInstance().getKey("lastSelectedAlbum") == null) {
+                        return;
+                    }
+                    album = new File(PropertiesManager.getInstance().getKey("lastSelectedAlbum"));
+                    if (!album.exists()) {
+                        album = null;
+                        return;
+                    }
+                    for (int i = 0; i < albumsTable.getRowCount(); i++) {
+                        String rowValue = (String) albumsTable.getValueAt(i, 0) + albumsTable.getValueAt(i, 1);
+                        if (rowValue.equals(album.getName())) {
+                            albumsTable.getSelectionModel().setSelectionInterval(i, i);
+                            albumsTable.scrollRectToVisible(albumsTable.getCellRect(i, 0, true));
+                            break;
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
     
     public void refreshProfilesList() {
         refreshProfileComboBox();
@@ -830,15 +889,18 @@ public final class MainInterface extends javax.swing.JFrame {
                 threadedPreviewLoader.stop();
                 serie = null;
                 album = null;
-                while (threadedPreviewLoader.isAlive() || isAdjusting) {
+                while (threadedPreviewLoader.isAlive()) {
                     try {
                     Thread.sleep(1);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                isAdjusting = true;
                 serie = new File(booksDirectory.toString() + File.separator + seriesTable.getValueAt(selectedRow, 0).toString());
+                if (!serie.exists()) {
+                    setActionInProgress(false);
+                    return;
+                }
                 File[] allfiles = null;
                 try {
                     allfiles = serie.listFiles();
@@ -1016,6 +1078,14 @@ public final class MainInterface extends javax.swing.JFrame {
        this.setVisible(false);
        LogInterface.getInstance().dispose();
        this.dispose();
+       profiles.saveProfilesProperties();
+       if (serie != null) {
+           PropertiesManager.getInstance().setKey("lastSelectedSerie", serie.toString());
+       }
+       if (album != null) {
+           PropertiesManager.getInstance().setKey("lastSelectedAlbum", album.toString());
+       }
+       PropertiesManager.getInstance().saveProperties();
        System.exit(0);
    }
    

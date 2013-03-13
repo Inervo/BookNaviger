@@ -4,6 +4,7 @@
 package booknaviger.profiles;
 
 import booknaviger.MainInterface;
+import booknaviger.properties.PropertiesManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -19,6 +20,7 @@ public final class Profiles {
 
     public Profiles() {
         profiles.add(new String[]{"Default", ""});
+        loadProfilesProperties();
     }
 
     public String getCurrentProfileName() {
@@ -42,6 +44,9 @@ public final class Profiles {
     
     public String setNewCurrentProfile(String profileName) {
         currentProfile = getIndexFromProfileName(profileName);
+        if (currentProfile == -1) {
+            currentProfile = 0;
+        }
         return getCurrentProfileFolder();
     }
     
@@ -86,6 +91,38 @@ public final class Profiles {
             }
         }
         return profileIndex;
+    }
+    
+    public void loadProfilesProperties() {
+        String value = PropertiesManager.getInstance().getKey("profiles");
+        if (value == null) {
+            return;
+        }
+        String[] unparsedProfiles = value.split(";");
+        String[][] partiallyParsedProfiles = new String[unparsedProfiles.length][2];
+        if (partiallyParsedProfiles.length < 1) {
+            return;
+        }
+        profiles.clear();
+        for (int i = 0; i < partiallyParsedProfiles.length; i++) {
+            String[] profileData = unparsedProfiles[i].split(",");
+            if (profileData.length == 2) {
+                profiles.add(new String[] {profileData[0], profileData[1]});
+            }
+            else {
+                profiles.add(new String[] {profileData[0], ""});
+            }
+        }
+        setNewCurrentProfile(PropertiesManager.getInstance().getKey("lastSelectedProfile"));
+    }
+    
+    public void saveProfilesProperties() {
+        StringBuilder profileString = new StringBuilder();
+        for (int i = 0; i < profiles.size(); i++) {
+            profileString.append(profiles.get(i)[0]).append(",").append(profiles.get(i)[1]).append(";");
+        }
+        PropertiesManager.getInstance().setKey("profiles", profileString.toString());
+        PropertiesManager.getInstance().setKey("lastSelectedProfile", getCurrentProfileName());
     }
 
 }
