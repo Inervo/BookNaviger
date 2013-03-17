@@ -7,6 +7,7 @@ import booknaviger.macworld.MacOSXApplicationAdapter;
 import booknaviger.macworld.TrackPadAdapter;
 import booknaviger.picturehandler.AbstractImageHandler;
 import booknaviger.picturehandler.ImageReader;
+import booknaviger.properties.PropertiesManager;
 import java.awt.AWTException;
 import java.awt.Cursor;
 import java.awt.SystemTray;
@@ -487,8 +488,9 @@ public class ReadInterface extends javax.swing.JFrame {
         listPages();
     }//GEN-LAST:event_listPagesReadInterfaceMenuItemActionPerformed
     
-    private void exit() {
+    public void exit() {
         this.setVisible(false);
+        PropertiesManager.getInstance().setKey("lastReadedPage", String.valueOf(pageNbr));
         this.dispose();
     }
     
@@ -603,10 +605,12 @@ public class ReadInterface extends javax.swing.JFrame {
      * Go to the specified page in the current album
      * @param pageNbr the page number to jump to
      */
-    protected void goPage(int pageNbr) {
+    public void goPage(int pageNbr) {
         if (imageHandler.isImageInRange(pageNbr)) {
             this.pageNbr = pageNbr;
             readPageNbrImage();
+        } else {
+            goFirstImage();
         }
     }
     

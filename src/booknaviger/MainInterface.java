@@ -17,6 +17,7 @@ import booknaviger.properties.PropertiesManager;
 import booknaviger.readinterface.ReadInterface;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -33,6 +34,7 @@ import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -51,13 +53,13 @@ public final class MainInterface extends javax.swing.JFrame {
     private int busyIconIndex = 0;
     private Icon idleIcon;
     private Icon[] busyIcons = new Icon[15];
-    private boolean isAdjusting = false;
     private File serie = null;
     private File album = null;
     private PreviewImageLoader threadedPreviewLoader = new PreviewImageLoader();
     private AbstractImageHandler imageHandler = null;
     private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
     private volatile ReadInterface readInterface = null;
+    private Thread actionThread = null;
     
     /**
      *
@@ -80,7 +82,6 @@ public final class MainInterface extends javax.swing.JFrame {
         initComponents();
         setTimer();
         refreshProfilesList();
-        restoreLastSelectedBook();
         previewComponent.setStatusToolBarHeigh(statusToolBar.getHeight() + mainToolBar.getHeight());
     }
     
@@ -270,6 +271,11 @@ public final class MainInterface extends javax.swing.JFrame {
         resumeButton.setMaximumSize(new java.awt.Dimension(20, 20));
         resumeButton.setMinimumSize(new java.awt.Dimension(20, 20));
         resumeButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        resumeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resumeButtonActionPerformed(evt);
+            }
+        });
         mainToolBar.add(resumeButton);
         mainToolBar.add(toolbarSeparator1);
 
@@ -300,6 +306,7 @@ public final class MainInterface extends javax.swing.JFrame {
         mainToolBar.add(refreshCurrentButton);
         mainToolBar.add(toolbarSeparator2);
 
+        profileComboBox.setFocusable(false);
         profileComboBox.setMaximumSize(new java.awt.Dimension(200, 20));
         profileComboBox.setMinimumSize(new java.awt.Dimension(96, 20));
         profileComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -459,6 +466,7 @@ public final class MainInterface extends javax.swing.JFrame {
         generateReportMenuItem.setText(resourceBundle.getString("report-generate_menu")); // NOI18N
         fileMenu.add(generateReportMenuItem);
 
+        bookFolderMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         bookFolderMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/library.png"))); // NOI18N
         bookFolderMenuItem.setText(resourceBundle.getString("books-folder_menu")); // NOI18N
         bookFolderMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -468,7 +476,7 @@ public final class MainInterface extends javax.swing.JFrame {
         });
         fileMenu.add(bookFolderMenuItem);
 
-        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.META_MASK));
+        exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         exitMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/quit.png"))); // NOI18N
         exitMenuItem.setMnemonic('x');
         exitMenuItem.setText(resourceBundle.getString("exit_menu")); // NOI18N
@@ -483,8 +491,14 @@ public final class MainInterface extends javax.swing.JFrame {
 
         optionMenu.setText(resourceBundle.getString("controls_menu")); // NOI18N
 
+        resumeMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         resumeMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/resume.png"))); // NOI18N
         resumeMenuItem.setText(resourceBundle.getString("resume_menu")); // NOI18N
+        resumeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resumeMenuItemActionPerformed(evt);
+            }
+        });
         optionMenu.add(resumeMenuItem);
 
         profileMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/profile.png"))); // NOI18N
@@ -550,6 +564,7 @@ public final class MainInterface extends javax.swing.JFrame {
         autoUpdatesCheckBoxMenuItem.setText(resourceBundle.getString("auto-update_menu")); // NOI18N
         helpMenu.add(autoUpdatesCheckBoxMenuItem);
 
+        aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
         aboutMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/aboutIcon.png"))); // NOI18N
         aboutMenuItem.setText(resourceBundle.getString("about_menu")); // NOI18N
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -648,9 +663,17 @@ public final class MainInterface extends javax.swing.JFrame {
         new ProfileDialog(this, true).setVisible(true);
     }//GEN-LAST:event_profilesMenuItemActionPerformed
 
-    private void setActionInProgress(boolean inProgress) {
+    private void resumeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resumeButtonActionPerformed
+        resumeReading();
+    }//GEN-LAST:event_resumeButtonActionPerformed
+
+    private void resumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resumeMenuItemActionPerformed
+        resumeReading();
+    }//GEN-LAST:event_resumeMenuItemActionPerformed
+
+    private void setActionInProgress(boolean inProgress, Thread actionThread) {
         if (inProgress) {
-            isAdjusting = true;
+            this.actionThread = actionThread;
             this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             if (!busyIconTimer.isRunning()) {
                 statusAnimationLabel.setIcon(busyIcons[0]);
@@ -658,7 +681,7 @@ public final class MainInterface extends javax.swing.JFrame {
                 busyIconTimer.start();
             }
         } else {
-            isAdjusting = false;
+            this.actionThread = null;
             this.setCursor(Cursor.getDefaultCursor());
             busyIconTimer.stop();
             statusAnimationLabel.setIcon(idleIcon);
@@ -678,22 +701,25 @@ public final class MainInterface extends javax.swing.JFrame {
         }
     }
     
-    private void restoreLastSelectedBook() {
-        new Thread(new Runnable() {
+    protected Thread changeSelectedBook(final String serieToSelect, final String albumToSelect) {
+        return new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    while (isAdjusting) {
-                        Thread.sleep(1);
+                    if (actionThread != null) {
+                        if (actionThread.getState() != Thread.State.TERMINATED) {
+                            actionThread.join();
+                        }
                     }
                 } catch (InterruptedException ex) {
                     Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                if (PropertiesManager.getInstance().getKey("lastSelectedSerie") != null) {
-                    serie = new File(PropertiesManager.getInstance().getKey("lastSelectedSerie"));
+                if (serieToSelect != null) {
+                    serie = new File(serieToSelect);
                     if (!serie.exists()) {
                         serie = null;
+                        album = null;
                         return;
                     }
                     for (int i = 0; i < seriesTable.getRowCount(); i++) {
@@ -705,16 +731,18 @@ public final class MainInterface extends javax.swing.JFrame {
                         }
                     }
                     try {
-                        while (isAdjusting) {
-                            Thread.sleep(1);
+                        if (actionThread != null) {
+                            if (actionThread.getState() != Thread.State.TERMINATED) {
+                                actionThread.join();
+                            }
                         }
                     } catch (InterruptedException ex) {
                         Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    if (PropertiesManager.getInstance().getKey("lastSelectedAlbum") == null) {
+                    if (albumToSelect == null) {
                         return;
                     }
-                    album = new File(PropertiesManager.getInstance().getKey("lastSelectedAlbum"));
+                    album = new File(albumToSelect);
                     if (!album.exists()) {
                         album = null;
                         return;
@@ -729,7 +757,7 @@ public final class MainInterface extends javax.swing.JFrame {
                     }
                 }
             }
-        }).start();
+        });
     }
 
     
@@ -795,9 +823,8 @@ public final class MainInterface extends javax.swing.JFrame {
      * Rafraichi la liste de toutes les séries
      */
     private void listSeries() {
-        setActionInProgress(true);
         previewComponent.setNoPreviewImage();
-        Thread toExecute = new Thread(new Runnable() {
+        Thread listSeriesThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
@@ -820,7 +847,7 @@ public final class MainInterface extends javax.swing.JFrame {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 }
                 if (booksDirectory == null) {
-                    setActionInProgress(false);
+                    setActionInProgress(false, null);
                     return;
                 }
                 try {
@@ -830,7 +857,7 @@ public final class MainInterface extends javax.swing.JFrame {
                     //new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Read_Rights", directory.toString());
                 }
                 if (allfiles == null) {
-                    setActionInProgress(false);
+                    setActionInProgress(false, null);
                     return;
                 }
                 Arrays.sort(allfiles);
@@ -868,21 +895,21 @@ public final class MainInterface extends javax.swing.JFrame {
                         Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                setActionInProgress(false);
+                setActionInProgress(false, null);
             }
         });
+        setActionInProgress(true, listSeriesThread);
         if (SwingUtilities.isEventDispatchThread()) {
-            toExecute.start();
+            listSeriesThread.start();
         }
         else {
-            toExecute.run();
+            listSeriesThread.run();
         }
     }
 
     @SuppressWarnings("deprecation")
     private void listAlbums(final int selectedRow) {
-        setActionInProgress(true);
-        new Thread(new Runnable() {
+        Thread listAlbumsThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
@@ -898,7 +925,7 @@ public final class MainInterface extends javax.swing.JFrame {
                 }
                 serie = new File(booksDirectory.toString() + File.separator + seriesTable.getValueAt(selectedRow, 0).toString());
                 if (!serie.exists()) {
-                    setActionInProgress(false);
+                    setActionInProgress(false, null);
                     return;
                 }
                 File[] allfiles = null;
@@ -922,7 +949,7 @@ public final class MainInterface extends javax.swing.JFrame {
                 }
                 if (allfiles == null) {
                     previewComponent.setNoPreviewImage();
-                    setActionInProgress(false);
+                    setActionInProgress(false, null);
                     return;
                 }
                 Arrays.sort(allfiles);
@@ -943,7 +970,7 @@ public final class MainInterface extends javax.swing.JFrame {
                                     String albumFullName = allFilesValue[index].getName();
                                     int indexOfExtension = albumFullName.lastIndexOf(".");
                                     albumsTableModel.addRow(new Object[]{albumFullName.substring(0, indexOfExtension), albumFullName.substring(indexOfExtension)});
-                                }
+                               }
                             }
                         });
                         SwingUtilities.invokeLater(tampon);
@@ -966,15 +993,16 @@ public final class MainInterface extends javax.swing.JFrame {
                                 albumsTable.getSelectionModel().setSelectionInterval(0, 0);
                             }
                             //albumScrollPane.getVerticalScrollBar().setValue(0);
-                            isAdjusting = false;
                         }
                     });
                 } catch (InterruptedException | InvocationTargetException ex) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 }
-                setActionInProgress(false);
+                setActionInProgress(false, null);
             }
-        }).start();
+        });
+        setActionInProgress(true, listAlbumsThread);
+        listAlbumsThread.start();
     }
     
     /**
@@ -1003,6 +1031,10 @@ public final class MainInterface extends javax.swing.JFrame {
     }
 
     private void startReading() {
+        launchReadInterface(1);
+    }
+    
+    private void launchReadInterface(final int page) {
         new Thread(new Runnable() {
 
             @Override
@@ -1015,7 +1047,31 @@ public final class MainInterface extends javax.swing.JFrame {
                 readInterface.setVisible(true);
                 readInterface.requestFocus();
                 readInterface.revalidate();
-                readInterface.goFirstImage();
+                readInterface.goPage(page);
+                PropertiesManager.getInstance().setKey("lastReadedSerie", serie.toString());
+                PropertiesManager.getInstance().setKey("lastReadedAlbum", album.toString());
+            }
+        }).start();
+    }
+    
+    private void resumeReading() {
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                Thread changeSelectedBookThread = changeSelectedBook(PropertiesManager.getInstance().getKey("lastReadedSerie"), PropertiesManager.getInstance().getKey("lastReadedAlbum"));
+                changeSelectedBookThread.start();
+                try {
+                    changeSelectedBookThread.join();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (album != null && serie != null) {
+                    if (PropertiesManager.getInstance().getKey("lastReadedPage") != null) {
+                        int page = Integer.parseInt(PropertiesManager.getInstance().getKey("lastReadedPage"));
+                        launchReadInterface(page);
+                    }
+                }
             }
         }).start();
     }
@@ -1027,7 +1083,7 @@ public final class MainInterface extends javax.swing.JFrame {
 
         @Override
         public void run() {
-            setActionInProgress(true);
+            setActionInProgress(true, this);
             if (album.isDirectory()) {
                 imageHandler = new FolderHandler(album);
                 BufferedImage previewImage = imageHandler.getImage(1);
@@ -1067,7 +1123,7 @@ public final class MainInterface extends javax.swing.JFrame {
             else {
                 previewComponent.setNoPreviewImage();
             }
-            setActionInProgress(false);
+            setActionInProgress(false, null);
         }
     }
     
@@ -1076,6 +1132,9 @@ public final class MainInterface extends javax.swing.JFrame {
      */
     public void exit() {
        this.setVisible(false);
+       if (readInterface != null) {
+           readInterface.exit();
+       }
        LogInterface.getInstance().dispose();
        this.dispose();
        profiles.saveProfilesProperties();

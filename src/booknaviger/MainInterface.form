@@ -200,6 +200,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="bookFolderMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="KeyStroke.getKeyStroke(KeyEvent.VK_B, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())" type="code"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/library.png"/>
                 </Property>
@@ -213,8 +216,8 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exitMenuItem">
               <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Meta+Q"/>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())" type="code"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/quit.png"/>
@@ -239,6 +242,9 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="resumeMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())" type="code"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/resume.png"/>
                 </Property>
@@ -246,6 +252,9 @@
                   <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="resume_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resumeMenuItemActionPerformed"/>
+              </Events>
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="profileMenu">
               <Properties>
@@ -372,6 +381,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="aboutMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="F1"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/aboutIcon.png"/>
                 </Property>
@@ -442,6 +454,9 @@
             </Property>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resumeButtonActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JToolBar$Separator" name="toolbarSeparator1">
         </Component>
@@ -487,6 +502,7 @@
         </Component>
         <Component class="javax.swing.JComboBox" name="profileComboBox">
           <Properties>
+            <Property name="focusable" type="boolean" value="false"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[200, 20]"/>
             </Property>

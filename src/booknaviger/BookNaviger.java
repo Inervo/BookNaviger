@@ -4,6 +4,7 @@
 package booknaviger;
 
 import booknaviger.macworld.MacOSXApplicationAdapter;
+import booknaviger.properties.PropertiesManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
@@ -26,6 +27,7 @@ public class BookNaviger {
             @Override
             public void run() {
                 MainInterface.getInstance().setVisible(true);
+                MainInterface.getInstance().changeSelectedBook(PropertiesManager.getInstance().getKey("lastSelectedSerie"), PropertiesManager.getInstance().getKey("lastSelectedAlbum")).start();
             }
         });
     }
