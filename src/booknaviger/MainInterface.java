@@ -15,6 +15,7 @@ import booknaviger.profiles.ProfileDialog;
 import booknaviger.profiles.Profiles;
 import booknaviger.properties.PropertiesManager;
 import booknaviger.readinterface.ReadInterface;
+import booknaviger.searcher.TableSearcher;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Toolkit;
@@ -366,6 +367,7 @@ public final class MainInterface extends javax.swing.JFrame {
                 seriesTableValueChanged(evt);
             }
         });
+        new TableSearcher(seriesTable, null).activateQuickSearch();
 
         booksPreviewSplitPane.setTopComponent(seriesScrollPane);
 
@@ -417,6 +419,7 @@ public final class MainInterface extends javax.swing.JFrame {
                 albumsTableValueChanged(evt);
             }
         });
+        new TableSearcher(albumsTable, null).activateQuickSearch();
 
         booksPreviewSplitPane.setRightComponent(albumsScrollPane);
 
@@ -638,6 +641,9 @@ public final class MainInterface extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_TAB) {
             evt.consume();
             albumsTable.requestFocusInWindow();
+        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            evt.consume();
+            startReading();
         }
     }//GEN-LAST:event_seriesTableKeyPressed
 

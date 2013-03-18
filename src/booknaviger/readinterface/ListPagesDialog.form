@@ -68,6 +68,9 @@
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="pagesListTableMouseClicked"/>
             <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="pagesListTableKeyPressed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="new TableSearcher(pagesListTable, this).activateQuickSearch();"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

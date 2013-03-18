@@ -2,6 +2,7 @@
  */
 package booknaviger.readinterface;
 
+import booknaviger.searcher.TableSearcher;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -120,6 +121,7 @@ public class ListPagesDialog extends javax.swing.JDialog {
             }
         });
         pagesListScrollPane.setViewportView(pagesListTable);
+        new TableSearcher(pagesListTable, this).activateQuickSearch();
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
