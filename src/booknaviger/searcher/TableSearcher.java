@@ -40,7 +40,7 @@ public class TableSearcher {
             @Override
             public void keyPressed(final KeyEvent evt) {
                 char character = evt.getKeyChar();
-                if (!Character.isLetterOrDigit(character) || evt.isMetaDown()) {
+                if (!Character.isLetterOrDigit(character) || evt.isMetaDown() || evt.isAltDown() || evt.isAltGraphDown() || evt.isControlDown()) {
                     return;
                 }
                 searchField.setText(searchField.getText() + String.valueOf(character));

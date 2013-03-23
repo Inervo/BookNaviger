@@ -11,6 +11,7 @@ import booknaviger.properties.PropertiesManager;
 import java.awt.AWTException;
 import java.awt.Cursor;
 import java.awt.SystemTray;
+import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -297,7 +298,7 @@ public class ReadInterface extends javax.swing.JFrame {
         setBackground(new java.awt.Color(0, 0, 0));
         setExtendedState(MAXIMIZED_BOTH);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(1, 1));
+        setPreferredSize(new java.awt.Dimension(0, 0));
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 readInterfaceKeyPressed(evt);
@@ -305,6 +306,8 @@ public class ReadInterface extends javax.swing.JFrame {
         });
 
         readInterfaceScrollPane.setBorder(null);
+        readInterfaceScrollPane.getVerticalScrollBar().setUnitIncrement(10);
+        readInterfaceScrollPane.getHorizontalScrollBar().setUnitIncrement(10);
 
         readComponent.setComponentPopupMenu(readInterfacePopupMenu);
         readComponent.setDoubleBuffered(true);
@@ -322,7 +325,7 @@ public class ReadInterface extends javax.swing.JFrame {
         );
         readComponentLayout.setVerticalGroup(
             readComponentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 285, Short.MAX_VALUE)
+            .add(0, 340, Short.MAX_VALUE)
         );
 
         readInterfaceScrollPane.setViewportView(readComponent);
@@ -331,15 +334,15 @@ public class ReadInterface extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 400, Short.MAX_VALUE)
+            .add(0, 475, Short.MAX_VALUE)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
+                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 300, Short.MAX_VALUE)
+            .add(0, 355, Short.MAX_VALUE)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
+                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE))
         );
 
         pack();
@@ -347,9 +350,22 @@ public class ReadInterface extends javax.swing.JFrame {
 
     private void readInterfaceKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_readInterfaceKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_RIGHT) {
-            goNextImage(); // TODO: image plus large que l'écran
+            goNextImage();
         } else if (evt.getKeyCode() == KeyEvent.VK_LEFT) {
-            goPreviousImage(); // TODO: image plus large que l'écran
+            goPreviousImage();
+        } else if (evt.getKeyCode() == KeyEvent.VK_SPACE) {
+            if (!readInterfaceScrollPane.getVerticalScrollBar().isVisible()) {
+                goNextImage();
+                return;
+            }
+            int value = readInterfaceScrollPane.getVerticalScrollBar().getValue();
+            int extent = readInterfaceScrollPane.getVerticalScrollBar().getVisibleAmount();
+            if (value == (readInterfaceScrollPane.getVerticalScrollBar().getMaximum() - extent)) {
+                goNextImage();
+            }
+            else {
+                readInterfaceScrollPane.getVerticalScrollBar().setValue(value + extent - 100);
+            }
         } else if (evt.getKeyCode() == KeyEvent.VK_PAGE_UP) {
             goPrevious10Image();
         } else if (evt.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
