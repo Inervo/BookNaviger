@@ -188,6 +188,23 @@ public class ImageReader {
         return imageCombined;
     }
     
+    public static BufferedImage getThumbnailImage(BufferedImage originalImage) {
+        if (originalImage == null) {
+            return null;
+        }
+        int srcWidth = originalImage.getWidth(null);
+        int srcHeight = originalImage.getHeight(null);
+        float ratio = (float)srcHeight / (float)srcWidth;
+        int destWidth = 300;
+        int destHeight = (int) (300 * ratio);
+        BufferedImage thumbnailImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = thumbnailImage.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.drawImage(originalImage, 0, 0, destWidth, destHeight, null);
+        g2d.dispose();
+        return thumbnailImage;
+    }
+    
     /**
      * trouve la couleur de la bordure pour l'image passée en paramètre
      * @param image l'image sur laquelle trouver la couleur du premier pixel

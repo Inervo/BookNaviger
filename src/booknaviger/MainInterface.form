@@ -197,6 +197,9 @@
                   <ResourceString bundle="booknaviger/resources/MainInterface.properties" key="report-generate_menu" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="generateReportMenuItemActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="bookFolderMenuItem">
               <Properties>

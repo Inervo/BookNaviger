@@ -5,6 +5,7 @@ package booknaviger;
 import booknaviger.booksfolder.BooksFolderSelector;
 import booknaviger.exceptioninterface.LogInterface;
 import booknaviger.inet.InetBasics;
+import booknaviger.inet.htmlreport.ReportModeSelector;
 import booknaviger.macworld.MacOSXApplicationAdapter;
 import booknaviger.picturehandler.AbstractImageHandler;
 import booknaviger.picturehandler.FolderHandler;
@@ -467,6 +468,11 @@ public final class MainInterface extends javax.swing.JFrame {
 
         generateReportMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/report.png"))); // NOI18N
         generateReportMenuItem.setText(resourceBundle.getString("report-generate_menu")); // NOI18N
+        generateReportMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generateReportMenuItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(generateReportMenuItem);
 
         bookFolderMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -676,6 +682,10 @@ public final class MainInterface extends javax.swing.JFrame {
     private void resumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resumeMenuItemActionPerformed
         resumeReading();
     }//GEN-LAST:event_resumeMenuItemActionPerformed
+
+    private void generateReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateReportMenuItemActionPerformed
+        new ReportModeSelector(this, true).setVisible(true);
+    }//GEN-LAST:event_generateReportMenuItemActionPerformed
 
     private void setActionInProgress(boolean inProgress, Thread actionThread) {
         if (inProgress) {
