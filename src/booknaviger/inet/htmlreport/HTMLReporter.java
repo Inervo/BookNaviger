@@ -44,19 +44,19 @@ import javax.swing.filechooser.FileSystemView;
  * @author Inervo
  *
  */
-public class CreateHTMLReport extends SwingWorker<Integer, String> {
+public class HTMLReporter extends SwingWorker<Integer, String> {
 
-    private File baseFile = null;
+    private File indexFile = null;
     private File cssFile = null;
-    private BufferedWriter baseFileWriter = null;
+    private BufferedWriter indexFileWriter = null;
     private BufferedWriter cssFileWriter = null;
     private boolean advancedMode;
-    private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/HTMLReport");
+    private ResourceBundle resourceBundle = ResourceBundle.getBundle("booknaviger/resources/HTMLReporter");
     private String reportFolder = null;
     private File baseDir = null;
     private int nbrOfSeries = 0;
     private int nbrOfAlbums = 0;
-    private GenerationProgress gp = null;
+    private GenerationProgress generationProgressDialog = null;
     private int nbrOfProcessedAlbums = 0;
     private boolean cancelAsked = false;
 
@@ -68,11 +68,11 @@ public class CreateHTMLReport extends SwingWorker<Integer, String> {
      * @param bnvf BookNavigerView Frame
      * @param gp Instance de GenerationProgress afin de communiquer les avancements de l'execution
      */
-    public CreateHTMLReport(boolean advancedMode, File baseDir, final GenerationProgress gp) {
+    public HTMLReporter(boolean advancedMode, File baseDir, final GenerationProgress gp) {
         super();
         this.advancedMode = advancedMode;
         this.baseDir = baseDir;
-        this.gp = gp;
+        this.generationProgressDialog = gp;
         String folder = System.getProperty("user.home");
         if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
             folder = FileSystemView.getFileSystemView().getDefaultDirectory().toString();
@@ -84,7 +84,7 @@ public class CreateHTMLReport extends SwingWorker<Integer, String> {
         if (advancedMode) {
             new File(reportFolder + "thumbnails").mkdir();
         }
-        baseFile = new File(reportFolder + "index.html");
+        indexFile = new File(reportFolder + "index.html");
         cssFile = new File(reportFolder + "style.css");
         addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -106,10 +106,10 @@ public class CreateHTMLReport extends SwingWorker<Integer, String> {
      */
     @Override
     protected void done() {
-        gp.setActionLabelValue(resourceBundle.getString("finished.text"));
-        gp.setActionProgressBarValue(100);
-        gp.setVisible(false);
-        gp.dispose();
+        generationProgressDialog.setActionLabelValue(resourceBundle.getString("finished.text"));
+        generationProgressDialog.setActionProgressBarValue(100);
+        generationProgressDialog.setVisible(false);
+        generationProgressDialog.dispose();
     }
 
     /**
@@ -119,7 +119,7 @@ public class CreateHTMLReport extends SwingWorker<Integer, String> {
     @Override
     protected void process(List<String> chunks) {
         for (String string : chunks) {
-            gp.setActionLabelValue(string);
+            generationProgressDialog.setActionLabelValue(string);
         }
     }
 
@@ -133,28 +133,28 @@ public class CreateHTMLReport extends SwingWorker<Integer, String> {
         nbrOfProcessedAlbums = 0;
         findNbrOfAlbums();
         try {
-            baseFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(baseFile), "UTF-8"));
+            indexFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(indexFile), "UTF-8"));
             cssFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(cssFile), "UTF-8"));
             createCss();
-            createHeader(baseFileWriter);
+            createHeader(indexFileWriter);
             createContent();
             if (cancelAsked) {
                 return 7;
             }
-            createFooter(baseFileWriter);
+            createFooter(indexFileWriter);
             copyImages();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
-            Logger.getLogger(CreateHTMLReport.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HTMLReporter.class.getName()).log(Level.SEVERE, null, ex);
 //            new KnownErrorBox(bnvf, KnownErrorBox.ERROR_LOGO, "Error_Opening_Report_Files");
         } catch (IOException ex) {
-            Logger.getLogger(CreateHTMLReport.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HTMLReporter.class.getName()).log(Level.SEVERE, null, ex);
 //            new KnownErrorBox(bnvf, KnownErrorBox.ERROR_LOGO, "Error_Reading_Report_Files_Template");
         }
         try {
-            baseFileWriter.close();
+            indexFileWriter.close();
             cssFileWriter.close();
         } catch (IOException ex) {
-            Logger.getLogger(CreateHTMLReport.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HTMLReporter.class.getName()).log(Level.SEVERE, null, ex);
 //            new KnownErrorBox(bnvf, KnownErrorBox.ERROR_LOGO, "Error_Close_Report_Files");
         }
         if (cancelAsked) {
@@ -169,7 +169,7 @@ public class CreateHTMLReport extends SwingWorker<Integer, String> {
                 }
             } catch (IOException ex) {
             } catch(URISyntaxException ex) {
-                Logger.getLogger(CreateHTMLReport.class.getName()).log(Level.SEVERE, "cannot show generated report. Please check index.html in the folder " + System.getProperty("user.dir").concat(File.separatorChar + "HTMLReport"), ex);
+                Logger.getLogger(HTMLReporter.class.getName()).log(Level.SEVERE, "cannot show generated report. Please check index.html in the folder " + System.getProperty("user.dir").concat(File.separatorChar + "HTMLReport"), ex);
             }
         }
         SwingUtilities.invokeLater(new Runnable() {
@@ -213,9 +213,9 @@ public class CreateHTMLReport extends SwingWorker<Integer, String> {
         header = header.append(System.getProperty("line.separator")).append("</head>");
         header = header.append(System.getProperty("line.separator")).append("<body>");
         header = header.append(System.getProperty("line.separator")).append("  <div id=\"header\">");
-        header = header.append(System.getProperty("line.separator")).append("    <a href=\"http://software.inervo.fr/\" target=\"_blank\"><img src=\"images/header.png\" alt=\"BookNaviger\" /></a>");
+        header = header.append(System.getProperty("line.separator")).append("    <a href=\"").append(ResourceBundle.getBundle("booknaviger/resources/Application").getString("appHomepage")).append("\" target=\"_blank\"><img src=\"images/header.png\" alt=\"BookNaviger\" /></a>");
         header = header.append(System.getProperty("line.separator")).append("    <p>");
-        header = header.append(System.getProperty("line.separator")).append("    Généré par <a href=\"http://software.inervo.fr/\" target=\"_blank\">BookNaviger</a> v").append(ResourceBundle.getBundle("/booknaviger/resources/Application").getString("appVersion"));
+        header = header.append(System.getProperty("line.separator")).append("    Généré par <a href=\"").append(ResourceBundle.getBundle("booknaviger/resources/Application").getString("appHomepage")).append("\" target=\"_blank\">BookNaviger</a> v").append(ResourceBundle.getBundle("booknaviger/resources/Application").getString("appVersion"));
         header = header.append(System.getProperty("line.separator")).append("    <br />");
         header = header.append(System.getProperty("line.separator")).append("    ").append(DateFormat.getDateTimeInstance().format(new Date()));
         header = header.append(System.getProperty("line.separator")).append("  </div>");
@@ -315,7 +315,7 @@ public class CreateHTMLReport extends SwingWorker<Integer, String> {
                         content = content.append(System.getProperty("line.separator")).append("          <tr class=\"impair\">");
                     }
                     content = content.append(System.getProperty("line.separator")).append("            <td>").append(albums[j]).append("</td>");
-                    setProgress(++nbrOfProcessedAlbums + nbrOfSeries * 100 / (nbrOfSeries + nbrOfAlbums));
+                    setProgress((++nbrOfProcessedAlbums + nbrOfSeries) * 100 / (nbrOfSeries + nbrOfAlbums));
                     publish(MessageFormat.format(resourceBundle.getString("simpleListingGen.text"), series[i], albums[j]));
                 }
                 content = content.append(System.getProperty("line.separator")).append("          </tr>");
@@ -329,8 +329,8 @@ public class CreateHTMLReport extends SwingWorker<Integer, String> {
         }
         publish(resourceBundle.getString("finalPhase.text"));
         content = content.append(System.getProperty("line.separator")).append("  </div>");
-        baseFileWriter.write(content.toString());
-        baseFileWriter.newLine();
+        indexFileWriter.write(content.toString());
+        indexFileWriter.newLine();
     }
 
     private void createAdvancedContent(String serie, String[] albums, int id) throws IOException {

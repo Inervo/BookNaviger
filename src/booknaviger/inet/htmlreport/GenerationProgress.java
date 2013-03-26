@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
  */
 public class GenerationProgress extends javax.swing.JDialog {
     
-    CreateHTMLReport htmlReport = null;
+    HTMLReporter htmlReport = null;
     ResourceBundle resourceBundle = ResourceBundle.getBundle("booknaviger/resources/GenerationProgress");
 
     /**
@@ -45,6 +45,11 @@ public class GenerationProgress extends javax.swing.JDialog {
         infoLabel.setText(resourceBundle.getString("infoLabelString")); // NOI18N
 
         cancelButton.setText(resourceBundle.getString("cancelButtonString")); // NOI18N
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -71,7 +76,7 @@ public class GenerationProgress extends javax.swing.JDialog {
                     .add(infoLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(logoLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(actionLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 12, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(actionLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 30, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(actionProgressBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -81,6 +86,10 @@ public class GenerationProgress extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        cancel();
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
     private void cancel() {
         htmlReport.setCancelAsked(true);
         setVisible(false);
@@ -88,10 +97,10 @@ public class GenerationProgress extends javax.swing.JDialog {
     }
     
     /**
-     * Set de CreateHTMLReport
-     * @param htmlReport Instance de CreateHTMLReport
+     * Set de HTMLReporter
+     * @param htmlReport Instance de HTMLReporter
      */
-    public void setHtmlReport(CreateHTMLReport htmlReport) {
+    public void setHtmlReport(HTMLReporter htmlReport) {
         this.htmlReport = htmlReport;
     }
 

@@ -24,11 +24,11 @@ public class GenerateReport {
 
             @Override
             public void run() {
-                GenerationProgress gp = new GenerationProgress(MainInterface.getInstance(), false);
-                gp.setVisible(true);
-                CreateHTMLReport chr = new CreateHTMLReport(advancedMode, baseDir, gp);
-                gp.setHtmlReport(chr);
-                chr.execute();
+                GenerationProgress generationProgressDialog = new GenerationProgress(MainInterface.getInstance(), false);
+                generationProgressDialog.setVisible(true);
+                HTMLReporter htmlReporter = new HTMLReporter(advancedMode, baseDir, generationProgressDialog);
+                generationProgressDialog.setHtmlReport(htmlReporter);
+                htmlReporter.execute();
             }
         });
     }

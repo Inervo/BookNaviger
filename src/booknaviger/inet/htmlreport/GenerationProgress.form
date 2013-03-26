@@ -49,7 +49,7 @@
                   <Component id="logoLabel" pref="60" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="actionLabel" min="-2" pref="12" max="-2" attributes="0"/>
+              <Component id="actionLabel" min="-2" pref="30" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="actionProgressBar" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -84,6 +84,9 @@
           <ResourceString bundle="booknaviger/resources/GenerationProgress.properties" key="cancelButtonString" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
