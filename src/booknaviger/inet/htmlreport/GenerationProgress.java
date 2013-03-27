@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
  */
 public class GenerationProgress extends javax.swing.JDialog {
     
-    HTMLReporter htmlReport = null;
+    ReportGenerator htmlReport = null;
     ResourceBundle resourceBundle = ResourceBundle.getBundle("booknaviger/resources/GenerationProgress");
 
     /**
@@ -97,10 +97,10 @@ public class GenerationProgress extends javax.swing.JDialog {
     }
     
     /**
-     * Set de HTMLReporter
-     * @param htmlReport Instance de HTMLReporter
+     * Set de ReportGenerator
+     * @param htmlReport Instance de ReportGenerator
      */
-    public void setHtmlReport(HTMLReporter htmlReport) {
+    public void setHtmlReport(ReportGenerator htmlReport) {
         this.htmlReport = htmlReport;
     }
 

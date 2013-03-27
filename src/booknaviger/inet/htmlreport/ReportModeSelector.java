@@ -5,6 +5,7 @@ package booknaviger.inet.htmlreport;
 import booknaviger.MainInterface;
 import java.io.File;
 import java.util.ResourceBundle;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -115,7 +116,17 @@ public class ReportModeSelector extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        new GenerateReport(advanceModeRadioButton.isSelected(), new File(MainInterface.getInstance().getProfiles().getCurrentProfileFolder()));
+        SwingUtilities.invokeLater(new Thread() {
+
+            @Override
+            public void run() {
+                GenerationProgress generationProgressDialog = new GenerationProgress(MainInterface.getInstance(), false);
+                generationProgressDialog.setVisible(true);
+                ReportGenerator htmlReporter = new ReportGenerator(advanceModeRadioButton.isSelected(), new File(MainInterface.getInstance().getProfiles().getCurrentProfileFolder()), generationProgressDialog);
+                generationProgressDialog.setHtmlReport(htmlReporter);
+                htmlReporter.execute();
+            }
+        });
         setVisible(false);
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed

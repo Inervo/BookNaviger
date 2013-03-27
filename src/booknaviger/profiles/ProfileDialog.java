@@ -5,7 +5,9 @@ package booknaviger.profiles;
 import booknaviger.MainInterface;
 import booknaviger.booksfolder.BooksFolderSelector;
 import java.util.ResourceBundle;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.JTextComponent;
 
 /**
  *
@@ -135,6 +137,10 @@ public class ProfileDialog extends javax.swing.JDialog {
         dtm.addRow(new String[] {profileName, ""});
         profileTable.requestFocusInWindow();
         profileTable.editCellAt(profileTable.getRowCount() - 1, 0);
+        if (profileTable.getEditorComponent() instanceof JTextComponent) {
+            ((JTextComponent)profileTable.getEditorComponent()).requestFocus();
+            ((JTextComponent)profileTable.getEditorComponent()).selectAll();
+        }
     }//GEN-LAST:event_newProfileButtonActionPerformed
 
     private void deleteProfileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteProfileButtonActionPerformed

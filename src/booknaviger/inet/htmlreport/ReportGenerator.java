@@ -44,14 +44,14 @@ import javax.swing.filechooser.FileSystemView;
  * @author Inervo
  *
  */
-public class HTMLReporter extends SwingWorker<Integer, String> {
+public class ReportGenerator extends SwingWorker<Integer, String> {
 
     private File indexFile = null;
     private File cssFile = null;
     private BufferedWriter indexFileWriter = null;
     private BufferedWriter cssFileWriter = null;
     private boolean advancedMode;
-    private ResourceBundle resourceBundle = ResourceBundle.getBundle("booknaviger/resources/HTMLReporter");
+    private ResourceBundle resourceBundle = ResourceBundle.getBundle("booknaviger/resources/ReportGenerator");
     private String reportFolder = null;
     private File baseDir = null;
     private int nbrOfSeries = 0;
@@ -68,7 +68,7 @@ public class HTMLReporter extends SwingWorker<Integer, String> {
      * @param bnvf BookNavigerView Frame
      * @param gp Instance de GenerationProgress afin de communiquer les avancements de l'execution
      */
-    public HTMLReporter(boolean advancedMode, File baseDir, final GenerationProgress gp) {
+    public ReportGenerator(boolean advancedMode, File baseDir, final GenerationProgress gp) {
         super();
         this.advancedMode = advancedMode;
         this.baseDir = baseDir;
@@ -144,17 +144,17 @@ public class HTMLReporter extends SwingWorker<Integer, String> {
             createFooter(indexFileWriter);
             copyImages();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
-            Logger.getLogger(HTMLReporter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, null, ex);
 //            new KnownErrorBox(bnvf, KnownErrorBox.ERROR_LOGO, "Error_Opening_Report_Files");
         } catch (IOException ex) {
-            Logger.getLogger(HTMLReporter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, null, ex);
 //            new KnownErrorBox(bnvf, KnownErrorBox.ERROR_LOGO, "Error_Reading_Report_Files_Template");
         }
         try {
             indexFileWriter.close();
             cssFileWriter.close();
         } catch (IOException ex) {
-            Logger.getLogger(HTMLReporter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, null, ex);
 //            new KnownErrorBox(bnvf, KnownErrorBox.ERROR_LOGO, "Error_Close_Report_Files");
         }
         if (cancelAsked) {
@@ -169,7 +169,7 @@ public class HTMLReporter extends SwingWorker<Integer, String> {
                 }
             } catch (IOException ex) {
             } catch(URISyntaxException ex) {
-                Logger.getLogger(HTMLReporter.class.getName()).log(Level.SEVERE, "cannot show generated report. Please check index.html in the folder " + System.getProperty("user.dir").concat(File.separatorChar + "HTMLReport"), ex);
+                Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "cannot show generated report. Please check index.html in the folder " + System.getProperty("user.dir").concat(File.separatorChar + "HTMLReport"), ex);
             }
         }
         SwingUtilities.invokeLater(new Runnable() {
