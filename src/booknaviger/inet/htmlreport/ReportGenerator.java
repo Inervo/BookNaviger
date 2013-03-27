@@ -48,8 +48,9 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
 
     private File indexFile = null;
     private File cssFile = null;
-    private BufferedWriter indexFileWriter = null;
+    private File pageXFile = null;
     private BufferedWriter cssFileWriter = null;
+    private BufferedWriter pageXWriter = null;
     private boolean advancedMode;
     private ResourceBundle resourceBundle = ResourceBundle.getBundle("booknaviger/resources/ReportGenerator");
     private String reportFolder = null;
@@ -133,15 +134,15 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         nbrOfProcessedAlbums = 0;
         findNbrOfAlbums();
         try {
-            indexFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(indexFile), "UTF-8"));
+            pageXWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(indexFile), "UTF-8"));
             cssFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(cssFile), "UTF-8"));
             createCss();
-            createHeader(indexFileWriter);
+            createHeader(pageXWriter);
             createContent();
             if (cancelAsked) {
                 return 7;
             }
-            createFooter(indexFileWriter);
+            createFooter();
             copyImages();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
             Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, null, ex);
@@ -151,7 +152,7 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
 //            new KnownErrorBox(bnvf, KnownErrorBox.ERROR_LOGO, "Error_Reading_Report_Files_Template");
         }
         try {
-            indexFileWriter.close();
+            pageXWriter.close();
             cssFileWriter.close();
         } catch (IOException ex) {
             Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, null, ex);
@@ -222,8 +223,8 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         bw.write(header.toString());
         bw.newLine();
     }
-
-    private void createContent() throws IOException {
+    
+    private void createTOCHead() throws IOException {
         StringBuilder content = new StringBuilder("  <div id=\"contents\">");
         // TOC
         content = content.append(System.getProperty("line.separator")).append("    <div id=\"tableOfContents\">");
@@ -232,12 +233,33 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         content = content.append(System.getProperty("line.separator")).append("          <td colspan=\"4\">").append(resourceBundle.getString("TocTitle.text")).append("</td>");
         content = content.append(System.getProperty("line.separator")).append("        </thead>");
         content = content.append(System.getProperty("line.separator")).append("        <tbody>");
+        pageXWriter.write(content.toString());
+        pageXWriter.newLine();
+    }
+
+    private void createContent() throws IOException {
+        StringBuilder content = new StringBuilder();
+        createTOCHead();
         String[] series = listSeries();
         setProgress(1);
         publish(resourceBundle.getString("TOCgen.text"));
         if (advancedMode) {
             int i;
             for (i = 0; i < series.length; i++) {
+                if (i%3 == 0 && i != 0) { // TODO: changer 3 par 40 !!!!
+                    if (i/3 > 0) {
+                        pageXWriter.write(content.toString());
+                        pageXWriter.newLine();
+                        createTOCFoot();
+                        createFooter();
+                        pageXWriter.close();
+                    }
+                    pageXFile = new File(reportFolder + "page" + i/3 + ".html");
+                    pageXWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pageXFile), "UTF-8"));
+                    createHeader(pageXWriter);
+                    createTOCHead();
+                    content = new StringBuilder();
+                }
                 String[] albums = listAlbums(series[i]);
                 createThumbnail(series[i], albums[0], i, 0);
                 if (i%4 == 0) {
@@ -284,12 +306,10 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
             }
             content = content.append(System.getProperty("line.separator")).append("          </tr>");
         }
-        content = content.append(System.getProperty("line.separator")).append("        </tbody>");
-        content = content.append(System.getProperty("line.separator")).append("        <tfoot>");
-        content = content.append(System.getProperty("line.separator")).append("          <td colspan=\"4\">Copyright &copy; Inervo</td>");
-        content = content.append(System.getProperty("line.separator")).append("        </tfoot>");
-        content = content.append(System.getProperty("line.separator")).append("      </table>");
-        content = content.append(System.getProperty("line.separator")).append("    </div>");
+        pageXWriter.write(content.toString());
+        pageXWriter.newLine();
+        content = new StringBuilder();
+        createTOCFoot();
         // Listing
         if (!advancedMode) {
             content = content.append(System.getProperty("line.separator")).append("    <div id=\"listing\">");
@@ -329,8 +349,20 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         }
         publish(resourceBundle.getString("finalPhase.text"));
         content = content.append(System.getProperty("line.separator")).append("  </div>");
-        indexFileWriter.write(content.toString());
-        indexFileWriter.newLine();
+        pageXWriter.write(content.toString());
+        pageXWriter.newLine();
+    }
+    
+    private void createTOCFoot() throws IOException {
+        StringBuilder content = new StringBuilder();
+        content = content.append(System.getProperty("line.separator")).append("        </tbody>");
+        content = content.append(System.getProperty("line.separator")).append("        <tfoot>");
+        content = content.append(System.getProperty("line.separator")).append("          <td colspan=\"4\">Copyright &copy; Inervo</td>");
+        content = content.append(System.getProperty("line.separator")).append("        </tfoot>");
+        content = content.append(System.getProperty("line.separator")).append("      </table>");
+        content = content.append(System.getProperty("line.separator")).append("    </div>");
+        pageXWriter.write(content.toString());
+        pageXWriter.newLine();
     }
 
     private void createAdvancedContent(String serie, String[] albums, int id) throws IOException {
@@ -400,7 +432,7 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         }
     }
 
-    private void createFooter(BufferedWriter bw) throws IOException {
+    private void createFooter() throws IOException {
         StringBuilder footer = new StringBuilder("  <div id=\"footer\">");
         footer = footer.append(System.getProperty("line.separator")).append("    ").append(nbrOfSeries).append(" ").append(resourceBundle.getString("nbrOfSeries.text"));
         footer = footer.append(System.getProperty("line.separator")).append("    <br />");
@@ -408,9 +440,9 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         footer = footer.append(System.getProperty("line.separator")).append("    <br />");
         footer = footer.append(System.getProperty("line.separator")).append("    ").append(getFolderSize(baseDir));
         footer = footer.append(System.getProperty("line.separator")).append("  </div>");
-        bw.write(footer.toString());
-        bw.newLine();
-        createSimpleFooter(bw);
+        pageXWriter.write(footer.toString());
+        pageXWriter.newLine();
+        createSimpleFooter(pageXWriter);
     }
     
     /**
