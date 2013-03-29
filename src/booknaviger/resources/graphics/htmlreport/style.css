@@ -42,6 +42,22 @@ a:hover{
 	text-align:left;
 }
 
+table#navigation{
+        margin-top:10px;
+        margin-bottom:10px;
+}
+
+table#navigation td{
+        background-image:url(images/table_tray.png);
+	-moz-border-radius-topright:20px;
+	-webkit-border-radius-topright:20px;
+	-o-border-radius-topright:20px;
+	-moz-border-radius-topleft:20px;
+	-webkit-border-radius-topleft:20px;
+	-o-border-radius-topleft:20px;
+	width:100%;
+}
+
 thead td{
 	background-image:url(images/table_tray.png);
 	-moz-border-radius-topright:20px;

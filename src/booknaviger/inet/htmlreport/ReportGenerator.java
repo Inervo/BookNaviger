@@ -46,8 +46,6 @@ import javax.swing.filechooser.FileSystemView;
  */
 public class ReportGenerator extends SwingWorker<Integer, String> {
 
-    private File indexFile = null;
-    private File cssFile = null;
     private File pageXFile = null;
     private BufferedWriter cssFileWriter = null;
     private BufferedWriter pageXWriter = null;
@@ -85,8 +83,6 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         if (advancedMode) {
             new File(reportFolder + "thumbnails").mkdir();
         }
-        indexFile = new File(reportFolder + "index.html");
-        cssFile = new File(reportFolder + "style.css");
         addPropertyChangeListener(new PropertyChangeListener() {
 
             @Override
@@ -134,8 +130,8 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         nbrOfProcessedAlbums = 0;
         findNbrOfAlbums();
         try {
-            pageXWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(indexFile), "UTF-8"));
-            cssFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(cssFile), "UTF-8"));
+            pageXWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(reportFolder + "index.html")), "UTF-8"));
+            cssFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(reportFolder + "style.css")), "UTF-8"));
             createCss();
             createHeader(pageXWriter);
             createContent();
@@ -185,7 +181,6 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
     }
 
     private void createCss() throws IOException {
-        String css = "";
         BufferedReader initialCssFile = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlReport/style.css")));
         while(true) {
             String tampon = initialCssFile.readLine();
@@ -220,12 +215,13 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         header = header.append(System.getProperty("line.separator")).append("    <br />");
         header = header.append(System.getProperty("line.separator")).append("    ").append(DateFormat.getDateTimeInstance().format(new Date()));
         header = header.append(System.getProperty("line.separator")).append("  </div>");
+        header = header.append(System.getProperty("line.separator")).append("  <div id=\"contents\">");
         bw.write(header.toString());
         bw.newLine();
     }
     
     private void createTOCHead() throws IOException {
-        StringBuilder content = new StringBuilder("  <div id=\"contents\">");
+        StringBuilder content = new StringBuilder();
         // TOC
         content = content.append(System.getProperty("line.separator")).append("    <div id=\"tableOfContents\">");
         content = content.append(System.getProperty("line.separator")).append("      <table align=\"center\" cellspacing=\"0\">");
@@ -236,27 +232,71 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         pageXWriter.write(content.toString());
         pageXWriter.newLine();
     }
+    
+    private void createNavigationMenu(int numberOfPages, int currentPage) throws IOException {
+        if (numberOfPages==0) {
+            return;
+        }
+        StringBuilder content = new StringBuilder();
+        content = content.append(System.getProperty("line.separator")).append("    <table align=\"center\" id=\"navigation\">");
+        content = content.append(System.getProperty("line.separator")).append("      <tbody>");
+        content = content.append(System.getProperty("line.separator")).append("        <tr>");
+        content = content.append(System.getProperty("line.separator")).append("          <td>");
+        content = content.append(System.getProperty("line.separator")).append("            ");
+        if (currentPage != 0) {
+            if (currentPage == 1) {
+                content = content.append("&nbsp;<a href=\"index.html\">").append(resourceBundle.getString("previousPage.text"));
+            } else {
+                content = content.append("&nbsp;<a href=\"page").append(currentPage - 1).append(".html\">").append(resourceBundle.getString("previousPage.text"));
+            }
+        }
+        for (int i = 0; i <= numberOfPages; i++) {
+            if (currentPage == i) {
+                content = content.append("&nbsp;").append(i);
+            } else {
+                if (i == 0) {
+                    content = content.append("&nbsp;<a href=\"index.html\">").append(i).append("</a>");
+                } else {
+                    content = content.append("&nbsp;<a href=\"page").append(i).append(".html\">").append(i).append("</a>");
+                }
+            }
+        }
+        if (currentPage != numberOfPages) {
+            content = content.append("&nbsp;<a href=\"page").append(currentPage + 1).append(".html\">").append(resourceBundle.getString("nextPage.text"));
+        }
+        content = content.append(System.getProperty("line.separator")).append("          </td>");
+        content = content.append(System.getProperty("line.separator")).append("        </tr>");
+        content = content.append(System.getProperty("line.separator")).append("      </tbody>");
+        content = content.append(System.getProperty("line.separator")).append("    </table>");
+        pageXWriter.write(content.toString());
+        pageXWriter.newLine();
+    }
 
     private void createContent() throws IOException {
         StringBuilder content = new StringBuilder();
-        createTOCHead();
         String[] series = listSeries();
+        if (advancedMode) {
+            createNavigationMenu((series.length-1) / 20, 0);
+        }
+        createTOCHead();
         setProgress(1);
         publish(resourceBundle.getString("TOCgen.text"));
         if (advancedMode) {
             int i;
             for (i = 0; i < series.length; i++) {
-                if (i%3 == 0 && i != 0) { // TODO: changer 3 par 40 !!!!
-                    if (i/3 > 0) {
+                if (i%20 == 0 && i != 0) {
+                    if (i/20 > 0) {
                         pageXWriter.write(content.toString());
                         pageXWriter.newLine();
                         createTOCFoot();
+                        createNavigationMenu((series.length-1) / 20, i/20 - 1);
                         createFooter();
                         pageXWriter.close();
                     }
-                    pageXFile = new File(reportFolder + "page" + i/3 + ".html");
+                    pageXFile = new File(reportFolder + "page" + i/20 + ".html");
                     pageXWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pageXFile), "UTF-8"));
                     createHeader(pageXWriter);
+                    createNavigationMenu((series.length-1) / 20, i/20);
                     createTOCHead();
                     content = new StringBuilder();
                 }
@@ -310,6 +350,9 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         pageXWriter.newLine();
         content = new StringBuilder();
         createTOCFoot();
+        if (advancedMode) {
+            createNavigationMenu((series.length-1) / 20, (series.length-1)/20);
+        }
         // Listing
         if (!advancedMode) {
             content = content.append(System.getProperty("line.separator")).append("    <div id=\"listing\">");
@@ -369,7 +412,7 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         BufferedWriter comicFile;
         comicFile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(reportFolder + "Comic" + id + ".html"), "UTF-8"));
         createHeader(comicFile);
-        StringBuilder content = new StringBuilder("  <div id=\"contents\">");
+        StringBuilder content = new StringBuilder();
         content = content.append(System.getProperty("line.separator")).append("    <div id=\"listing\">");
         content = content.append(System.getProperty("line.separator")).append("      <table align=\"center\" cellspacing=\"0\">");
         content = content.append(System.getProperty("line.separator")).append("        <thead>");
@@ -416,19 +459,24 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         File album = new File(baseDir.toString() + File.separatorChar + serie + File.separatorChar + albumString);
         File destinationFile = new File(reportFolder + "thumbnails" + File.separatorChar + "Comic" + serieId + "-" + albumId + ".png");
         BufferedImage previewImage = null;
-        if (album.isDirectory()) {
-            previewImage = new FolderHandler(album).getImage(1);
-        } else if (album.getName().toLowerCase().endsWith(".zip") || album.getName().toLowerCase().endsWith(".cbz")) {
-            previewImage = new ZipHandler(album).getImage(1);
-        } else if (album.getName().toLowerCase().endsWith(".rar") || album.getName().toLowerCase().endsWith(".cbr")) {
-            previewImage = new RarHandler(album).getImage(1);
-        } else if (album.getName().toLowerCase().endsWith(".pdf")) {
-            previewImage = new PdfHandler(album).getImage(1);
-        }
-        BufferedImage thumbnailImage = ImageReader.getThumbnailImage(previewImage);
-        previewImage.flush();
-        if (thumbnailImage != null) {
-            ImageIO.write(thumbnailImage, "png", destinationFile);
+        try {
+            if (album.isDirectory()) {
+                previewImage = new FolderHandler(album).getImage(1);
+            } else if (album.getName().toLowerCase().endsWith(".zip") || album.getName().toLowerCase().endsWith(".cbz")) {
+                previewImage = new ZipHandler(album).getImage(1);
+            } else if (album.getName().toLowerCase().endsWith(".rar") || album.getName().toLowerCase().endsWith(".cbr")) {
+                previewImage = new RarHandler(album).getImage(1);
+            } else if (album.getName().toLowerCase().endsWith(".pdf")) {
+                previewImage = new PdfHandler(album).getImage(1);
+            }
+            BufferedImage thumbnailImage = ImageReader.getThumbnailImage(previewImage);
+            previewImage.flush();
+            if (thumbnailImage != null) {
+                ImageIO.write(thumbnailImage, "png", destinationFile);
+            }
+        } catch(Exception ex) {
+            Image emptyThumbnail = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlReport/noImageAvailable.png"));
+            ImageIO.write((RenderedImage) emptyThumbnail, "png", new FileOutputStream(destinationFile));
         }
     }
 

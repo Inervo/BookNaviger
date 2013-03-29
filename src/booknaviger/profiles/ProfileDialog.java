@@ -5,7 +5,6 @@ package booknaviger.profiles;
 import booknaviger.MainInterface;
 import booknaviger.booksfolder.BooksFolderSelector;
 import java.util.ResourceBundle;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 
