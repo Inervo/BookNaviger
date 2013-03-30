@@ -40,7 +40,7 @@ public class GenerationProgress extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         logoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        logoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/htmlreport/info.png"))); // NOI18N
+        logoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/infologos/info.png"))); // NOI18N
 
         infoLabel.setText(resourceBundle.getString("infoLabelString")); // NOI18N
 

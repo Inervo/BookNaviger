@@ -6,6 +6,8 @@ import booknaviger.booksfolder.BooksFolderSelector;
 import booknaviger.exceptioninterface.LogInterface;
 import booknaviger.inet.InetBasics;
 import booknaviger.inet.htmlreport.ReportModeSelector;
+import booknaviger.inet.updater.NewUpdateAvailableDialog;
+import booknaviger.inet.updater.Updater;
 import booknaviger.macworld.MacOSXApplicationAdapter;
 import booknaviger.picturehandler.AbstractImageHandler;
 import booknaviger.picturehandler.FolderHandler;
@@ -27,8 +29,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -85,6 +92,9 @@ public final class MainInterface extends javax.swing.JFrame {
         setTimer();
         refreshProfilesList();
         previewComponent.setStatusToolBarHeigh(statusToolBar.getHeight() + mainToolBar.getHeight());
+        if (shoudCheckNewVersion()) {
+            checkForNewVersion();
+        }
     }
     
     private void macInit() {
@@ -108,6 +118,45 @@ public final class MainInterface extends javax.swing.JFrame {
         });
         idleIcon = new javax.swing.ImageIcon(getClass().getResource(resourceBundle.getString("idle_icon")));
         statusAnimationLabel.setIcon(idleIcon);
+    }
+    
+    private boolean shoudCheckNewVersion() {
+        String autoCheckUpdates = PropertiesManager.getInstance().getKey("autoCheckUpdates");
+        if (autoCheckUpdates != null && autoCheckUpdates.equals("false")) {
+            autoUpdatesCheckBoxMenuItem.setSelected(false);
+            return false;
+        }
+        String lastUpdateCheckString = PropertiesManager.getInstance().getKey("lastUpdateCheck");
+        if (lastUpdateCheckString == null) {
+            return true;
+        }
+        Date lastUpdateCheckDate;
+        try {
+            lastUpdateCheckDate = DateFormat.getDateInstance().parse(lastUpdateCheckString);
+        } catch (ParseException ex) {
+            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+            return true;
+        }
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(lastUpdateCheckDate);
+        cal.add(Calendar.DATE, 7);
+        if (new Date().after(cal.getTime())) {
+            return true;
+        }
+        return false;
+    }
+    
+    private void checkForNewVersion() {
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                Updater updater = new Updater();
+                if (updater.isNewVersionAvailable()) {
+                    new NewUpdateAvailableDialog(MainInterface.getInstance(), updater.getVersionNumber(), updater.getDownloadURLString()).setVisible(true);
+                }
+            }
+        }).start();
     }
 
     /**
@@ -571,6 +620,11 @@ public final class MainInterface extends javax.swing.JFrame {
 
         autoUpdatesCheckBoxMenuItem.setSelected(true);
         autoUpdatesCheckBoxMenuItem.setText(resourceBundle.getString("auto-update_menu")); // NOI18N
+        autoUpdatesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoUpdatesCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
         helpMenu.add(autoUpdatesCheckBoxMenuItem);
 
         aboutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
@@ -686,6 +740,15 @@ public final class MainInterface extends javax.swing.JFrame {
     private void generateReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateReportMenuItemActionPerformed
         new ReportModeSelector(this, true).setVisible(true);
     }//GEN-LAST:event_generateReportMenuItemActionPerformed
+
+    private void autoUpdatesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoUpdatesCheckBoxMenuItemActionPerformed
+        if (autoUpdatesCheckBoxMenuItem.isSelected()) {
+            PropertiesManager.getInstance().setKey("autoCheckUpdates", "true");
+            checkForNewVersion();
+        } else {
+            PropertiesManager.getInstance().setKey("autoCheckUpdates", "false");
+        }
+    }//GEN-LAST:event_autoUpdatesCheckBoxMenuItemActionPerformed
 
     private void setActionInProgress(boolean inProgress, Thread actionThread) {
         if (inProgress) {

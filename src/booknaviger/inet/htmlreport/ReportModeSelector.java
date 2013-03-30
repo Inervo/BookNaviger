@@ -45,7 +45,7 @@ public class ReportModeSelector extends javax.swing.JDialog {
         setTitle(resourceBundle.getString("Title")); // NOI18N
 
         logoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        logoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/htmlreport/info.png"))); // NOI18N
+        logoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/infologos/info.png"))); // NOI18N
 
         infoLabel.setText(resourceBundle.getString("infoLabel.text")); // NOI18N
 
