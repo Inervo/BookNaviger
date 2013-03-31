@@ -44,6 +44,8 @@ public class GenerationProgress extends javax.swing.JDialog {
 
         infoLabel.setText(resourceBundle.getString("infoLabelString")); // NOI18N
 
+        actionProgressBar.setStringPainted(true);
+
         cancelButton.setText(resourceBundle.getString("cancelButtonString")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

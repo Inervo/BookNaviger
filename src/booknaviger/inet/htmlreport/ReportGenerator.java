@@ -3,12 +3,12 @@
 
 package booknaviger.inet.htmlreport;
 
+import booknaviger.inet.InetBasics;
 import booknaviger.picturehandler.FolderHandler;
 import booknaviger.picturehandler.ImageReader;
 import booknaviger.picturehandler.PdfHandler;
 import booknaviger.picturehandler.RarHandler;
 import booknaviger.picturehandler.ZipHandler;
-import java.awt.Desktop;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -36,7 +34,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileSystemView;
 
@@ -157,31 +154,12 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         if (cancelAsked) {
             return 7;
         }
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop desktop = Desktop.getDesktop();
-                if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                    desktop.browse(new URI("file://" + reportFolder.replace('\\', '/').concat("index.html")));
-                    return 0;
-                }
-            } catch (IOException ex) {
-            } catch(URISyntaxException ex) {
-                Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "cannot show generated report. Please check index.html in the folder " + System.getProperty("user.dir").concat(File.separatorChar + "HTMLReport"), ex);
-            }
-        }
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-//                IndexFilePosition ifp = new IndexFilePosition(bnvf, true, reportFolder + "index.html");
-//                ifp.setVisible(true);
-            }
-        });
+        InetBasics.openURI("file://" + reportFolder.replace('\\', '/').concat("index.html"));
         return 0;
     }
 
     private void createCss() throws IOException {
-        BufferedReader initialCssFile = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlReport/style.css")));
+        BufferedReader initialCssFile = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/style.css")));
         while(true) {
             String tampon = initialCssFile.readLine();
             if (tampon == null) {
@@ -245,9 +223,9 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         content = content.append(System.getProperty("line.separator")).append("            ");
         if (currentPage != 0) {
             if (currentPage == 1) {
-                content = content.append("&nbsp;<a href=\"index.html\">").append(resourceBundle.getString("previousPage.text"));
+                content = content.append("&nbsp;<a href=\"index.html\">").append(resourceBundle.getString("previousPage.text")).append("</a>");
             } else {
-                content = content.append("&nbsp;<a href=\"page").append(currentPage - 1).append(".html\">").append(resourceBundle.getString("previousPage.text"));
+                content = content.append("&nbsp;<a href=\"page").append(currentPage - 1).append(".html\">").append(resourceBundle.getString("previousPage.text")).append("</a>");
             }
         }
         for (int i = 0; i <= numberOfPages; i++) {
@@ -262,7 +240,7 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
             }
         }
         if (currentPage != numberOfPages) {
-            content = content.append("&nbsp;<a href=\"page").append(currentPage + 1).append(".html\">").append(resourceBundle.getString("nextPage.text"));
+            content = content.append("&nbsp;<a href=\"page").append(currentPage + 1).append(".html\">").append(resourceBundle.getString("nextPage.text")).append("</a>");
         }
         content = content.append(System.getProperty("line.separator")).append("          </td>");
         content = content.append(System.getProperty("line.separator")).append("        </tr>");
@@ -301,7 +279,12 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
                     content = new StringBuilder();
                 }
                 String[] albums = listAlbums(series[i]);
-                createThumbnail(series[i], albums[0], i, 0);
+                if (albums.length > 0) {
+                    createThumbnail(series[i], albums[0], i, 0);
+                } else {
+                    Image emptyThumbnail = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/noImageAvailable.png"));
+                    ImageIO.write((RenderedImage) emptyThumbnail, "png", new FileOutputStream(new File(reportFolder + "thumbnails" + File.separatorChar + "Comic" + i + "-0.png")));
+                }
                 if (i%4 == 0) {
                     if (i != 0) {
                         content = content.append(System.getProperty("line.separator")).append("          </tr>");
@@ -475,7 +458,7 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
                 ImageIO.write(thumbnailImage, "png", destinationFile);
             }
         } catch(Exception ex) {
-            Image emptyThumbnail = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlReport/noImageAvailable.png"));
+            Image emptyThumbnail = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/noImageAvailable.png"));
             ImageIO.write((RenderedImage) emptyThumbnail, "png", new FileOutputStream(destinationFile));
         }
     }
@@ -541,14 +524,14 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         String imagefolder = reportFolder + "images";
         new File(imagefolder).mkdir();
         imagefolder = imagefolder.concat(File.separator);
-        Image header = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlReport/header.png"));
-        Image background = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlReport/background.png"));
-        Image tableTray = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlReport/table_tray.png"));
+        Image header = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/header.png"));
+        Image background = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/background.png"));
+        Image tableTray = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/table_tray.png"));
         ImageIO.write((RenderedImage) header, "png", new FileOutputStream(imagefolder + "header.png"));
         ImageIO.write((RenderedImage) background, "png", new FileOutputStream(imagefolder + "background.png"));
         ImageIO.write((RenderedImage) tableTray, "png", new FileOutputStream(imagefolder + "table_tray.png"));
         if (advancedMode) {
-            Image emptyThumbnail = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlReport/emptyThumbnail.png"));
+            Image emptyThumbnail = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/emptyThumbnail.png"));
             ImageIO.write((RenderedImage) emptyThumbnail, "png", new FileOutputStream(imagefolder + "emptyThumbnail.png"));
         }
 
