@@ -230,7 +230,7 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         }
         for (int i = 0; i <= numberOfPages; i++) {
             if (currentPage == i) {
-                content = content.append("&nbsp;").append(i);
+                content = content.append("&nbsp;<u>").append(i).append("</u>");
             } else {
                 if (i == 0) {
                     content = content.append("&nbsp;<a href=\"index.html\">").append(i).append("</a>");
@@ -264,10 +264,13 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
             for (i = 0; i < series.length; i++) {
                 if (i%20 == 0 && i != 0) {
                     if (i/20 > 0) {
+                        content = content.append(System.getProperty("line.separator")).append("          </tr>");
                         pageXWriter.write(content.toString());
                         pageXWriter.newLine();
                         createTOCFoot();
                         createNavigationMenu((series.length-1) / 20, i/20 - 1);
+                        pageXWriter.write(System.getProperty("line.separator") + "  </div>");
+                        pageXWriter.newLine();
                         createFooter();
                         pageXWriter.close();
                     }
@@ -286,7 +289,7 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
                     ImageIO.write((RenderedImage) emptyThumbnail, "png", new FileOutputStream(new File(reportFolder + "thumbnails" + File.separatorChar + "Comic" + i + "-0.png")));
                 }
                 if (i%4 == 0) {
-                    if (i != 0) {
+                    if (i != 0 && i%20 != 0) {
                         content = content.append(System.getProperty("line.separator")).append("          </tr>");
                     }
                     content = content.append(System.getProperty("line.separator")).append("          <tr>");
