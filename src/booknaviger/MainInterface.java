@@ -3,6 +3,7 @@
 package booknaviger;
 
 import booknaviger.booksfolder.BooksFolderSelector;
+import booknaviger.exceptioninterface.ExceptionHandler;
 import booknaviger.exceptioninterface.LogInterface;
 import booknaviger.inet.InetBasics;
 import booknaviger.inet.htmlreport.ReportModeSelector;
@@ -37,6 +38,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,11 +78,22 @@ public final class MainInterface extends javax.swing.JFrame {
      */
     private static class MainInterfaceHolder {
 
-        private static final MainInterface INSTANCE = new MainInterface();
+        private static MainInterface INSTANCE = new MainInterface();
     }
     
     public static MainInterface getInstance() {
-        return MainInterfaceHolder.INSTANCE;
+        synchronized(MainInterfaceHolder.class) {
+            if (MainInterfaceHolder.INSTANCE == null) {
+                MainInterfaceHolder.INSTANCE = new MainInterface();
+            }
+            return MainInterfaceHolder.INSTANCE;
+        }
+    }
+    
+    public static void reinitializeMainInterface() {
+        synchronized(MainInterfaceHolder.class) {
+            MainInterfaceHolder.INSTANCE = null;
+        }
     }
     
     /**
@@ -95,6 +108,7 @@ public final class MainInterface extends javax.swing.JFrame {
         if (shoudCheckNewVersion()) {
             checkForNewVersion();
         }
+        initializeLanguageMenuSelection();
     }
     
     private void macInit() {
@@ -134,7 +148,7 @@ public final class MainInterface extends javax.swing.JFrame {
         try {
             lastUpdateCheckDate = DateFormat.getDateInstance().parse(lastUpdateCheckString);
         } catch (ParseException ex) {
-            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, null, ex);
             return true;
         }
         Calendar cal = new GregorianCalendar();
@@ -157,6 +171,20 @@ public final class MainInterface extends javax.swing.JFrame {
                 }
             }
         }).start();
+    }
+    
+    private void initializeLanguageMenuSelection() {
+        String languageWanted = PropertiesManager.getInstance().getKey("language");
+        if (languageWanted != null) {
+            switch (languageWanted) {
+                case "fr":
+                    frenchLanguageCheckBoxMenuItem.setSelected(true);
+                    break;
+                case "en":
+                    englishLanguageCheckBoxMenuItem.setSelected(true);
+                    break;
+            }
+        }
     }
 
     /**
@@ -601,17 +629,32 @@ public final class MainInterface extends javax.swing.JFrame {
         defaultLanguageCheckBoxMenuItem.setSelected(true);
         defaultLanguageCheckBoxMenuItem.setText(resourceBundle.getString("default-language_menu")); // NOI18N
         defaultLanguageCheckBoxMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/defaultLanguage.png"))); // NOI18N
+        defaultLanguageCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                defaultLanguageCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
         languageMenu.add(defaultLanguageCheckBoxMenuItem);
         languageMenu.add(languageSeparator);
 
         languageButtonGroup.add(englishLanguageCheckBoxMenuItem);
         englishLanguageCheckBoxMenuItem.setText(resourceBundle.getString("english-language_menu")); // NOI18N
         englishLanguageCheckBoxMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/en_US.png"))); // NOI18N
+        englishLanguageCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                englishLanguageCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
         languageMenu.add(englishLanguageCheckBoxMenuItem);
 
         languageButtonGroup.add(frenchLanguageCheckBoxMenuItem);
         frenchLanguageCheckBoxMenuItem.setText(resourceBundle.getString("french-language_menu")); // NOI18N
         frenchLanguageCheckBoxMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/fr_FR.png"))); // NOI18N
+        frenchLanguageCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                frenchLanguageCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
         languageMenu.add(frenchLanguageCheckBoxMenuItem);
 
         toolBar.add(languageMenu);
@@ -750,6 +793,35 @@ public final class MainInterface extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_autoUpdatesCheckBoxMenuItemActionPerformed
 
+    private void defaultLanguageCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defaultLanguageCheckBoxMenuItemActionPerformed
+        Locale.setDefault(new Locale(System.getProperty("user.language")));
+        PropertiesManager.getInstance().removeKey("language");
+        restartInterface();
+    }//GEN-LAST:event_defaultLanguageCheckBoxMenuItemActionPerformed
+
+    private void englishLanguageCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_englishLanguageCheckBoxMenuItemActionPerformed
+        Locale.setDefault(Locale.ENGLISH);
+        PropertiesManager.getInstance().setKey("language", "en");
+        restartInterface();
+    }//GEN-LAST:event_englishLanguageCheckBoxMenuItemActionPerformed
+
+    private void frenchLanguageCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_frenchLanguageCheckBoxMenuItemActionPerformed
+        Locale.setDefault(Locale.FRENCH);
+        PropertiesManager.getInstance().setKey("language", "fr");
+        restartInterface();
+    }//GEN-LAST:event_frenchLanguageCheckBoxMenuItemActionPerformed
+
+    private void restartInterface() {
+        this.setVisible(false);
+        this.dispose();
+        reinitializeMainInterface();
+        MainInterface.getInstance().setVisible(true);
+        MainInterface.getInstance().changeSelectedBook(PropertiesManager.getInstance().getKey("lastSelectedSerie"), PropertiesManager.getInstance().getKey("lastSelectedAlbum")).start();
+        LogInterface.getInstance().dispose();
+        LogInterface.reinitializeLogInterface();
+        ExceptionHandler.logInterface = LogInterface.getInstance();
+    }
+    
     private void setActionInProgress(boolean inProgress, Thread actionThread) {
         if (inProgress) {
             this.actionThread = actionThread;

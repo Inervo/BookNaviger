@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class ExceptionHandler extends Handler {
     
-    LogInterface logInterface = LogInterface.getInstance();
+    public static LogInterface logInterface = LogInterface.getInstance();
     
     private ExceptionHandler() {
         setFormatter(new ExceptionHandlerFormatter());

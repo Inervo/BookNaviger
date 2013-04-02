@@ -336,6 +336,9 @@
                   <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/defaultLanguage.png"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="defaultLanguageCheckBoxMenuItemActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="languageSeparator">
             </MenuItem>
@@ -351,6 +354,9 @@
                   <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/en_US.png"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="englishLanguageCheckBoxMenuItemActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="frenchLanguageCheckBoxMenuItem">
               <Properties>
@@ -364,6 +370,9 @@
                   <Image iconType="3" name="/booknaviger/resources/graphics/mainmenu/fr_FR.png"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="frenchLanguageCheckBoxMenuItemActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>

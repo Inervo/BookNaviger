@@ -29,6 +29,12 @@ public class LogInterface extends javax.swing.JDialog {
         }
         return instance;
     }
+    
+    public static void reinitializeLogInterface() {
+        synchronized(LogInterface.class) {
+            instance = null;
+        }
+    }
 
     /**
      * Creates new form LogInterface

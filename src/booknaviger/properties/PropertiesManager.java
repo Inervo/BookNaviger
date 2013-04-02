@@ -50,6 +50,10 @@ public class PropertiesManager {
         properties.setProperty(keyString, value);
     }
     
+    public void removeKey(String keyString) {
+        properties.remove(keyString);
+    }
+    
     public void saveProperties() {
         try {
             properties.store(new FileWriter(propertiesFile), "Every properties is written here");
