@@ -3,6 +3,7 @@
 
 package booknaviger;
 
+import booknaviger.exceptioninterface.ExceptionHandler;
 import booknaviger.macworld.MacOSXApplicationAdapter;
 import booknaviger.properties.PropertiesManager;
 import java.util.Locale;
@@ -21,6 +22,8 @@ public class BookNaviger {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        ExceptionHandler.registerExceptionHandler();
+        Logger.getLogger(BookNaviger.class.getName()).log(Level.INFO, "Software starting !");
         preInterface();
 
         /* Create and display the form */

@@ -34,7 +34,6 @@ public class ImageReader {
      * @param image
      */
     public ImageReader(Image image) {
-        ExceptionHandler.registerExceptionHandler(ImageReader.class.getName());
         imageObject = image;
     }
 
@@ -43,7 +42,6 @@ public class ImageReader {
      * @param imageFile
      */
     public ImageReader(File imageFile) {
-        ExceptionHandler.registerExceptionHandler(ImageReader.class.getName());
         imageObject = imageFile;
     }
 
@@ -52,7 +50,6 @@ public class ImageReader {
      * @param imageIS
      */
     public ImageReader(InputStream imageIS) {
-        ExceptionHandler.registerExceptionHandler(ImageReader.class.getName());
         imageObject = imageIS;
     }
     

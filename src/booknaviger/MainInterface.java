@@ -5,11 +5,11 @@ package booknaviger;
 import booknaviger.booksfolder.BooksFolderSelector;
 import booknaviger.exceptioninterface.ExceptionHandler;
 import booknaviger.exceptioninterface.LogInterface;
-import booknaviger.inet.InetBasics;
 import booknaviger.inet.htmlreport.ReportModeSelector;
 import booknaviger.inet.updater.NewUpdateAvailableDialog;
 import booknaviger.inet.updater.Updater;
 import booknaviger.macworld.MacOSXApplicationAdapter;
+import booknaviger.osbasics.OSBasics;
 import booknaviger.picturehandler.AbstractImageHandler;
 import booknaviger.picturehandler.FolderHandler;
 import booknaviger.picturehandler.PdfHandler;
@@ -339,6 +339,11 @@ public final class MainInterface extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("BookNaviger"); // NOI18N
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         mainToolBar.setFloatable(false);
         mainToolBar.setRollover(true);
@@ -721,7 +726,7 @@ public final class MainInterface extends javax.swing.JFrame {
     }//GEN-LAST:event_openAboutDialog
 
     private void homepageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_homepageLabelMouseClicked
-        InetBasics.openURI(appHomepageLabel.getText());
+        OSBasics.openURI(appHomepageLabel.getText());
     }//GEN-LAST:event_homepageLabelMouseClicked
 
     private void albumsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_albumsTableMouseClicked
@@ -811,6 +816,10 @@ public final class MainInterface extends javax.swing.JFrame {
         restartInterface();
     }//GEN-LAST:event_frenchLanguageCheckBoxMenuItemActionPerformed
 
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        exit();
+    }//GEN-LAST:event_formWindowClosing
+
     private void restartInterface() {
         this.setVisible(false);
         this.dispose();
@@ -819,7 +828,7 @@ public final class MainInterface extends javax.swing.JFrame {
         MainInterface.getInstance().changeSelectedBook(PropertiesManager.getInstance().getKey("lastSelectedSerie"), PropertiesManager.getInstance().getKey("lastSelectedAlbum")).start();
         LogInterface.getInstance().dispose();
         LogInterface.reinitializeLogInterface();
-        ExceptionHandler.logInterface = LogInterface.getInstance();
+        ExceptionHandler.reinitializeLogInterfaceLink();
     }
     
     private void setActionInProgress(boolean inProgress, Thread actionThread) {
@@ -1296,6 +1305,7 @@ public final class MainInterface extends javax.swing.JFrame {
            PropertiesManager.getInstance().setKey("lastSelectedAlbum", album.toString());
        }
        PropertiesManager.getInstance().saveProperties();
+       Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Software quitting !");
        System.exit(0);
    }
    

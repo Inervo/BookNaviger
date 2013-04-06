@@ -3,7 +3,7 @@
 
 package booknaviger.inet.htmlreport;
 
-import booknaviger.inet.InetBasics;
+import booknaviger.osbasics.OSBasics;
 import booknaviger.picturehandler.FolderHandler;
 import booknaviger.picturehandler.ImageReader;
 import booknaviger.picturehandler.PdfHandler;
@@ -154,7 +154,8 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         if (cancelAsked) {
             return 7;
         }
-        InetBasics.openURI("file://" + reportFolder.replace('\\', '/').concat("index.html"));
+        OSBasics.openFile(reportFolder);
+        OSBasics.openURI("file://" + reportFolder.replace('\\', '/').concat("index.html"));
         return 0;
     }
 
@@ -285,8 +286,8 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
                 if (albums.length > 0) {
                     createThumbnail(series[i], albums[0], i, 0);
                 } else {
-                    Image emptyThumbnail = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/noImageAvailable.png"));
-                    ImageIO.write((RenderedImage) emptyThumbnail, "png", new FileOutputStream(new File(reportFolder + "thumbnails" + File.separatorChar + "Comic" + i + "-0.png")));
+                    Image noImageThumbnail = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/noImageAvailable.png"));
+                    ImageIO.write((RenderedImage) noImageThumbnail, "png", new FileOutputStream(new File(reportFolder + "thumbnails" + File.separatorChar + "Comic" + i + "-0.png")));
                 }
                 if (i%4 == 0) {
                     if (i != 0 && i%20 != 0) {
@@ -461,8 +462,8 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
                 ImageIO.write(thumbnailImage, "png", destinationFile);
             }
         } catch(Exception ex) {
-            Image emptyThumbnail = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/noImageAvailable.png"));
-            ImageIO.write((RenderedImage) emptyThumbnail, "png", new FileOutputStream(destinationFile));
+            Image noImageThumbnail = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/noImageAvailable.png"));
+            ImageIO.write((RenderedImage) noImageThumbnail, "png", new FileOutputStream(destinationFile));
         }
     }
 

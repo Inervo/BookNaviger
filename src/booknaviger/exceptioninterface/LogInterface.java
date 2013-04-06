@@ -40,6 +40,7 @@ public class LogInterface extends javax.swing.JDialog {
      * Creates new form LogInterface
      */
     private LogInterface() {
+        super();
         initComponents();
         doc = logTextPane.getStyledDocument();
         Style newEntryStyle = logTextPane.addStyle("newEntry", null);
@@ -58,7 +59,8 @@ public class LogInterface extends javax.swing.JDialog {
         logScrollPane = new javax.swing.JScrollPane();
         logTextPane = new javax.swing.JTextPane();
 
-        setTitle("Error log");
+        setTitle("Log");
+        setAlwaysOnTop(true);
 
         logScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         logScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -89,8 +91,9 @@ public class LogInterface extends javax.swing.JDialog {
         } catch (BadLocationException ex) {
             logTextPane.setText(newLog);
         }
-        setVisible(true);
-        requestFocus();
+        if (!isVisible()) {
+            setVisible(true);
+        }
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -2,7 +2,7 @@
  */
 package booknaviger.inet.updater;
 
-import booknaviger.inet.InetBasics;
+import booknaviger.osbasics.OSBasics;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -103,7 +103,7 @@ public class NewUpdateAvailableDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_laterButtonActionPerformed
 
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
-        InetBasics.openURI(downloadURLString);
+        OSBasics.openURI(downloadURLString);
         exit();
     }//GEN-LAST:event_goButtonActionPerformed
 
