@@ -4,7 +4,6 @@
 package booknaviger.picturehandler;
 
 import booknaviger.MainInterface;
-import booknaviger.exceptioninterface.ExceptionHandler;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;

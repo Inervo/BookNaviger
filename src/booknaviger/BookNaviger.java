@@ -23,7 +23,7 @@ public class BookNaviger {
      */
     public static void main(String args[]) {
         ExceptionHandler.registerExceptionHandler();
-        Logger.getLogger(BookNaviger.class.getName()).log(Level.INFO, "Software starting !");
+        Logger.getLogger(BookNaviger.class.getName()).log(Level.INFO, "The software is now starting !");
         preInterface();
 
         /* Create and display the form */
@@ -31,31 +31,39 @@ public class BookNaviger {
             @Override
             public void run() {
                 MainInterface.getInstance().setVisible(true);
+                Logger.getLogger(BookNaviger.class.getName()).log(Level.INFO, "MainInterface is now showing");
                 MainInterface.getInstance().changeSelectedBook(PropertiesManager.getInstance().getKey("lastSelectedSerie"), PropertiesManager.getInstance().getKey("lastSelectedAlbum")).start();
             }
         });
     }
     
+    /**
+     * Set the parameters that must be defined before starting the GUI
+     */
     private static void preInterface() {
+        Logger.getLogger(BookNaviger.class.getName()).entering(BookNaviger.class.getName(), "preInterface");
         if (MacOSXApplicationAdapter.isMac()) {
             MacOSXApplicationAdapter.setMacInterfaceAndCommands();
         }
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BookNaviger.class.getName()).log(Level.SEVERE, "Couldn't set the system LookAndFeel", ex);
         }
         String languageWanted = PropertiesManager.getInstance().getKey("language");
         if (languageWanted != null) {
             switch (languageWanted) {
                 case "fr":
                     Locale.setDefault(Locale.FRENCH);
+                    Logger.getLogger(BookNaviger.class.getName()).log(Level.INFO, "Setting language to French");
                     break;
                 case "en":
                     Locale.setDefault(Locale.ENGLISH);
+                    Logger.getLogger(BookNaviger.class.getName()).log(Level.INFO, "Setting language to English");
                     break;
             }
         }
+        Logger.getLogger(BookNaviger.class.getName()).exiting(BookNaviger.class.getName(), "preInterface");
     }
 
 }

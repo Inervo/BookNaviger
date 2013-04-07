@@ -44,7 +44,9 @@ public class LogInterface extends javax.swing.JDialog {
         initComponents();
         doc = logTextPane.getStyledDocument();
         Style newEntryStyle = logTextPane.addStyle("newEntry", null);
+        Style oldEntryStyle = logTextPane.addStyle("oldEntry", null);
         StyleConstants.setForeground(newEntryStyle, Color.red);
+        StyleConstants.setForeground(oldEntryStyle, Color.black);
     }
 
     /**
@@ -64,6 +66,12 @@ public class LogInterface extends javax.swing.JDialog {
 
         logScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         logScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        logTextPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                logTextPaneComponentResized(evt);
+            }
+        });
         logScrollPane.setViewportView(logTextPane);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
@@ -80,13 +88,17 @@ public class LogInterface extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void logTextPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_logTextPaneComponentResized
+        logScrollPane.getVerticalScrollBar().setValue(logScrollPane.getVerticalScrollBar().getMaximum());
+    }//GEN-LAST:event_logTextPaneComponentResized
+
     /**
      *
      * @param newLog
      */
     protected synchronized void publishNewLog(String newLog) {
-        logTextPane.setText(logTextPane.getText());
         try {
+            doc.setCharacterAttributes(0, doc.getLength(), logTextPane.getStyle("oldEntry"), true);
             doc.insertString(doc.getLength(), newLog + System.getProperty("line.separator"), logTextPane.getStyle("newEntry"));
         } catch (BadLocationException ex) {
             logTextPane.setText(newLog);

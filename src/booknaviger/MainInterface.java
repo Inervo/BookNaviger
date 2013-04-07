@@ -4,6 +4,7 @@ package booknaviger;
 
 import booknaviger.booksfolder.BooksFolderSelector;
 import booknaviger.exceptioninterface.ExceptionHandler;
+import booknaviger.exceptioninterface.InfoInterface;
 import booknaviger.exceptioninterface.LogInterface;
 import booknaviger.inet.htmlreport.ReportModeSelector;
 import booknaviger.inet.updater.NewUpdateAvailableDialog;
@@ -73,33 +74,44 @@ public final class MainInterface extends javax.swing.JFrame {
     private Thread actionThread = null;
     
     /**
-     *
-     * @return
+     * The holder of the unique MainInterface instance
      */
     private static class MainInterfaceHolder {
 
         private static MainInterface INSTANCE = new MainInterface();
     }
     
+    /**
+     * Get the unique instance of the MaintInterface
+     * @return the unique instance
+     */
     public static MainInterface getInstance() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "getInstance");
         synchronized(MainInterfaceHolder.class) {
             if (MainInterfaceHolder.INSTANCE == null) {
                 MainInterfaceHolder.INSTANCE = new MainInterface();
             }
+            Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "getInstance");
             return MainInterfaceHolder.INSTANCE;
         }
     }
     
+    /**
+     * Forget the unique instance previously set of MainInterface
+     */
     public static void reinitializeMainInterface() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "reinitializeMainInterface");
         synchronized(MainInterfaceHolder.class) {
             MainInterfaceHolder.INSTANCE = null;
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "reinitializeMainInterface");
     }
     
     /**
      * Creates new form MainInterface
      */
     private MainInterface() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "MainInterface");
         macInit();
         initComponents();
         setTimer();
@@ -109,15 +121,25 @@ public final class MainInterface extends javax.swing.JFrame {
             checkForNewVersion();
         }
         initializeLanguageMenuSelection();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "MainInterface");
     }
     
+    /**
+     * initialize Mac OS X settings if OS is Mac
+     */
     private void macInit() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "macInit");
         if (MacOSXApplicationAdapter.isMac()) {
             new MacOSXApplicationAdapter(this);
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "macInit");
     }
     
+    /**
+     * Set the timer component animation
+     */
     private void setTimer() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "setTimer");
         int busyAnimationRate = 30;
         for (int i = 0; i < busyIcons.length; i++) {
             busyIcons[i] = new javax.swing.ImageIcon(getClass().getResource(java.text.MessageFormat.format(resourceBundle.getString("busy_icon_{0}"), new Object[] {i})));
@@ -132,59 +154,86 @@ public final class MainInterface extends javax.swing.JFrame {
         });
         idleIcon = new javax.swing.ImageIcon(getClass().getResource(resourceBundle.getString("idle_icon")));
         statusAnimationLabel.setIcon(idleIcon);
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "setTimer");
     }
     
+    /**
+     * Verify if the software must check for a new version
+     * @return true if a check must be done<br />false otherwise
+     */
     private boolean shoudCheckNewVersion() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "shoudCheckNewVersion");
+        Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Checking if the software should check for a new version");
         String autoCheckUpdates = PropertiesManager.getInstance().getKey("autoCheckUpdates");
         if (autoCheckUpdates != null && autoCheckUpdates.equals("false")) {
             autoUpdatesCheckBoxMenuItem.setSelected(false);
+            Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "shoudCheckNewVersion", false);
             return false;
         }
         String lastUpdateCheckString = PropertiesManager.getInstance().getKey("lastUpdateCheck");
         if (lastUpdateCheckString == null) {
+            Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "No previous check date found. Should check");
+            Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "shoudCheckNewVersion", true);
             return true;
         }
         Date lastUpdateCheckDate;
         try {
             lastUpdateCheckDate = DateFormat.getDateInstance().parse(lastUpdateCheckString);
         } catch (ParseException ex) {
-            Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, null, ex);
+            Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "Couldn't parse the previous update check date", ex);
+            Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "shoudCheckNewVersion", true);
             return true;
         }
         Calendar cal = new GregorianCalendar();
         cal.setTime(lastUpdateCheckDate);
         cal.add(Calendar.DATE, 7);
         if (new Date().after(cal.getTime())) {
+            Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Should check for a new version of the software");
+            Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "shoudCheckNewVersion", true);
             return true;
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "shoudCheckNewVersion", false);
         return false;
     }
     
+    /**
+     * Check that a new version of this software is available
+     */
     private void checkForNewVersion() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "checkForNewVersion");
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 Updater updater = new Updater();
                 if (updater.isNewVersionAvailable()) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.FINE, "A new version is available. Showing info interface");
                     new NewUpdateAvailableDialog(MainInterface.getInstance(), updater.getVersionNumber(), updater.getDownloadURLString()).setVisible(true);
                 }
+                Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "checkForNewVersion");
             }
         }).start();
     }
     
+    /**
+     * Initialize the language menu with the desired language found in the properties
+     */
     private void initializeLanguageMenuSelection() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "initializeLanguageMenuSelection");
         String languageWanted = PropertiesManager.getInstance().getKey("language");
         if (languageWanted != null) {
             switch (languageWanted) {
                 case "fr":
                     frenchLanguageCheckBoxMenuItem.setSelected(true);
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Setting language menu selection to French");
                     break;
                 case "en":
                     englishLanguageCheckBoxMenuItem.setSelected(true);
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Setting language menu selection to English");
                     break;
             }
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "initializeLanguageMenuSelection");
     }
 
     /**
@@ -692,60 +741,125 @@ public final class MainInterface extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Menu item exit has been triggered
+     * @param evt the event associated
+     */
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "exitMenuItemActionPerformed");
         exit();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "exitMenuItemActionPerformed");
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
+    /**
+     * Menu item book folder has been triggered
+     * @param evt the event associated
+     */
     private void bookFolderMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bookFolderMenuItemActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "bookFolderMenuItemActionPerformed");
         BooksFolderSelector booksFolderselector = new BooksFolderSelector(this, true);
         String selectedFolder = booksFolderselector.selectFolder();
         if (selectedFolder != null) {
             getProfiles().setCurrentProfileFolder(selectedFolder);
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "bookFolderMenuItemActionPerformed");
     }//GEN-LAST:event_bookFolderMenuItemActionPerformed
 
+    /**
+     * Menu item refresh all has been triggered
+     * @param evt the event associated
+     */
     private void refreshAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshAllActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "refreshAllActionPerformed");
         listSeries();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "refreshAllActionPerformed");
     }//GEN-LAST:event_refreshAllActionPerformed
 
+    /**
+     * Menu item refresh current serie has been triggered
+     * @param evt the event associated
+     */
     private void refreshCurrentAlbumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshCurrentAlbumActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "refreshCurrentAlbumActionPerformed");
         int selectedRow = seriesTable.getSelectedRow();
         if (selectedRow != -1) {
             listAlbums(selectedRow);
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "refreshCurrentAlbumActionPerformed");
     }//GEN-LAST:event_refreshCurrentAlbumActionPerformed
 
+    /**
+     * Close the about box has been triggered
+     * @param evt the event associated
+     */
     private void closeAboutBox(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeAboutBox
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "closeAboutBox");
         aboutDialog.setVisible(false);
         aboutDialog.dispose();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "closeAboutBox");
     }//GEN-LAST:event_closeAboutBox
 
+    /**
+     * Open the about box has been triggered
+     * @param evt the event associated
+     */
     private void openAboutDialog(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openAboutDialog
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "openAboutDialog");
         aboutDialog.pack();
         aboutDialog.setVisible(true);
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "openAboutDialog");
     }//GEN-LAST:event_openAboutDialog
 
+    /**
+     * Click on the homepage link has been triggered
+     * @param evt the event associated
+     */
     private void homepageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_homepageLabelMouseClicked
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "homepageLabelMouseClicked");
         OSBasics.openURI(appHomepageLabel.getText());
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "homepageLabelMouseClicked");
     }//GEN-LAST:event_homepageLabelMouseClicked
 
+    /**
+     * Click on the album table has been triggered
+     * @param evt the event associated
+     */
     private void albumsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_albumsTableMouseClicked
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "albumsTableMouseClicked");
         if (evt.getClickCount() == 2 && album != null) {
             startReading();
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "albumsTableMouseClicked");
     }//GEN-LAST:event_albumsTableMouseClicked
 
+    /**
+     * The component is rezised
+     * @param evt the event associated
+     */
     private void previewComponentComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_previewComponentComponentResized
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "previewComponentComponentResized");
         previewComponent.refresh();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "previewComponentComponentResized");
     }//GEN-LAST:event_previewComponentComponentResized
 
+    /**
+     * Click on the preview component has been triggered
+     * @param evt the event associated
+     */
     private void previewComponentMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_previewComponentMouseClicked
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "previewComponentMouseClicked");
         if (album != null) {
             startReading();
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "previewComponentMouseClicked");
     }//GEN-LAST:event_previewComponentMouseClicked
 
+    /**
+     * A key has been pressed while the focus was on the serietable
+     * @param evt the event associated
+     */
     private void seriesTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_seriesTableKeyPressed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "seriesTableKeyPressed");
         if (evt.getKeyCode() == KeyEvent.VK_TAB) {
             evt.consume();
             albumsTable.requestFocusInWindow();
@@ -753,9 +867,15 @@ public final class MainInterface extends javax.swing.JFrame {
             evt.consume();
             startReading();
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "seriesTableKeyPressed");
     }//GEN-LAST:event_seriesTableKeyPressed
 
+    /**
+     * A key has been pressed while the focus was on the albumtable
+     * @param evt the event associated
+     */
     private void albumsTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_albumsTableKeyPressed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "albumsTableKeyPressed");
         if (evt.getKeyCode() == KeyEvent.VK_TAB) {
             evt.consume();
             seriesTable.requestFocusInWindow();
@@ -763,64 +883,129 @@ public final class MainInterface extends javax.swing.JFrame {
             evt.consume();
             startReading();
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "albumsTableKeyPressed");
     }//GEN-LAST:event_albumsTableKeyPressed
 
+    /**
+     * The profile combo box has triggered an action
+     * @param evt the event associated
+     */
     private void profileComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profileComboBoxActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "profileComboBoxActionPerformed");
         String profileName = profileComboBox.getSelectedItem().toString();
         if (!profileName.equals(profiles.getCurrentProfileName())) {
             profiles.setNewCurrentProfile(profileName);
             refreshProfilesList();
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "profileComboBoxActionPerformed");
     }//GEN-LAST:event_profileComboBoxActionPerformed
 
+    /**
+     * The menu item profiles has been triggered
+     * @param evt the event associated
+     */
     private void profilesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profilesMenuItemActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "profilesMenuItemActionPerformed");
         new ProfileDialog(this, true).setVisible(true);
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "profilesMenuItemActionPerformed");
     }//GEN-LAST:event_profilesMenuItemActionPerformed
 
+    /**
+     * The button resume has been triggered
+     * @param evt the event associated
+     */
     private void resumeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resumeButtonActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "resumeButtonActionPerformed");
         resumeReading();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "resumeButtonActionPerformed");
     }//GEN-LAST:event_resumeButtonActionPerformed
 
+    /**
+     * The menu item resume has been triggered
+     * @param evt the event associated
+     */
     private void resumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resumeMenuItemActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "resumeMenuItemActionPerformed");
         resumeReading();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "resumeMenuItemActionPerformed");
     }//GEN-LAST:event_resumeMenuItemActionPerformed
 
+    /**
+     * The menu item generate report has been triggered
+     * @param evt the event associated
+     */
     private void generateReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateReportMenuItemActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "generateReportMenuItemActionPerformed");
         new ReportModeSelector(this, true).setVisible(true);
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "generateReportMenuItemActionPerformed");
     }//GEN-LAST:event_generateReportMenuItemActionPerformed
 
+    /**
+     * The menu item auto updates has been triggered
+     * @param evt the event associated
+     */
     private void autoUpdatesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoUpdatesCheckBoxMenuItemActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "autoUpdatesCheckBoxMenuItemActionPerformed");
         if (autoUpdatesCheckBoxMenuItem.isSelected()) {
             PropertiesManager.getInstance().setKey("autoCheckUpdates", "true");
             checkForNewVersion();
         } else {
             PropertiesManager.getInstance().setKey("autoCheckUpdates", "false");
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "autoUpdatesCheckBoxMenuItemActionPerformed");
     }//GEN-LAST:event_autoUpdatesCheckBoxMenuItemActionPerformed
 
+    /**
+     * The menu item default language has been triggered
+     * @param evt the event associated
+     */
     private void defaultLanguageCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defaultLanguageCheckBoxMenuItemActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "defaultLanguageCheckBoxMenuItemActionPerformed");
         Locale.setDefault(new Locale(System.getProperty("user.language")));
         PropertiesManager.getInstance().removeKey("language");
         restartInterface();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "defaultLanguageCheckBoxMenuItemActionPerformed");
     }//GEN-LAST:event_defaultLanguageCheckBoxMenuItemActionPerformed
 
+    /**
+     * The menu item english language has been triggered
+     * @param evt the event associated
+     */
     private void englishLanguageCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_englishLanguageCheckBoxMenuItemActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "englishLanguageCheckBoxMenuItemActionPerformed");
         Locale.setDefault(Locale.ENGLISH);
         PropertiesManager.getInstance().setKey("language", "en");
         restartInterface();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "englishLanguageCheckBoxMenuItemActionPerformed");
     }//GEN-LAST:event_englishLanguageCheckBoxMenuItemActionPerformed
 
+    /**
+     * The menu item french language has been triggered
+     * @param evt the event associated
+     */
     private void frenchLanguageCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_frenchLanguageCheckBoxMenuItemActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "frenchLanguageCheckBoxMenuItemActionPerformed");
         Locale.setDefault(Locale.FRENCH);
         PropertiesManager.getInstance().setKey("language", "fr");
         restartInterface();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "frenchLanguageCheckBoxMenuItemActionPerformed");
     }//GEN-LAST:event_frenchLanguageCheckBoxMenuItemActionPerformed
 
+    /**
+     * The window closing action (with the X) has been triggered
+     * @param evt the event associated
+     */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "formWindowClosing");
         exit();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "formWindowClosing");
     }//GEN-LAST:event_formWindowClosing
 
+    /**
+     * restart the mainInterface (mainly to take new language parameters)
+     */
     private void restartInterface() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "restartInterface");
         this.setVisible(false);
         this.dispose();
         reinitializeMainInterface();
@@ -829,9 +1014,16 @@ public final class MainInterface extends javax.swing.JFrame {
         LogInterface.getInstance().dispose();
         LogInterface.reinitializeLogInterface();
         ExceptionHandler.reinitializeLogInterfaceLink();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "restartInterface");
     }
     
+    /**
+     * When an action is in progress, this method should be called
+     * @param inProgress status of the action. <br />true : action in progress<br />false : action finished
+     * @param actionThread The thread which is active
+     */
     private void setActionInProgress(boolean inProgress, Thread actionThread) {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "setActionInProgress", new Object[] {inProgress, actionThread});
         if (inProgress) {
             this.actionThread = actionThread;
             this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -846,26 +1038,39 @@ public final class MainInterface extends javax.swing.JFrame {
             busyIconTimer.stop();
             statusAnimationLabel.setIcon(idleIcon);
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "setActionInProgress");
     }
     
     /**
      * Listener sur le changement d'une série
+     * @param evt the event associated
      */
     private synchronized void seriesTableValueChanged(javax.swing.event.ListSelectionEvent evt) {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "seriesTableValueChanged");
         if (booksDirectory == null) {
+            Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "seriesTableValueChanged");
             return;
         }
         final int selectedRow = seriesTable.getSelectedRow();
         if (!evt.getValueIsAdjusting() && selectedRow != -1) {
             listAlbums(selectedRow);
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "seriesTableValueChanged");
     }
     
+    /**
+     * Select a specific serie and then a specific album in this serie
+     * @param serieToSelect the serie string to select
+     * @param albumToSelect the album string to select
+     * @return the thread that run the selection
+     */
     protected Thread changeSelectedBook(final String serieToSelect, final String albumToSelect) {
-        return new Thread(new Runnable() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "changeSelectedBook", new Object[] {serieToSelect, albumToSelect});
+        Thread changeSelectBookThread =  new Thread(new Runnable() {
 
             @Override
             public void run() {
+                Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "changeSelectedBookThread");
                 try {
                     if (actionThread != null) {
                         if (actionThread.getState() != Thread.State.TERMINATED) {
@@ -878,10 +1083,13 @@ public final class MainInterface extends javax.swing.JFrame {
                 if (serieToSelect != null) {
                     serie = new File(serieToSelect);
                     if (!serie.exists()) {
+                        Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The serie to select doesn't exist : {0}", serie);
                         serie = null;
                         album = null;
+                        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBookThread");
                         return;
                     }
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Selecting the serie : {0}", serie);
                     for (int i = 0; i < seriesTable.getRowCount(); i++) {
                         String rowValue = (String) seriesTable.getValueAt(i, 0);
                         if (rowValue.equals(serie.getName())) {
@@ -900,13 +1108,17 @@ public final class MainInterface extends javax.swing.JFrame {
                         Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     if (albumToSelect == null) {
+                        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBookThread");
                         return;
                     }
                     album = new File(albumToSelect);
                     if (!album.exists()) {
+                        Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The album to select doesn't exist : {0}", album);
                         album = null;
+                        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBookThread");
                         return;
                     }
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Selecting the album : {0}", album);
                     for (int i = 0; i < albumsTable.getRowCount(); i++) {
                         String rowValue = (String) albumsTable.getValueAt(i, 0) + albumsTable.getValueAt(i, 1);
                         if (rowValue.equals(album.getName())) {
@@ -918,10 +1130,16 @@ public final class MainInterface extends javax.swing.JFrame {
                 }
             }
         });
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBook", changeSelectBookThread);
+        return changeSelectBookThread;
     }
 
-    
+    /**
+     * Refresh the profiles combo box and menu items
+     */
     public void refreshProfilesList() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "refreshProfilesList");
+        Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Refresh the profiles list items and combo box");
         refreshProfileComboBox();
         refreshProfileRadioButtonMenuItem();
         if (booksDirectory == null) {
@@ -933,19 +1151,24 @@ public final class MainInterface extends javax.swing.JFrame {
             booksDirectory = new File(profiles.getCurrentProfileFolder());
             listSeries();
         }
-    }
-    
-    private void refreshProfileComboBox() {
-        profileComboBox.setModel(new DefaultComboBoxModel<>(profiles.getProfilesNames()));
-        profileComboBox.setSelectedItem(profiles.getCurrentProfileName());
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "refreshProfilesList");
     }
     
     /**
-     * Crée un nouveau radiobuttonmenuitem pour un nouveau profil
-     * @param text le titre du profil à mettre sur le button
-     * @return le button créé
+     * Refresh the profiles combo box
+     */
+    private void refreshProfileComboBox() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "refreshProfileComboBox");
+        profileComboBox.setModel(new DefaultComboBoxModel<>(profiles.getProfilesNames()));
+        profileComboBox.setSelectedItem(profiles.getCurrentProfileName());
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "refreshProfileComboBox");
+    }
+    
+    /**
+     * Refresh the profiles menu item
      */
     private void refreshProfileRadioButtonMenuItem() {
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "refreshProfileRadioButtonMenuItem");
         for (JRadioButtonMenuItem profileRadioButtonMenuItem : profilesListRadioButtonMenuItem) {
             profileButtonGroup.remove(profileRadioButtonMenuItem);
             profileMenu.remove(profileRadioButtonMenuItem);
@@ -977,17 +1200,20 @@ public final class MainInterface extends javax.swing.JFrame {
             profileMenu.add(profileRadioButtonMenuItem);
             profilesListRadioButtonMenuItem.add(profileRadioButtonMenuItem);
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "refreshProfileRadioButtonMenuItem");
     }
     
     /**
-     * Rafraichi la liste de toutes les séries
+     * Refresh all the series
      */
     private void listSeries() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "listSeries");
         previewComponent.setNoPreviewImage();
         Thread listSeriesThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
+                Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Refreshing the serie list");
                 File[] allfiles = null;
                 serie = null;
                 album = null;
@@ -1004,20 +1230,23 @@ public final class MainInterface extends javax.swing.JFrame {
                         }
                     });
                 } catch (InterruptedException | InvocationTargetException ex) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                if (booksDirectory == null) {
+                if (booksDirectory == null || !booksDirectory.exists()) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The profile folder doesn't exist : {0}", booksDirectory);
                     setActionInProgress(false, null);
+                    Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listSeries");
                     return;
                 }
                 try {
                     allfiles = booksDirectory.listFiles();
                 } catch(SecurityException ex) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                    //new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Read_Rights", directory.toString());
+                    new InfoInterface(null, InfoInterface.ERROR, "rights", booksDirectory);
                 }
                 if (allfiles == null) {
                     setActionInProgress(false, null);
+                    Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listSeries");
                     return;
                 }
                 Arrays.sort(allfiles);
@@ -1056,6 +1285,7 @@ public final class MainInterface extends javax.swing.JFrame {
                     }
                 }
                 setActionInProgress(false, null);
+                Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listSeries");
             }
         });
         setActionInProgress(true, listSeriesThread);
@@ -1067,12 +1297,18 @@ public final class MainInterface extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Refresh the albums of the selected serie
+     * @param selectedRow the row of the selected serie
+     */
     @SuppressWarnings("deprecation")
     private void listAlbums(final int selectedRow) {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "listAlbums");
         Thread listAlbumsThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
+                Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Refreshing the album list");
                 threadedPreviewLoader.stop();
                 serie = null;
                 album = null;
@@ -1085,15 +1321,18 @@ public final class MainInterface extends javax.swing.JFrame {
                 }
                 serie = new File(booksDirectory.toString() + File.separator + seriesTable.getValueAt(selectedRow, 0).toString());
                 if (!serie.exists()) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The serie folder doesn't exist : {0}", serie);
                     setActionInProgress(false, null);
+                    Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listAlbums");
                     return;
                 }
+                Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Serie \"{0}\" Selected", serie);
                 File[] allfiles = null;
                 try {
                     allfiles = serie.listFiles();
                 } catch(SecurityException ex) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                    // new KnownErrorBox(getFrame(), KnownErrorBox.ERROR_LOGO, "Error_Read_Rights", serie.toString());
+                    new InfoInterface(null, InfoInterface.ERROR, "rights", serie);
                 }
                 final DefaultTableModel albumsTableModel = (DefaultTableModel) albumsTable.getModel();
                 try {
@@ -1105,11 +1344,12 @@ public final class MainInterface extends javax.swing.JFrame {
                         }
                     });
                 } catch (InterruptedException | InvocationTargetException ex) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 if (allfiles == null) {
                     previewComponent.setNoPreviewImage();
                     setActionInProgress(false, null);
+                    Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listAlbums");
                     return;
                 }
                 Arrays.sort(allfiles);
@@ -1152,13 +1392,13 @@ public final class MainInterface extends javax.swing.JFrame {
                             if (albumsTableModel.getRowCount() != 0) {
                                 albumsTable.getSelectionModel().setSelectionInterval(0, 0);
                             }
-                            //albumScrollPane.getVerticalScrollBar().setValue(0);
                         }
                     });
                 } catch (InterruptedException | InvocationTargetException ex) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 }
                 setActionInProgress(false, null);
+                Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listAlbums");
             }
         });
         setActionInProgress(true, listAlbumsThread);
@@ -1166,10 +1406,12 @@ public final class MainInterface extends javax.swing.JFrame {
     }
     
     /**
-     * listener sur le changement d'un album (au sein d'une série)
+     * listener on a new album selected
+     * @param evt the event associated
      */
     @SuppressWarnings("deprecation")
     private synchronized void albumsTableValueChanged(javax.swing.event.ListSelectionEvent evt) {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "albumsTableValueChanged");
         album = null;
         if (booksDirectory == null) {
             return;
@@ -1185,20 +1427,33 @@ public final class MainInterface extends javax.swing.JFrame {
                 }
             }
             album = new File(serie.toString() + File.separator + albumsTable.getValueAt(selectedRow, 0).toString() + albumsTable.getValueAt(selectedRow, 1).toString());
+            Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Album \"{0}\" Selected", album);
             threadedPreviewLoader = new PreviewImageLoader();
             threadedPreviewLoader.start();
         }
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "albumsTableValueChanged");
     }
 
+    /**
+     * Start reading the selected album on page 1
+     */
     private void startReading() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "startReading");
         launchReadInterface(1);
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "startReading");
     }
     
+    /**
+     * Launch the reading interface on the indicated page
+     * @param page the page number to show first. First page is page 1
+     */
     private void launchReadInterface(final int page) {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "launchReadInterface", page);
         new Thread(new Runnable() {
 
             @Override
             public void run() {
+                Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Start the read interface on page {0}", page);
                 if (readInterface != null) {
                     readInterface.setVisible(false);
                     readInterface.dispose();
@@ -1210,15 +1465,21 @@ public final class MainInterface extends javax.swing.JFrame {
                 readInterface.goPage(page);
                 PropertiesManager.getInstance().setKey("lastReadedSerie", serie.toString());
                 PropertiesManager.getInstance().setKey("lastReadedAlbum", album.toString());
+                Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "launchReadInterface");
             }
         }).start();
     }
     
+    /**
+     * Resume the reading from the previously saved state (previous serie, previous album, previous page)
+     */
     private void resumeReading() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "resumeReading");
         new Thread(new Runnable() {
 
             @Override
             public void run() {
+                Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Resume the reading");
                 Thread changeSelectedBookThread = changeSelectedBook(PropertiesManager.getInstance().getKey("lastReadedSerie"), PropertiesManager.getInstance().getKey("lastReadedAlbum"));
                 changeSelectedBookThread.start();
                 try {
@@ -1232,18 +1493,21 @@ public final class MainInterface extends javax.swing.JFrame {
                         launchReadInterface(page);
                     }
                 }
+                Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "resumeReading");
             }
         }).start();
     }
   
+    /**
+     * This class have in charge the preview of the selected album
+     */
     private class PreviewImageLoader extends Thread {
-        
-        public PreviewImageLoader() {
-        }
 
         @Override
         public void run() {
+            Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "PreviewImageLoader");
             setActionInProgress(true, this);
+            Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Preview the album {0}", album);
             if (album.isDirectory()) {
                 imageHandler = new FolderHandler(album);
                 BufferedImage previewImage = imageHandler.getImage(1);
@@ -1284,18 +1548,19 @@ public final class MainInterface extends javax.swing.JFrame {
                 previewComponent.setNoPreviewImage();
             }
             setActionInProgress(false, null);
+            Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "PreviewImageLoader");
         }
     }
     
     /**
-     *
+     * Save the properties and exit this application
      */
     public void exit() {
+       Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "exit");
        this.setVisible(false);
        if (readInterface != null) {
            readInterface.exit();
        }
-       LogInterface.getInstance().dispose();
        this.dispose();
        profiles.saveProfilesProperties();
        if (serie != null) {
@@ -1305,26 +1570,32 @@ public final class MainInterface extends javax.swing.JFrame {
            PropertiesManager.getInstance().setKey("lastSelectedAlbum", album.toString());
        }
        PropertiesManager.getInstance().saveProperties();
-       Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Software quitting !");
+       Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Software is quitting normally !");
+       LogInterface.getInstance().dispose();
        System.exit(0);
+       Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "exit");
    }
    
     /**
-     *
-     * @return
+     * Get the preview component
+     * @return The component that preview the selected album
      */
     public static Component getPreviewComponent() {
        return previewComponent;
    }
 
     /**
-     *
-     * @return
+     * Get the ReadInterface instance
+     * @return the readInterface instance
      */
     public ReadInterface getReadInterface() {
         return readInterface;
     }
 
+    /**
+     * Get the profiles instance
+     * @return The profiles instance
+     */
     public Profiles getProfiles() {
         return profiles;
     }

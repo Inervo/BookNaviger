@@ -49,7 +49,9 @@ public class ExceptionHandler extends Handler {
             date.setTime(record.getMillis());
             String message = formatMessage(record);
             String level = record.getLevel().getLocalizedName();
-            return (new SimpleDateFormat("HH:mm:ss:SSS").format(date) + "  [" + level + "] : " + message);
+            String className = record.getSourceClassName();
+            String methodName = record.getSourceMethodName();
+            return (new SimpleDateFormat("HH:mm:ss:SSS").format(date) + "  [" + level + "] - " + className + "§" + methodName + " : " + message);
         }
         
     }
@@ -75,7 +77,7 @@ public class ExceptionHandler extends Handler {
     public static void registerExceptionHandler() {
         Enumeration<String> loggers = LogManager.getLogManager().getLoggerNames();
         while (loggers.hasMoreElements()) {
-            Logger.getLogger(loggers.nextElement()).setLevel(Level.OFF);
+            Logger.getLogger(loggers.nextElement()).setLevel(Level.SEVERE);
         }
         Handler[] handlers = Logger.getLogger("").getHandlers();
         String logLevel = PropertiesManager.getInstance().getKey("logLevel");
