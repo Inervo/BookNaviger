@@ -3,6 +3,8 @@
 
 package booknaviger.inet.htmlreport;
 
+import booknaviger.MainInterface;
+import booknaviger.exceptioninterface.InfoInterface;
 import booknaviger.osbasics.OSBasics;
 import booknaviger.picturehandler.FolderHandler;
 import booknaviger.picturehandler.ImageReader;
@@ -38,8 +40,8 @@ import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileSystemView;
 
 /**
+ * Class used to create the html report
  * @author Inervo
- *
  */
 public class ReportGenerator extends SwingWorker<Integer, String> {
 
@@ -58,17 +60,18 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
 
 
     /**
-     * Constructeur pour la création du rapport html
-     * @param advancedMode mode de création du rapport (simple vs. advanced (avec miniatures)
-     * @param baseDir Dossier contenant les séries
-     * @param bnvf BookNavigerView Frame
-     * @param gp Instance de GenerationProgress afin de communiquer les avancements de l'execution
+     * Constructor of the html reporting generator
+     * @param advancedMode mode of the report.<br />false for simple<br />true for advanced with thumbnail
+     * @param baseDir Folder containing the books
+     * @param gp Instance of GenerationProgress to communicate the current status
      */
     public ReportGenerator(boolean advancedMode, File baseDir, final GenerationProgress gp) {
         super();
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "ReportGenerator", new Object[] {advancedMode, baseDir, gp});
         this.advancedMode = advancedMode;
         this.baseDir = baseDir;
         this.generationProgressDialog = gp;
+        Logger.getLogger(ReportGenerator.class.getName()).log(Level.INFO, "Starting the html report");
         String folder = System.getProperty("user.home");
         if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
             folder = FileSystemView.getFileSystemView().getDefaultDirectory().toString();
@@ -93,36 +96,31 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
                 }
             }
         });
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "ReportGenerator");
     }
 
-    /**
-     * Executé à la fin de la tâche principale
-     */
     @Override
     protected void done() {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "done");
         generationProgressDialog.setActionLabelValue(resourceBundle.getString("finished.text"));
         generationProgressDialog.setActionProgressBarValue(100);
         generationProgressDialog.setVisible(false);
         generationProgressDialog.dispose();
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "done");
     }
 
-    /**
-     * Gestion des strings données par l'execution de la tâche en arrière plan
-     * @param chunks Liste des String d'informations
-     */
     @Override
     protected void process(List<String> chunks) {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "process", chunks);
         for (String string : chunks) {
             generationProgressDialog.setActionLabelValue(string);
         }
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "process");
     }
 
-    /**
-     * fonction racine dans la création du rapport
-     * @return Valeur de retour (osef, non utilisé)
-     */
     @Override
     protected Integer doInBackground() {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "doInBackground");
         nbrOfAlbums = 0;
         nbrOfProcessedAlbums = 0;
         findNbrOfAlbums();
@@ -133,33 +131,41 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
             createHeader(pageXWriter);
             createContent();
             if (cancelAsked) {
+                Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "doInBackground", 7);
                 return 7;
             }
             createFooter();
             copyImages();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
-            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, null, ex);
-//            new KnownErrorBox(bnvf, KnownErrorBox.ERROR_LOGO, "Error_Opening_Report_Files");
+            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "Error with the files during the reporting", ex);
+            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "report-files");
         } catch (IOException ex) {
-            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, null, ex);
-//            new KnownErrorBox(bnvf, KnownErrorBox.ERROR_LOGO, "Error_Reading_Report_Files_Template");
+            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "IO error during the reporting", ex);
+            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "report-IO");
         }
         try {
             pageXWriter.close();
             cssFileWriter.close();
         } catch (IOException ex) {
-            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, null, ex);
-//            new KnownErrorBox(bnvf, KnownErrorBox.ERROR_LOGO, "Error_Close_Report_Files");
+            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "IO error while closing the report files", ex);
+            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "report-IO");
         }
         if (cancelAsked) {
+            Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "doInBackground", 7);
             return 7;
         }
         OSBasics.openFile(reportFolder);
         OSBasics.openURI("file://" + reportFolder.replace('\\', '/').concat("index.html"));
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "doInBackground", 0);
         return 0;
     }
 
+    /**
+     * Create the css file from the one in the resource
+     * @throws IOException if the one from the resource cannot be read
+     */
     private void createCss() throws IOException {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "createCss");
         BufferedReader initialCssFile = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/style.css")));
         while(true) {
             String tampon = initialCssFile.readLine();
@@ -169,14 +175,16 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
             cssFileWriter.write(tampon);
             cssFileWriter.newLine();
         }
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "createCss");
     }
 
     /**
-     * Créé l'header du fichier html
-     * @param bw BufferedWriter sur le fichier dans lequel écrire le header
-     * @throws IOException Si erreur dans l'écriture du fichier
+     * Create the header of the html file
+     * @param bw BufferedWriter to write the header to
+     * @throws IOException If an error occur during the writing of the BufferedWriter
      */
-    protected void createHeader(BufferedWriter bw) throws IOException {
+    private void createHeader(BufferedWriter bw) throws IOException {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "createHeader", bw);
         StringBuilder header = new StringBuilder("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
         header = header.append(System.getProperty("line.separator")).append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
         header = header.append(System.getProperty("line.separator")).append("<head>");
@@ -197,9 +205,15 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         header = header.append(System.getProperty("line.separator")).append("  <div id=\"contents\">");
         bw.write(header.toString());
         bw.newLine();
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "createHeader");
     }
     
+    /**
+     * Create the TableOfContent header of the html file
+     * @throws IOException If an error occur during the writing of the BufferedWriter
+     */
     private void createTOCHead() throws IOException {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "createTOCHead");
         StringBuilder content = new StringBuilder();
         // TOC
         content = content.append(System.getProperty("line.separator")).append("    <div id=\"tableOfContents\">");
@@ -210,9 +224,17 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         content = content.append(System.getProperty("line.separator")).append("        <tbody>");
         pageXWriter.write(content.toString());
         pageXWriter.newLine();
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "createTOCHead");
     }
     
+    /**
+     * Create the menu to navigate between the pages
+     * @param numberOfPages the total number of pages during this report
+     * @param currentPage the current page we're creating the header for
+     * @throws IOException If an error occur during the writing of the BufferedWriter
+     */
     private void createNavigationMenu(int numberOfPages, int currentPage) throws IOException {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "createNavigationMenu", new Object[] {numberOfPages, currentPage});
         if (numberOfPages==0) {
             return;
         }
@@ -249,9 +271,15 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         content = content.append(System.getProperty("line.separator")).append("    </table>");
         pageXWriter.write(content.toString());
         pageXWriter.newLine();
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "createNavigationMenu");
     }
 
+    /**
+     * Create the main content of the html page
+     * @throws IOException If an error occur during the writing of the BufferedWriter
+     */
     private void createContent() throws IOException {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "createContent");
         StringBuilder content = new StringBuilder();
         String[] series = listSeries();
         if (advancedMode) {
@@ -381,9 +409,15 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         content = content.append(System.getProperty("line.separator")).append("  </div>");
         pageXWriter.write(content.toString());
         pageXWriter.newLine();
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "createContent");
     }
     
+    /**
+     * Create the TableOfContent footer
+     * @throws IOException If an error occur during the writing of the BufferedWriter
+     */
     private void createTOCFoot() throws IOException {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "createTOCFoot");
         StringBuilder content = new StringBuilder();
         content = content.append(System.getProperty("line.separator")).append("        </tbody>");
         content = content.append(System.getProperty("line.separator")).append("        <tfoot>");
@@ -393,9 +427,18 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         content = content.append(System.getProperty("line.separator")).append("    </div>");
         pageXWriter.write(content.toString());
         pageXWriter.newLine();
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "createTOCFoot");
     }
 
+    /**
+     * When in advance mode, create the webpage specific to a serie
+     * @param serie the serie name we create the webpage for
+     * @param albums the albums this serie have
+     * @param id unique id of this serie to create the html page name
+     * @throws IOException If an error occur during the writing the file
+     */
     private void createAdvancedContent(String serie, String[] albums, int id) throws IOException {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "createAdvancedContent", new Object[] {serie, albums, id});
         BufferedWriter comicFile;
         comicFile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(reportFolder + "Comic" + id + ".html"), "UTF-8"));
         createHeader(comicFile);
@@ -440,9 +483,19 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         comicFile.newLine();
         createSimpleFooter(comicFile);
         comicFile.close();
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "createAdvancedContent");
     }
 
+    /**
+     * Create the thumbnail to a specific serie and album
+     * @param serie the serie name
+     * @param albumString the album name
+     * @param serieId the serie unique id (used for file name)
+     * @param albumId the album unique id (used for file name)
+     * @throws IOException If an error occur during the creation of the thumbnail
+     */
     private void createThumbnail(String serie, String albumString, int serieId, int albumId) throws IOException {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "createThumbnail", new Object[] {serie, albumString, serieId, albumId});
         File album = new File(baseDir.toString() + File.separatorChar + serie + File.separatorChar + albumString);
         File destinationFile = new File(reportFolder + "thumbnails" + File.separatorChar + "Comic" + serieId + "-" + albumId + ".png");
         BufferedImage previewImage = null;
@@ -465,9 +518,15 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
             Image noImageThumbnail = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/noImageAvailable.png"));
             ImageIO.write((RenderedImage) noImageThumbnail, "png", new FileOutputStream(destinationFile));
         }
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "createThumbnail");
     }
 
+    /**
+     * Create the footer of the html file
+     * @throws IOException If an error occur during the writing of the BufferedWriter
+     */
     private void createFooter() throws IOException {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "createFooter");
         StringBuilder footer = new StringBuilder("  <div id=\"footer\">");
         footer = footer.append(System.getProperty("line.separator")).append("    ").append(nbrOfSeries).append(" ").append(resourceBundle.getString("nbrOfSeries.text"));
         footer = footer.append(System.getProperty("line.separator")).append("    <br />");
@@ -478,14 +537,16 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         pageXWriter.write(footer.toString());
         pageXWriter.newLine();
         createSimpleFooter(pageXWriter);
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "createFooter");
     }
     
     /**
-     * Retourne la taille d'un dossier
-     * @param folder dossier racine
-     * @return String formatée de la taille du dossier
+     * Get a folder size
+     * @param folder folder to get the size from
+     * @return Formated string of the folder size
      */
     private String getFolderSize(File folder) {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "getFolderSize", folder);
         double size = getFolderSizeAsLong(folder);
 
         DecimalFormat df =new DecimalFormat("#.##");
@@ -493,38 +554,53 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         if (Double.valueOf(sizeString.replace(',', '.')) > 1024) {
             return df.format(size / (1024*1024*1024)) + " " + resourceBundle.getString("GB.text");
         }
-        return sizeString + " " + resourceBundle.getString("MB.text");
+        sizeString = sizeString + " " + resourceBundle.getString("MB.text");
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "getFolderSize", sizeString);
+        return sizeString;
     }
     
     /**
-     * Retourne la taille d'un dossier
-     * @param folder dossier racine
-     * @return long de la taille du dossier
+     * Return the folder size
+     * @param folder folder to get the size from
+     * @return Size of the folder as long
      */
     private long getFolderSizeAsLong(File folder) {
-            long foldersize = 0;
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "getFolderSizeAsLong", folder);
+        long foldersize = 0;
 
-            File[] filelist = folder.listFiles();
-            for (int i = 0; i < filelist.length; i++) {
-                if (filelist[i].isDirectory()) {
-                    foldersize += getFolderSizeAsLong(filelist[i]);
-                }
-                else {
-                    foldersize += filelist[i].length();
-                }
+        File[] filelist = folder.listFiles();
+        for (int i = 0; i < filelist.length; i++) {
+            if (filelist[i].isDirectory()) {
+                foldersize += getFolderSizeAsLong(filelist[i]);
             }
-            return foldersize;
+            else {
+                foldersize += filelist[i].length();
+            }
+        }
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "getFolderSize", foldersize);
+        return foldersize;
     }
 
+    /**
+     * Create the basic part of the footer
+     * @param bw The bufferedWriter to write the footer to.
+     * @throws IOException If an error occur during the writing of the BufferedWriter
+     */
     private void createSimpleFooter(BufferedWriter bw) throws IOException {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "createSimpleFooter", bw);
         StringBuilder footer = new StringBuilder("</body>");
         footer = footer.append(System.getProperty("line.separator")).append("</html>");
         bw.write(footer.toString());
         bw.newLine();
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "createSimpleFooter");
     }
     
-
+    /**
+     * Copy the images from the resources to the destination report folder
+     * @throws IOException If an error occur during the loading from the resources
+     */
     private void copyImages() throws IOException {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "copyImages");
         String imagefolder = reportFolder + "images";
         new File(imagefolder).mkdir();
         imagefolder = imagefolder.concat(File.separator);
@@ -538,10 +614,15 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
             Image emptyThumbnail = ImageIO.read(ClassLoader.getSystemResourceAsStream("booknaviger/resources/graphics/htmlreport/emptyThumbnail.png"));
             ImageIO.write((RenderedImage) emptyThumbnail, "png", new FileOutputStream(imagefolder + "emptyThumbnail.png"));
         }
-
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "copyImages");
     }
 
+    /**
+     * List the series from the base directory
+     * @return The series names
+     */
     private String[] listSeries() {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "listSeries");
         File[] seriesFiles = baseDir.listFiles(new FileFilter() {
 
             @Override
@@ -559,10 +640,17 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         }
         nbrOfSeries = seriesFiles.length;
         Arrays.sort(seriesNames);
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "listSeries", seriesNames);
         return seriesNames;
     }
 
+    /**
+     * List the albums for a specific serie
+     * @param serieName the serie name to list the albums
+     * @return the albums names
+     */
     private String[] listAlbums(String serieName) {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "listAlbums", serieName);
         File albumFile = new File(baseDir.getPath() + File.separatorChar + serieName);
         File[] albumsFiles = albumFile.listFiles(new FileFilter() {
 
@@ -580,10 +668,18 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
             albumsNames[i] = albumsFiles[i].getName();
         }
         Arrays.sort(albumsNames);
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "listAlbums", albumsNames);
         return albumsNames;
     }
 
+    /**
+     * Clean the albums names of the extension
+     * @param serieName the serie name of the albums to clean
+     * @param albumsNames the albums names to clean
+     * @return the cleaned albums names
+     */
     private String[] cleanAlbumsNames(String serieName, String[] albumsNames) {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "cleanAlbumsNames", new Object[] {serieName, albumsNames});
         String[] cleanAlbumsNames = albumsNames.clone();
         for (int i = 0; i < albumsNames.length; i++) {
             File albumFile = new File(baseDir.getPath() + File.separatorChar + serieName + File.separatorChar + albumsNames[i]);
@@ -594,10 +690,16 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
                 cleanAlbumsNames[i] = albumsNames[i];
             }
         }
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "cleanAlbumsNames", cleanAlbumsNames);
         return cleanAlbumsNames;
     }
 
+    /**
+     * Delete the specified folder
+     * @param path The folder to delete
+     */
     private void deleteHTMLReportDirectory(File path) {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "deleteHTMLReportDirectory", path);
         if( path.exists() ) {
             File[] files = path.listFiles();
             for(int i=0; i < files.length; i++) {
@@ -610,9 +712,14 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
             }
             path.delete();
         }
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "deleteHTMLReportDirectory");
     }
 
+    /**
+     * Find the number of albums (total of all series)
+     */
     private void findNbrOfAlbums() {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "findNbrOfAlbums");
         File[] series = baseDir.listFiles(new FileFilter() {
 
             @Override
@@ -637,14 +744,17 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
                 }
             }).length;
         }
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "findNbrOfAlbums");
     }
 
     /**
-     * Set la demande d'annulation de la génération du rapport html
-     * @param cancelAsked valeur de la demande
+     * Set when the user want to cancel the reporting
+     * @param cancelAsked Should be true to cancel the reporting
      */
     public void setCancelAsked(boolean cancelAsked) {
+        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "setCancelAsked", cancelAsked);
         this.cancelAsked = cancelAsked;
+        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "setCancelAsked");
     }
 
 }

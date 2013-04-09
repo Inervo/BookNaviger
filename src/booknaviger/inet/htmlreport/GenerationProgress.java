@@ -3,9 +3,11 @@
 package booknaviger.inet.htmlreport;
 
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
+ * Interface for the progress of the html report
  * @author Inervo
  */
 public class GenerationProgress extends javax.swing.JDialog {
@@ -18,8 +20,10 @@ public class GenerationProgress extends javax.swing.JDialog {
      */
     public GenerationProgress(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        Logger.getLogger(GenerationProgress.class.getName()).entering(GenerationProgress.class.getName(), "GenerationProgress", new Object[] {parent, modal});
         initComponents();
         this.setLocationRelativeTo(this.getParent());
+        Logger.getLogger(GenerationProgress.class.getName()).exiting(GenerationProgress.class.getName(), "GenerationProgress");
     }
 
     /**
@@ -89,46 +93,66 @@ public class GenerationProgress extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Event received when wanting to cancel the reporting
+     * @param evt the event associated
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        Logger.getLogger(GenerationProgress.class.getName()).entering(GenerationProgress.class.getName(), "cancelButtonActionPerformed");
         cancel();
+        Logger.getLogger(GenerationProgress.class.getName()).exiting(GenerationProgress.class.getName(), "cancelButtonActionPerformed");
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Cancel the html reporting
+     */
     private void cancel() {
+        Logger.getLogger(GenerationProgress.class.getName()).entering(GenerationProgress.class.getName(), "cancel");
         htmlReport.setCancelAsked(true);
         setVisible(false);
         dispose();
+        Logger.getLogger(GenerationProgress.class.getName()).log(Level.INFO, "The cancel of the HTML report has been asked");
+        Logger.getLogger(GenerationProgress.class.getName()).exiting(GenerationProgress.class.getName(), "cancel");
     }
     
     /**
-     * Set de ReportGenerator
-     * @param htmlReport Instance de ReportGenerator
+     * Set the ReportGenerator instance
+     * @param htmlReport ReportGenerator instance
      */
     public void setHtmlReport(ReportGenerator htmlReport) {
+        Logger.getLogger(GenerationProgress.class.getName()).entering(GenerationProgress.class.getName(), "setHtmlReport", htmlReport);
         this.htmlReport = htmlReport;
+        Logger.getLogger(GenerationProgress.class.getName()).exiting(GenerationProgress.class.getName(), "setHtmlReport");
     }
 
     /**
-     * Défini la valeur de la progressBar
-     * @param value Nouvelle valeur de la progressBar
+     * Set the value of the progressBar
+     * @param value value of the progressBar
      */
     public void setActionProgressBarValue(int value) {
+        Logger.getLogger(GenerationProgress.class.getName()).entering(GenerationProgress.class.getName(), "setActionProgressBarValue", value);
         this.actionProgressBar.setValue(value);
+        Logger.getLogger(GenerationProgress.class.getName()).exiting(GenerationProgress.class.getName(), "setActionProgressBarValue");
     }
 
     /**
-     * Retourne la valeur de la progressBar
-     * @return Valeur de la progressBar
+     * Get the progressBar value
+     * @return Value of the progressBar
      */
     public int getActionProgressBarValue() {
+        Logger.getLogger(GenerationProgress.class.getName()).entering(GenerationProgress.class.getName(), "getActionProgressBarValue");
+        Logger.getLogger(GenerationProgress.class.getName()).exiting(GenerationProgress.class.getName(), "getActionProgressBarValue", this.actionProgressBar.getValue());
         return this.actionProgressBar.getValue();
     }
 
     /**
-     * Défini le texte informant de l'action en cours
-     * @param value String de l'action en cours
+     * Set the text about the current action
+     * @param value String of the action in progress
      */
     public void setActionLabelValue(String value) {
+        Logger.getLogger(GenerationProgress.class.getName()).entering(GenerationProgress.class.getName(), "setActionLabelValue", value);
         this.actionLabel.setText("<html>" + value + "</html>");
+        Logger.getLogger(GenerationProgress.class.getName()).exiting(GenerationProgress.class.getName(), "setActionLabelValue");
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

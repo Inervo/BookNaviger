@@ -5,10 +5,11 @@ package booknaviger.inet.htmlreport;
 import booknaviger.MainInterface;
 import java.io.File;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
- *
+ * Class to select the mode (simple or advance) of the html report
  * @author Inervo
  */
 public class ReportModeSelector extends javax.swing.JDialog {
@@ -20,8 +21,10 @@ public class ReportModeSelector extends javax.swing.JDialog {
      */
     public ReportModeSelector(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        Logger.getLogger(ReportModeSelector.class.getName()).entering(ReportModeSelector.class.getName(), "ReportModeSelector", new Object[] {parent, modal});
         initComponents();
         this.setLocationRelativeTo(this.getParent());
+        Logger.getLogger(ReportModeSelector.class.getName()).exiting(ReportModeSelector.class.getName(), "ReportModeSelector");
     }
 
     /**
@@ -115,7 +118,12 @@ public class ReportModeSelector extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Event received when the ok button is clicked
+     * @param evt the event associated
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        Logger.getLogger(ReportModeSelector.class.getName()).entering(ReportModeSelector.class.getName(), "okButtonActionPerformed");
         SwingUtilities.invokeLater(new Thread() {
 
             @Override
@@ -125,15 +133,22 @@ public class ReportModeSelector extends javax.swing.JDialog {
                 ReportGenerator htmlReporter = new ReportGenerator(advanceModeRadioButton.isSelected(), new File(MainInterface.getInstance().getProfiles().getCurrentProfileFolder()), generationProgressDialog);
                 generationProgressDialog.setHtmlReport(htmlReporter);
                 htmlReporter.execute();
+                Logger.getLogger(ReportModeSelector.class.getName()).exiting(ReportModeSelector.class.getName(), "okButtonActionPerformed");
             }
         });
         setVisible(false);
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
+    /**
+     * Event received when wanting to cancel the report
+     * @param evt the event associated
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        Logger.getLogger(ReportModeSelector.class.getName()).entering(ReportModeSelector.class.getName(), "cancelButtonActionPerformed");
         setVisible(false);
         dispose();
+        Logger.getLogger(ReportModeSelector.class.getName()).exiting(ReportModeSelector.class.getName(), "cancelButtonActionPerformed");
     }//GEN-LAST:event_cancelButtonActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

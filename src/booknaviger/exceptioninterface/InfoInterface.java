@@ -40,11 +40,11 @@ public class InfoInterface extends javax.swing.JDialog {
                 logoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/infologos/error.png")));
                 break;
         }
-        infoLabel.setText(resourceBundle.getString(infoMessage + ".title"));
+        infoLabel.setText("<html>" + resourceBundle.getString(infoMessage + ".title") + "</html>");
         if (parameters == null || parameters.length == 0) {
-            messageLabel.setText(resourceBundle.getString(infoMessage + ".message"));
+            messageLabel.setText("<html>" + resourceBundle.getString(infoMessage + ".message") + "</html>");
         } else {
-            messageLabel.setText(MessageFormat.format(resourceBundle.getString(infoMessage + ".message"), parameters));
+            messageLabel.setText("<html>" + MessageFormat.format(resourceBundle.getString(infoMessage + ".message"), parameters) + "</html>");
         }
     }
 
@@ -67,7 +67,7 @@ public class InfoInterface extends javax.swing.JDialog {
 
         logoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
-        okButton.setText(resourceBundle.getString("okButton")); // NOI18N
+        okButton.setText("OK");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);

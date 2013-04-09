@@ -4,9 +4,11 @@ package booknaviger.booksfolder;
 
 import booknaviger.MainInterface;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
+ * Used to select a folder
  * @author Inervo
  */
 public class BooksFolderSelector extends javax.swing.JDialog {
@@ -16,7 +18,9 @@ public class BooksFolderSelector extends javax.swing.JDialog {
      */
     public BooksFolderSelector(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        Logger.getLogger(BooksFolderSelector.class.getName()).entering(BooksFolderSelector.class.getName(), "BooksFolderSelector", new Object[] {parent, modal});
         initComponents();
+        Logger.getLogger(BooksFolderSelector.class.getName()).exiting(BooksFolderSelector.class.getName(), "BooksFolderSelector");
     }
 
     /**
@@ -54,6 +58,7 @@ public class BooksFolderSelector extends javax.swing.JDialog {
      * Modification du dossier contenant les bouquins
      */
     public String selectFolder() {
+        Logger.getLogger(BooksFolderSelector.class.getName()).entering(BooksFolderSelector.class.getName(), "selectFolder");
 //        if (MacOSXApplicationAdapter.isMac()) { // Set inactive (don't work anyway) until Java7 make it work.
 //            FileDialog booksFolderMacFileChooser = new FileDialog(this, "test", FileDialog.LOAD);
 //            booksFolderMacFileChooser.setDirectory(System.getProperty("user.home"));
@@ -74,8 +79,11 @@ public class BooksFolderSelector extends javax.swing.JDialog {
                 booksFolderFileChooser.setCurrentDirectory(new File(currentDirectoryString).getParentFile());
             }
             if (booksFolderFileChooser.showOpenDialog(this) == javax.swing.JFileChooser.APPROVE_OPTION) {
+                Logger.getLogger(BooksFolderSelector.class.getName()).log(Level.INFO, "Folder \"{0}\" has been selected", booksFolderFileChooser.getSelectedFile().toString());
+                Logger.getLogger(BooksFolderSelector.class.getName()).exiting(BooksFolderSelector.class.getName(), booksFolderFileChooser.getSelectedFile().toString());
                 return booksFolderFileChooser.getSelectedFile().toString();
             }
+            Logger.getLogger(BooksFolderSelector.class.getName()).exiting(BooksFolderSelector.class.getName(), null);
             return null;
 //        }
     }
