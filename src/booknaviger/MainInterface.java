@@ -729,7 +729,7 @@ public final class MainInterface extends javax.swing.JFrame {
         aboutMenuItem.setText(resourceBundle.getString("about_menu")); // NOI18N
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openAboutDialog(evt);
+                openAboutDialogActionPerformed(evt);
             }
         });
         helpMenu.add(aboutMenuItem);
@@ -803,13 +803,22 @@ public final class MainInterface extends javax.swing.JFrame {
      * Open the about box has been triggered
      * @param evt the event associated
      */
-    private void openAboutDialog(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openAboutDialog
+    private void openAboutDialogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openAboutDialogActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "openAboutDialogActionPerformed");
+        openAboutDialog();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "openAboutDialogActionPerformed");
+    }//GEN-LAST:event_openAboutDialogActionPerformed
+
+    /**
+     * Open the about box
+     */
+    public void openAboutDialog() {
         Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "openAboutDialog");
         aboutDialog.pack();
         aboutDialog.setVisible(true);
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "openAboutDialog");
-    }//GEN-LAST:event_openAboutDialog
-
+    }
+    
     /**
      * Click on the homepage link has been triggered
      * @param evt the event associated

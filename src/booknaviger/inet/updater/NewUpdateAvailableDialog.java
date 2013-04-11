@@ -5,9 +5,10 @@ package booknaviger.inet.updater;
 import booknaviger.osbasics.OSBasics;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 /**
- *
+ * Class to the interface about the new version information
  * @author Inervo
  */
 public class NewUpdateAvailableDialog extends javax.swing.JDialog {
@@ -21,10 +22,12 @@ public class NewUpdateAvailableDialog extends javax.swing.JDialog {
      */
     public NewUpdateAvailableDialog(java.awt.Frame parent, String versionNumber, String downloadURLString) {
         super(parent, true);
+        Logger.getLogger(NewUpdateAvailableDialog.class.getName()).entering(NewUpdateAvailableDialog.class.getName(), "NewUpdateAvailableDialog", new Object[] {parent, versionNumber, downloadURLString});
         setLocationRelativeTo(parent);
         this.versionNumber = versionNumber;
         this.downloadURLString = downloadURLString;
         initComponents();
+        Logger.getLogger(NewUpdateAvailableDialog.class.getName()).exiting(NewUpdateAvailableDialog.class.getName(), "NewUpdateAvailableDialog");
     }
 
     /**
@@ -98,18 +101,35 @@ public class NewUpdateAvailableDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Called when the latter button is pressed
+     * @param evt The event associated
+     */
     private void laterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_laterButtonActionPerformed
+        Logger.getLogger(NewUpdateAvailableDialog.class.getName()).entering(NewUpdateAvailableDialog.class.getName(), "laterButtonActionPerformed");
         exit();
+        Logger.getLogger(NewUpdateAvailableDialog.class.getName()).exiting(NewUpdateAvailableDialog.class.getName(), "laterButtonActionPerformed");
     }//GEN-LAST:event_laterButtonActionPerformed
 
+    /**
+     * Called when the go button is pressed
+     * @param evt The event associated
+     */
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
+        Logger.getLogger(NewUpdateAvailableDialog.class.getName()).entering(NewUpdateAvailableDialog.class.getName(), "goButtonActionPerformed");
         OSBasics.openURI(downloadURLString);
         exit();
+        Logger.getLogger(NewUpdateAvailableDialog.class.getName()).exiting(NewUpdateAvailableDialog.class.getName(), "goButtonActionPerformed");
     }//GEN-LAST:event_goButtonActionPerformed
 
+    /**
+     * Exit this interface
+     */
     private void exit() {
+        Logger.getLogger(NewUpdateAvailableDialog.class.getName()).entering(NewUpdateAvailableDialog.class.getName(), "exit");
         this.setVisible(false);
         dispose();
+        Logger.getLogger(NewUpdateAvailableDialog.class.getName()).exiting(NewUpdateAvailableDialog.class.getName(), "exit");
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

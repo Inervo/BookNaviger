@@ -18,7 +18,7 @@ public class InfoInterface extends javax.swing.JDialog {
     public final static int ERROR = 2;
 
     public InfoInterface(java.awt.Frame parent, int infoType, String infoMessage, Object... parameters) {
-        super(parent, true);
+        super(parent, false);
         initComponents();
         this.setLocationRelativeTo(this.getParent());
         setInfo(infoType, infoMessage, parameters);

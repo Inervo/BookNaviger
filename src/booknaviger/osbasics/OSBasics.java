@@ -15,55 +15,60 @@ import java.util.logging.Logger;
 
 /**
  * @author Inervo
- *
+ * Basic operation related to the OS
  */
 public class OSBasics {
-
-    /**
-     *
-     */
-    public OSBasics() {
-    }
     
     /**
-     *
-     * @param URIString
+     * Open an URL in the default browser
+     * @param URIString the URI string to navigate to
      */
     public static void openURI(String URIString) {
+        Logger.getLogger(OSBasics.class.getName()).entering(OSBasics.class.getName(), "openURI", URIString);
         if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
             if (desktop.isSupported(Desktop.Action.BROWSE)) {
             try {
+                Logger.getLogger(OSBasics.class.getName()).log(Level.INFO, "Open the URL \"{0}\" in the default browser", URIString);
                 desktop.browse(new URI(URIString));
             } catch (IOException | URISyntaxException ex) {
-                Logger.getLogger(OSBasics.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(OSBasics.class.getName()).log(Level.SEVERE, "The URL can't be accessed", ex);
                 }
+            } else {
+                Logger.getLogger(OSBasics.class.getName()).log(Level.WARNING, "No default browser found");
             }
         }
+        Logger.getLogger(OSBasics.class.getName()).exiting(OSBasics.class.getName(), "openURI");
     }
     
     /**
-     *
-     * @param URIString
+     * Open the default file manager to a file / folder
+     * @param fileString The file / folder to open
      */
     public static void openFile(String fileString) {
+        Logger.getLogger(OSBasics.class.getName()).entering(OSBasics.class.getName(), "openFile", fileString);
         if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
             if (desktop.isSupported(Desktop.Action.OPEN)) {
                 try {
+                    Logger.getLogger(OSBasics.class.getName()).log(Level.INFO, "Open the file \"{0}\" in the default browser", fileString);
                     desktop.open(new File(fileString));
                 } catch (IOException ex) {
-                    Logger.getLogger(OSBasics.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(OSBasics.class.getName()).log(Level.SEVERE, "The specified file / folder can't be accessed", ex);
                 }
+            } else {
+                Logger.getLogger(OSBasics.class.getName()).log(Level.WARNING, "No default file manager found");
             }
         }
+        Logger.getLogger(OSBasics.class.getName()).exiting(OSBasics.class.getName(), "openFile");
     }
     
     /**
-     *
-     * @param URIString
+     * Retreive the application data folder
+     * @return The path to the folder
      */
     public static String getAppDataDir() {
+        Logger.getLogger(OSBasics.class.getName()).entering(OSBasics.class.getName(), "getAppDataDir");
         File appDataDir;
         if (MacOSXApplicationAdapter.isMac()) {
             appDataDir = new File(System.getProperty("user.home"), "Library" + File.separatorChar + "Application Support"+ File.separatorChar + ResourceBundle.getBundle("booknaviger/resources/Application").getString("appTitle"));
@@ -75,6 +80,8 @@ public class OSBasics {
         if (!appDataDir.exists()) {
             appDataDir.mkdirs();
         }
+        Logger.getLogger(OSBasics.class.getName()).log(Level.CONFIG, "Appdir is \"{0}\"", appDataDir.toString());
+        Logger.getLogger(OSBasics.class.getName()).exiting(OSBasics.class.getName(), "getAppDataDir", appDataDir.toString());
         return appDataDir.toString();
     }
 
