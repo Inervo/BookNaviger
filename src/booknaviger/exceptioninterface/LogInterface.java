@@ -3,13 +3,14 @@
 package booknaviger.exceptioninterface;
 
 import java.awt.Color;
+import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 /**
- *
+ * This interface is shown when a log message should be displayed and the logLevel is forced in the properties
  * @author Inervo
  */
 public class LogInterface extends javax.swing.JDialog {
@@ -18,8 +19,8 @@ public class LogInterface extends javax.swing.JDialog {
     StyledDocument doc = null;
     
     /**
-     *
-     * @return
+     * Get the unique instance of this interface
+     * @return The unique instance of {@link LogInterface}
      */
     public static LogInterface getInstance() {
         synchronized(LogInterface.class) {
@@ -30,6 +31,9 @@ public class LogInterface extends javax.swing.JDialog {
         return instance;
     }
     
+    /**
+     * Reinitialize the {@link LogInterface} unique instance
+     */
     public static void reinitializeLogInterface() {
         synchronized(LogInterface.class) {
             instance = null;
@@ -41,12 +45,14 @@ public class LogInterface extends javax.swing.JDialog {
      */
     private LogInterface() {
         super();
+        Logger.getLogger(LogInterface.class.getName()).entering(LogInterface.class.getName(), "LogInterface");
         initComponents();
         doc = logTextPane.getStyledDocument();
         Style newEntryStyle = logTextPane.addStyle("newEntry", null);
         Style oldEntryStyle = logTextPane.addStyle("oldEntry", null);
         StyleConstants.setForeground(newEntryStyle, Color.red);
         StyleConstants.setForeground(oldEntryStyle, Color.black);
+        Logger.getLogger(LogInterface.class.getName()).exiting(LogInterface.class.getName(), "LogInterface");
     }
 
     /**
@@ -88,13 +94,17 @@ public class LogInterface extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Set the vertical scrollbare to the end of the {@link #logTextPane} when it is resized
+     * @param evt the event associated
+     */
     private void logTextPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_logTextPaneComponentResized
         logScrollPane.getVerticalScrollBar().setValue(logScrollPane.getVerticalScrollBar().getMaximum());
     }//GEN-LAST:event_logTextPaneComponentResized
 
     /**
-     *
-     * @param newLog
+     * Publish a new log message
+     * @param newLog the new log message to publish
      */
     protected synchronized void publishNewLog(String newLog) {
         try {

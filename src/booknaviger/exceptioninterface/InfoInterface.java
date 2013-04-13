@@ -5,9 +5,10 @@ package booknaviger.exceptioninterface;
 import java.awt.Frame;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 /**
- *
+ * Info interface to show information / warning / error messages to the user
  * @author Inervo
  */
 public class InfoInterface extends javax.swing.JDialog {
@@ -18,16 +19,31 @@ public class InfoInterface extends javax.swing.JDialog {
     @SuppressWarnings("FieldNameHidesFieldInSuperclass")
     public final static int ERROR = 2;
 
+    /**
+     * Constructor. Everything is done here.
+     * @param infoType The info level {@link #INFO}, {@link #WARNING} or {@link #ERROR}
+     * @param infoMessage The message which will be get from the properties of this class
+     * @param parameters The optional parameters which must be set with the message
+     */
     public InfoInterface(int infoType, String infoMessage, Object... parameters) {
         super((Frame)null, false);
+        Logger.getLogger(InfoInterface.class.getName()).entering(InfoInterface.class.getName(), "InfoInterface", new Object[] {infoType, infoMessage, parameters});
         initComponents();
         this.setLocationRelativeTo(this.getParent());
         setInfo(infoType, infoMessage, parameters);
         setVisible(true);
         requestFocus();
+        Logger.getLogger(InfoInterface.class.getName()).exiting(InfoInterface.class.getName(), "InfoInterface");
     }
 
+    /**
+     * Set the information of this event
+     * @param infoType The info level {@link #INFO}, {@link #WARNING} or {@link #ERROR}
+     * @param infoMessage The message which will be get from the properties of this class
+     * @param parameters The optional parameters which must be set with the message
+     */
     private void setInfo(int infoType, String infoMessage, Object... parameters) {
+        Logger.getLogger(InfoInterface.class.getName()).entering(InfoInterface.class.getName(), "InfoInterface", new Object[] {infoType, infoMessage, parameters});
         switch (infoType) {
             case INFO:
                 setTitle(resourceBundle.getString("infoInterface.info.title"));
@@ -48,6 +64,7 @@ public class InfoInterface extends javax.swing.JDialog {
         } else {
             messageLabel.setText("<html>" + MessageFormat.format(resourceBundle.getString(infoMessage + ".message"), parameters) + "</html>");
         }
+        Logger.getLogger(InfoInterface.class.getName()).exiting(InfoInterface.class.getName(), "InfoInterface");
     }
 
     /**
@@ -109,9 +126,15 @@ public class InfoInterface extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Event triggered when the ok button is selected
+     * @param evt the event associated
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        Logger.getLogger(InfoInterface.class.getName()).exiting(InfoInterface.class.getName(), "okButtonActionPerformed");
         setVisible(false);
         dispose();
+        Logger.getLogger(InfoInterface.class.getName()).exiting(InfoInterface.class.getName(), "okButtonActionPerformed");
     }//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel infoLabel;

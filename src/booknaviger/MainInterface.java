@@ -2,9 +2,9 @@
  */
 package booknaviger;
 
+import booknaviger.booksfolder.BooksFolderAnalyser;
 import booknaviger.booksfolder.BooksFolderSelector;
 import booknaviger.exceptioninterface.ExceptionHandler;
-import booknaviger.exceptioninterface.InfoInterface;
 import booknaviger.exceptioninterface.LogInterface;
 import booknaviger.inet.htmlreport.ReportModeSelector;
 import booknaviger.inet.updater.NewUpdateAvailableDialog;
@@ -29,12 +29,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -1223,7 +1221,6 @@ public final class MainInterface extends javax.swing.JFrame {
             @Override
             public void run() {
                 Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Refreshing the serie list");
-                File[] allfiles = null;
                 serie = null;
                 album = null;
                 
@@ -1241,50 +1238,24 @@ public final class MainInterface extends javax.swing.JFrame {
                 } catch (InterruptedException | InvocationTargetException ex) {
                     Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                if (booksDirectory == null || !booksDirectory.exists()) {
-                    Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The profile folder doesn't exist : {0}", booksDirectory);
+                Object[][] seriesData =  new BooksFolderAnalyser(booksDirectory).listSeries();
+                if (seriesData == null) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The profile folder doesn't exist or can't be read : {0}", booksDirectory);
                     setActionInProgress(false, null);
                     Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listSeries");
                     return;
                 }
-                try {
-                    allfiles = booksDirectory.listFiles();
-                } catch(SecurityException ex) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                    new InfoInterface(InfoInterface.ERROR, "rights", booksDirectory);
-                }
-                if (allfiles == null) {
-                    setActionInProgress(false, null);
-                    Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listSeries");
-                    return;
-                }
-                Arrays.sort(allfiles);
-                final File[] allFilesValue = allfiles;
                 final List<Thread> rows = new ArrayList<>();
-                for (int i = 0; allFilesValue.length > i; i++) {
-                    if (allFilesValue[i].isDirectory() && !allFilesValue[i].isHidden()) {
-                        final int nbrOfAlbums = new File(allFilesValue[i].getPath()).listFiles(new FileFilter() {
+                for (final Object[] serieData : seriesData) {
+                    Thread tampon = new Thread(new Runnable() {
 
-                            @Override
-                            public boolean accept(File pathname) {
-                                String name = pathname.getName();
-                                if (!pathname.isHidden() && (pathname.isDirectory() || name.toLowerCase().endsWith(".zip") || name.toLowerCase().endsWith("cbz") || name.toLowerCase().endsWith(".rar") || name.toLowerCase().endsWith(".cbr") || name.toLowerCase().endsWith(".pdf"))) {
-                                    return true;
-                                }
-                                return false;
-                            }
-                        }).length;
-                        final int index = i;
-                        Thread tampon = new Thread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                seriesTableModel.addRow(new Object[]{allFilesValue[index].getName(), nbrOfAlbums});
-                            }
-                        });
-                        SwingUtilities.invokeLater(tampon);
-                        rows.add(tampon);
-                    }
+                        @Override
+                        public void run() {
+                            seriesTableModel.addRow(new Object[]{serieData[0], serieData[1]});
+                        }
+                    });
+                    SwingUtilities.invokeLater(tampon);
+                    rows.add(tampon);
                 }
                 for (Thread thread : rows) {
                     try {
@@ -1336,13 +1307,6 @@ public final class MainInterface extends javax.swing.JFrame {
                     return;
                 }
                 Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Serie \"{0}\" Selected", serie);
-                File[] allfiles = null;
-                try {
-                    allfiles = serie.listFiles();
-                } catch(SecurityException ex) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                    new InfoInterface(InfoInterface.ERROR, "rights", serie);
-                }
                 final DefaultTableModel albumsTableModel = (DefaultTableModel) albumsTable.getModel();
                 try {
                     SwingUtilities.invokeAndWait(new Runnable() {
@@ -1355,37 +1319,25 @@ public final class MainInterface extends javax.swing.JFrame {
                 } catch (InterruptedException | InvocationTargetException ex) {
                     Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                if (allfiles == null) {
+                String[][] albumsData = new BooksFolderAnalyser(serie).listAlbums();
+                if (albumsData == null) {
                     previewComponent.setNoPreviewImage();
                     setActionInProgress(false, null);
                     Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listAlbums");
                     return;
                 }
-                Arrays.sort(allfiles);
-                final File[] allFilesValue = allfiles;
                 List<Thread> rows = new ArrayList<>();
-                for (int i = 0; i < allFilesValue.length; i++) {
-                    String name = allFilesValue[i].getName();
-                    if (!allFilesValue[i].isHidden() && (allFilesValue[i].isDirectory() || name.toLowerCase().endsWith(".zip") || name.toLowerCase().endsWith(".cbz") || name.toLowerCase().endsWith(".rar") || name.toLowerCase().endsWith(".cbr") || name.toLowerCase().endsWith(".pdf"))) {
-                        final int index = i;
-                        Thread tampon = new Thread(new Runnable() {
+                for (final String[] albumData : albumsData) {
+                    Thread tampon = new Thread(new Runnable() {
 
-                            @Override
-                            public void run() {
-                                if (allFilesValue[index].isDirectory()) {
-                                    albumsTableModel.addRow(new Object[]{allFilesValue[index].getName(), ""});
-                                }
-                                else {
-                                    String albumFullName = allFilesValue[index].getName();
-                                    int indexOfExtension = albumFullName.lastIndexOf(".");
-                                    albumsTableModel.addRow(new Object[]{albumFullName.substring(0, indexOfExtension), albumFullName.substring(indexOfExtension)});
-                               }
-                            }
-                        });
-                        SwingUtilities.invokeLater(tampon);
-                        rows.add(tampon);
-                    }
-                }
+                        @Override
+                        public void run() {
+                            albumsTableModel.addRow(new Object[]{albumData[0], albumData[1]});
+                        }
+                    });
+                    SwingUtilities.invokeLater(tampon);
+                    rows.add(tampon);
+                }       
                 for (Thread thread : rows) {
                     try {
                         thread.join();

@@ -3,7 +3,7 @@
 
 package booknaviger.inet.htmlreport;
 
-import booknaviger.MainInterface;
+import booknaviger.booksfolder.BooksFolderAnalyser;
 import booknaviger.exceptioninterface.InfoInterface;
 import booknaviger.osbasics.OSBasics;
 import booknaviger.picturehandler.FolderHandler;
@@ -29,7 +29,6 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -128,6 +127,7 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
             pageXWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(reportFolder + "index.html")), "UTF-8"));
             cssFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(reportFolder + "style.css")), "UTF-8"));
             createCss();
+            copyImages();
             createHeader(pageXWriter);
             createContent();
             if (cancelAsked) {
@@ -135,7 +135,6 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
                 return 7;
             }
             createFooter();
-            copyImages();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
             Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "Error with the files during the reporting", ex);
             new InfoInterface(InfoInterface.ERROR, "report-files");
@@ -375,7 +374,6 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
                 content = content.append(System.getProperty("line.separator")).append("      <table align=\"center\" cellspacing=\"0\" id=\"Comic").append(i).append("\">");
                 content = content.append(System.getProperty("line.separator")).append("        <thead>");
                 String[] albums = listAlbums(series[i]);
-                albums = cleanAlbumsNames(series[i], albums);
                 content = content.append(System.getProperty("line.separator")).append("          <td>").append(series[i]).append(" (").append(albums.length).append(" ").append(resourceBundle.getString("nbrOfAlbums.text")).append(") - <a href=\"#header\">").append(resourceBundle.getString("menu.text")).append("</a></td>");
                 content = content.append(System.getProperty("line.separator")).append("        </thead>");
                 content = content.append(System.getProperty("line.separator")).append("        <tbody>");
@@ -449,7 +447,6 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         content = content.append(System.getProperty("line.separator")).append("          <td colspan=\"2\">").append(serie).append(" (").append(albums.length).append(" ").append(resourceBundle.getString("nbrOfAlbums.text")).append(") - <a href=\"index.html\">Menu</a></td>");
         content = content.append(System.getProperty("line.separator")).append("        </thead>");
         content = content.append(System.getProperty("line.separator")).append("        <tbody>");
-        String[] cleanAlbumsNames = cleanAlbumsNames(serie, albums);
         for (int i = 0; i < albums.length; i++) {
             if (cancelAsked) {
                 return;
@@ -467,7 +464,7 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
                 content = content.append(System.getProperty("line.separator")).append("          <tr class=\"impair\">");
             }
             content = content.append(System.getProperty("line.separator")).append("            <td class=\"thumbnail\"><img src=\"thumbnails/Comic").append(id).append("-").append(i).append(".png\" alt=\"").append(albums[i]).append("\" /></td>");
-            content = content.append(System.getProperty("line.separator")).append("            <td>").append(cleanAlbumsNames[i]).append("</td>");
+            content = content.append(System.getProperty("line.separator")).append("            <td>").append(albums[i]).append("</td>");
             setProgress(++nbrOfProcessedAlbums * 100 / nbrOfAlbums);
             publish(MessageFormat.format(resourceBundle.getString("simpleListingGen.text"), serie, albums[i]));
         }
@@ -623,23 +620,16 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
      */
     private String[] listSeries() {
         Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "listSeries");
-        File[] seriesFiles = baseDir.listFiles(new FileFilter() {
-
-            @Override
-            public boolean accept(File pathname) {
-                String name = pathname.getName();
-                if (!pathname.isHidden() && pathname.isDirectory()) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        String[] seriesNames = new String[seriesFiles.length];
-        for (int i = 0; i < seriesFiles.length; i++) {
-            seriesNames[i] = seriesFiles[i].getName();
+        Object[][] seriesData = new BooksFolderAnalyser(baseDir).listSeries();
+        if (seriesData == null) {
+            Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "listSeries", null);
+            return new String[] {};
         }
-        nbrOfSeries = seriesFiles.length;
-        Arrays.sort(seriesNames);
+        String[] seriesNames = new String[seriesData.length];
+        for (int i = 0; i < seriesData.length; i++) {
+            seriesNames[i] = (String) seriesData[i][0];
+        }
+        nbrOfSeries = seriesNames.length;
         Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "listSeries", seriesNames);
         return seriesNames;
     }
@@ -652,46 +642,17 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
     private String[] listAlbums(String serieName) {
         Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "listAlbums", serieName);
         File albumFile = new File(baseDir.getPath() + File.separatorChar + serieName);
-        File[] albumsFiles = albumFile.listFiles(new FileFilter() {
-
-            @Override
-            public boolean accept(File pathname) {
-                String name = pathname.getName();
-                if (!pathname.isHidden() && (pathname.isDirectory() || name.toLowerCase().endsWith(".zip") || name.toLowerCase().endsWith("cbz") || name.toLowerCase().endsWith(".rar") || name.toLowerCase().endsWith(".cbr") || name.toLowerCase().endsWith(".pdf"))) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        String[] albumsNames = new String[albumsFiles.length];
-        for (int i = 0; i < albumsFiles.length; i++) {
-            albumsNames[i] = albumsFiles[i].getName();
+        String[][] albumsData = new BooksFolderAnalyser(albumFile).listAlbums();
+        if (albumsData == null) {
+            Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "listAlbums", null);
+            return new String[] {};
         }
-        Arrays.sort(albumsNames);
+        String[] albumsNames = new String[albumsData.length];
+        for (int i = 0; i < albumsData.length; i++) {
+            albumsNames[i] = albumsData[i][0] + albumsData[i][1];
+        }
         Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "listAlbums", albumsNames);
         return albumsNames;
-    }
-
-    /**
-     * Clean the albums names of the extension
-     * @param serieName the serie name of the albums to clean
-     * @param albumsNames the albums names to clean
-     * @return the cleaned albums names
-     */
-    private String[] cleanAlbumsNames(String serieName, String[] albumsNames) {
-        Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "cleanAlbumsNames", new Object[] {serieName, albumsNames});
-        String[] cleanAlbumsNames = albumsNames.clone();
-        for (int i = 0; i < albumsNames.length; i++) {
-            File albumFile = new File(baseDir.getPath() + File.separatorChar + serieName + File.separatorChar + albumsNames[i]);
-            if (!albumFile.isDirectory()) {
-                cleanAlbumsNames[i] = albumsNames[i].substring(0, albumsNames[i].length() - 4);
-            }
-            else {
-                cleanAlbumsNames[i] = albumsNames[i];
-            }
-        }
-        Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "cleanAlbumsNames", cleanAlbumsNames);
-        return cleanAlbumsNames;
     }
 
     /**

@@ -20,18 +20,25 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
+ * Handler for the exception which get logged
  * @author Inervo
- *
  */
 public class ExceptionHandler extends Handler {
     
     private static LogInterface logInterface = LogInterface.getInstance();
     
+    /**
+     * Reinitialize the link for {@link ExceptionHandler#logInterface} 
+     */
     public static void reinitializeLogInterfaceLink() {
         logInterface = LogInterface.getInstance();
     }
     
+    /**
+     * Constructor. Set the formater and the log level from the properties
+     */
     private ExceptionHandler() {
+        Logger.getLogger(ExceptionHandler.class.getName()).entering(ExceptionHandler.class.getName(), "ExceptionHandler");
         setFormatter(new ExceptionHandlerFormatter());
         String logLevel = PropertiesManager.getInstance().getKey("logLevel");
         if (logLevel != null) {
@@ -39,8 +46,12 @@ public class ExceptionHandler extends Handler {
         } else {
             setLevel(Level.OFF);
         }
+        Logger.getLogger(ExceptionHandler.class.getName()).exiting(ExceptionHandler.class.getName(), "ExceptionHandler");
     }
     
+    /**
+     * Class to format the exception message for the {@link LogInterface}
+     */
     class ExceptionHandlerFormatter extends Formatter {
 
         @Override
@@ -72,9 +83,10 @@ public class ExceptionHandler extends Handler {
     }
     
     /**
-     *
+     * register the handlers (log file and interface) for the logged messages
      */
     public static void registerExceptionHandler() {
+        Logger.getLogger(ExceptionHandler.class.getName()).entering(ExceptionHandler.class.getName(), "registerExceptionHandler");
         Enumeration<String> loggers = LogManager.getLogManager().getLoggerNames();
         while (loggers.hasMoreElements()) {
             Logger.getLogger(loggers.nextElement()).setLevel(Level.SEVERE);
@@ -91,6 +103,7 @@ public class ExceptionHandler extends Handler {
                 if (handler instanceof ConsoleHandler) {
                     if (logLevel != null) {
                         handler.setLevel(Level.parse(logLevel));
+                        Logger.getLogger(ExceptionHandler.class.getName()).log(Level.INFO, "Log level set to {0}", logLevel);
                     } else {
                         handler.setLevel(Level.SEVERE);
                     }
@@ -103,10 +116,11 @@ public class ExceptionHandler extends Handler {
             try {
                 Logger.getLogger("").addHandler(new FileHandler(new File(OSBasics.getAppDataDir(), "log.txt").toString()));
             } catch (IOException | SecurityException ex) {
-                Logger.getLogger(ExceptionHandler.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ExceptionHandler.class.getName()).log(Level.SEVERE, "Can't log messages to the log file", ex);
             }
             Logger.getLogger("").addHandler(new ExceptionHandler());
         }
+        Logger.getLogger(ExceptionHandler.class.getName()).exiting(ExceptionHandler.class.getName(), "registerExceptionHandler");
     }
 
 }
