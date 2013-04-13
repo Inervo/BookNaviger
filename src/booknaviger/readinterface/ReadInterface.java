@@ -11,7 +11,6 @@ import booknaviger.properties.PropertiesManager;
 import java.awt.AWTException;
 import java.awt.Cursor;
 import java.awt.SystemTray;
-import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,8 +24,8 @@ import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 
 /**
- * @author Inervo
  * Form of the reading interface
+ * @author Inervo
  */
 public class ReadInterface extends javax.swing.JFrame {
     
@@ -43,12 +42,14 @@ public class ReadInterface extends javax.swing.JFrame {
      * {@link booknaviger.picturehandler.PdfHandler} or {@link booknaviger.picturehandler.FolderHandler}
      */
     public ReadInterface(AbstractImageHandler abstractImageHandler) {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "ReadInterface", abstractImageHandler);
         this.imageHandler = abstractImageHandler;
         initComponents();
         if (MacOSXApplicationAdapter.isMac()) {
             tpa = new TrackPadAdapter(this); // TODO : don't work !! WHYYYYY ???
             tpa.addListenerOn(getRootPane());
         }
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "ReadInterface");
     }
 
     /**
@@ -348,7 +349,13 @@ public class ReadInterface extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Listener on the keys pressed
+     * @param evt the event associated
+     */
     private void readInterfaceKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_readInterfaceKeyPressed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "readInterfaceKeyPressed");
+        Logger.getLogger(ReadInterface.class.getName()).log(Level.CONFIG, "A key is pressed", evt);
         if (evt.getKeyCode() == KeyEvent.VK_RIGHT) {
             goNextImage();
         } else if (evt.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -356,6 +363,7 @@ public class ReadInterface extends javax.swing.JFrame {
         } else if (evt.getKeyCode() == KeyEvent.VK_SPACE) {
             if (!readInterfaceScrollPane.getVerticalScrollBar().isVisible()) {
                 goNextImage();
+                Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readInterfaceKeyPressed");
                 return;
             }
             int value = readInterfaceScrollPane.getVerticalScrollBar().getValue();
@@ -416,101 +424,233 @@ public class ReadInterface extends javax.swing.JFrame {
             exit();
         } else if (evt.getKeyCode() == KeyEvent.VK_M) {
             minimize();
-        }else if (evt.getKeyCode() == KeyEvent.VK_L) {
+        } else if (evt.getKeyCode() == KeyEvent.VK_L) {
             listPages();
         }
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readInterfaceKeyPressed");
     }//GEN-LAST:event_readInterfaceKeyPressed
 
+    /**
+     * Listener on a mouse click event
+     * @param evt the event associated
+     */
     private void readComponentMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_readComponentMouseClicked
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "readComponentMouseClicked");
         if (evt.getButton() == MouseEvent.BUTTON1) {
             goNextImage();
         }
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readComponentMouseClicked");
     }//GEN-LAST:event_readComponentMouseClicked
 
+    /**
+     * The exit menu item is being triggered
+     * @param evt the event associated
+     */
     private void exitReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitReadInterfaceMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "exitReadInterfaceMenuItemActionPerformed");
         exit();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "exitReadInterfaceMenuItemActionPerformed");
     }//GEN-LAST:event_exitReadInterfaceMenuItemActionPerformed
 
+    /**
+     * The minimize menu item is being triggered
+     * @param evt the event associated
+     */
     private void minimizeReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minimizeReadInterfaceMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "minimizeReadInterfaceMenuItemActionPerformed");
         minimize();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "minimizeReadInterfaceMenuItemActionPerformed");
     }//GEN-LAST:event_minimizeReadInterfaceMenuItemActionPerformed
 
+    /**
+     * The previous page menu item is being triggered
+     * @param evt the event associated
+     */
     private void previousPageReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousPageReadInterfaceMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "previousPageReadInterfaceMenuItemActionPerformed");
         goPreviousImage();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "previousPageReadInterfaceMenuItemActionPerformed");
     }//GEN-LAST:event_previousPageReadInterfaceMenuItemActionPerformed
 
+    /**
+     * The next page menu item is being ttriggered
+     * @param evt the event associated
+     */
     private void nextPageReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextPageReadInterfaceMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "nextPageReadInterfaceMenuItemActionPerformed");
         goNextImage();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "nextPageReadInterfaceMenuItemActionPerformed");
     }//GEN-LAST:event_nextPageReadInterfaceMenuItemActionPerformed
 
+    /**
+     * The "ten page backward" menu item is being triggered
+     * @param evt the event associated
+     */
     private void tenPagesBeforeReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tenPagesBeforeReadInterfaceMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "tenPagesBeforeReadInterfaceMenuItemActionPerformed");
         goPrevious10Image();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "tenPagesBeforeReadInterfaceMenuItemActionPerformed");
     }//GEN-LAST:event_tenPagesBeforeReadInterfaceMenuItemActionPerformed
 
+    /**
+     * The ten pages forward" menu item is being triggered
+     * @param evt the event associated
+     */
     private void tenPagesAfterReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tenPagesAfterReadInterfaceMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "tenPagesAfterReadInterfaceMenuItemActionPerformed");
         goNext10Image();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "tenPagesAfterReadInterfaceMenuItemActionPerformed");
     }//GEN-LAST:event_tenPagesAfterReadInterfaceMenuItemActionPerformed
 
+    /**
+     * The "first page" menu item is being triggered
+     * @param evt the event associated
+     */
     private void firstPageReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstPageReadInterfaceMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "firstPageReadInterfaceMenuItemActionPerformed");
         goFirstImage();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "firstPageReadInterfaceMenuItemActionPerformed");
     }//GEN-LAST:event_firstPageReadInterfaceMenuItemActionPerformed
 
+    /**
+     * The last page menu item is being triggered
+     * @param evt the event associated
+     */
     private void lastPageReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lastPageReadInterfaceMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "lastPageReadInterfaceMenuItemActionPerformed");
         goLastImage();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "lastPageReadInterfaceMenuItemActionPerformed");
     }//GEN-LAST:event_lastPageReadInterfaceMenuItemActionPerformed
 
+    /**
+     * The "double pages" menu item is being triggered
+     * @param evt the event associated
+     */
     private void doublePagesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doublePagesCheckBoxMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "doublePagesCheckBoxMenuItemActionPerformed");
         dualPageReadMode = !dualPageReadMode;
         readPageNbrImage();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "doublePagesCheckBoxMenuItemActionPerformed");
     }//GEN-LAST:event_doublePagesCheckBoxMenuItemActionPerformed
 
+    /**
+     * The default zoom menu item is being triggered
+     * @param evt the event associated
+     */
     private void zoomDefaultReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomDefaultReadInterfaceMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "zoomDefaultReadInterfaceMenuItemActionPerformed");
         readComponent.normalZoom();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "zoomDefaultReadInterfaceMenuItemActionPerformed");
     }//GEN-LAST:event_zoomDefaultReadInterfaceMenuItemActionPerformed
 
+    /**
+     * The zoom in menu item is being triggered
+     * @param evt the event associated
+     */
     private void zoomInReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomInReadInterfaceMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "zoomInReadInterfaceMenuItemActionPerformed");
         readComponent.zoomIn();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "zoomInReadInterfaceMenuItemActionPerformed");
     }//GEN-LAST:event_zoomInReadInterfaceMenuItemActionPerformed
 
+    /**
+     * The zoom out menu item is being triggered
+     * @param evt the event associated
+     */
     private void zoomOutReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomOutReadInterfaceMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "zoomOutReadInterfaceMenuItemActionPerformed");
         readComponent.zoomOut();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "zoomOutReadInterfaceMenuItemActionPerformed");
     }//GEN-LAST:event_zoomOutReadInterfaceMenuItemActionPerformed
 
+    /**
+     * The fit horizontal menu item is being triggered
+     * @param evt the event associated
+     */
     private void fitHorizontallyReadInterfaceCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fitHorizontallyReadInterfaceCheckBoxMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "fitHorizontallyReadInterfaceCheckBoxMenuItemActionPerformed");
         readComponent.changeFitToScreenHorizontally();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "fitHorizontallyReadInterfaceCheckBoxMenuItemActionPerformed");
     }//GEN-LAST:event_fitHorizontallyReadInterfaceCheckBoxMenuItemActionPerformed
 
+    /**
+     * The fit vertical menu item is being triggered
+     * @param evt the event associated
+     */
     private void fitVerticallyReadInterfaceCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fitVerticallyReadInterfaceCheckBoxMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "fitVerticallyReadInterfaceCheckBoxMenuItemActionPerformed");
         readComponent.changeFitToScreenVertically();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "fitVerticallyReadInterfaceCheckBoxMenuItemActionPerformed");
     }//GEN-LAST:event_fitVerticallyReadInterfaceCheckBoxMenuItemActionPerformed
 
+    /**
+     * The "rotate to 0" menu item is being triggered
+     * @param evt the event associated
+     */
     private void rotateInitialRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rotateInitialRadioButtonMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "rotateInitialRadioButtonMenuItemActionPerformed");
         readComponent.rotateImage(0);
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "rotateInitialRadioButtonMenuItemActionPerformed");
     }//GEN-LAST:event_rotateInitialRadioButtonMenuItemActionPerformed
 
+    /**
+     * The "rotate to 90°" menu item is being triggered
+     * @param evt the event associated
+     */
     private void rotate90RadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rotate90RadioButtonMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "rotate90RadioButtonMenuItemActionPerformed");
         readComponent.rotateImage(90);
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "rotate90RadioButtonMenuItemActionPerformed");
     }//GEN-LAST:event_rotate90RadioButtonMenuItemActionPerformed
 
+    /**
+     * The "rotate to 180°" menu item is being triggered
+     * @param evt the event associated
+     */
     private void rotate180RadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rotate180RadioButtonMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "rotate180RadioButtonMenuItemActionPerformed");
         readComponent.rotateImage(180);
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "rotate180RadioButtonMenuItemActionPerformed");
     }//GEN-LAST:event_rotate180RadioButtonMenuItemActionPerformed
 
+    /**
+     * The "rotate to 270°" menu item is being triggered
+     * @param evt the event associated
+     */
     private void rotate270RadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rotate270RadioButtonMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "rotate270RadioButtonMenuItemActionPerformed");
         readComponent.rotateImage(270);
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "rotate270RadioButtonMenuItemActionPerformed");
     }//GEN-LAST:event_rotate270RadioButtonMenuItemActionPerformed
 
+    /**
+     * The "show list of pages" menu item is being triggered
+     * @param evt the event associated
+     */
     private void listPagesReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listPagesReadInterfaceMenuItemActionPerformed
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "listPagesReadInterfaceMenuItemActionPerformed");
         listPages();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "listPagesReadInterfaceMenuItemActionPerformed");
     }//GEN-LAST:event_listPagesReadInterfaceMenuItemActionPerformed
     
+    /**
+     * Exit the read interface
+     */
     public void exit() {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "exit");
+        Logger.getLogger(ReadInterface.class.getName()).log(Level.INFO, "quitting read interface");
         this.setVisible(false);
         PropertiesManager.getInstance().setKey("lastReadedPage", String.valueOf(pageNbr));
         this.dispose();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "exit");
     }
     
+    /**
+     * Minimize this component and the mainInterface
+     */
     private void minimize() {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "minimize");
+        Logger.getLogger(ReadInterface.class.getName()).log(Level.INFO, "Minimizing");
         if (SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
             TrayIcon trayIcon = new TrayIcon(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/Application").getString("appLogoIcon"))).getImage(), java.util.ResourceBundle.getBundle("booknaviger/resources/Application").getString("appTitle"));
@@ -519,6 +659,7 @@ public class ReadInterface extends javax.swing.JFrame {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    Logger.getLogger(ReadInterface.class.getName()).log(Level.INFO, "Restoring from minimize");
                     MainInterface.getInstance().setVisible(true);
                     setVisible(true);
                     toFront();
@@ -537,35 +678,46 @@ public class ReadInterface extends javax.swing.JFrame {
             this.setExtendedState(javax.swing.JFrame.ICONIFIED);
             MainInterface.getInstance().setExtendedState(javax.swing.JFrame.ICONIFIED);
         }
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "minimize");
     }
     
+    /**
+     * List the pages available for this album
+     */
     private void listPages() {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "listPages");
         ListPagesDialog listPagesDialog = new ListPagesDialog(this);
         listPagesDialog.fillPagesName(imageHandler.getPagesName(), pageNbr-1);
         listPagesDialog.setLocationRelativeTo(this);
         listPagesDialog.setVisible(true);
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "listPages");
     }
     
     /**
      * Read the first image of the current album
      */
     public void goFirstImage() {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "goFirstImage");
         pageNbr = 1;
         readPageNbrImage();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "goFirstImage");
     }
     
     /**
      * Read the last image of the current album
      */
     private void goLastImage() {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "goLastImage");
         pageNbr = imageHandler.getNbrOfPages();
         readPageNbrImage();
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "goLastImage");
     }
     
     /**
      * Read the next image of the current album
      */
     public void goNextImage() {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "goNextImage");
         if (dualPageReadMode) {
             pageNbr += 2;
         } else {
@@ -580,12 +732,14 @@ public class ReadInterface extends javax.swing.JFrame {
             readPageNbrImage();
             readComponent.setLastPageReached();
         }
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "goNextImage");
     }
     
     /**
      * Read the previous image of the current album
      */
     public void goPreviousImage() {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "goPreviousImage");
         if (dualPageReadMode) {
             pageNbr -= 2;
         } else {
@@ -595,26 +749,31 @@ public class ReadInterface extends javax.swing.JFrame {
             goFirstImage();
             readComponent.setFirstPageReached();
         }
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "goPreviousImage");
     }
     
     /**
      * Jump 10 images forward in the current album
      */
     private void goNext10Image() {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "goNext10Image");
         pageNbr += 10;
         if (!readPageNbrImage()) {
             goLastImage();
         }
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "goNext10Image");
     }
     
     /**
      * Jump 10 images backward in the current album
      */
     private void goPrevious10Image() {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "goPrevious10Image");
         pageNbr -= 10;
         if (!readPageNbrImage()) {
             goFirstImage();
         }
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "goPrevious10Image");
     }
     
     /**
@@ -622,23 +781,39 @@ public class ReadInterface extends javax.swing.JFrame {
      * @param pageNbr the page number to jump to
      */
     public void goPage(int pageNbr) {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "goPage", pageNbr);
         if (imageHandler.isImageInRange(pageNbr)) {
             this.pageNbr = pageNbr;
             readPageNbrImage();
         } else {
             goFirstImage();
         }
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "goPage");
     }
     
+    /**
+     * Read the page for which the page number have been set in <code>pageNbr</code>
+     * @return false if the page number is not in range, true otherwise
+     */
     private boolean readPageNbrImage() {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "readPageNbrImage");
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readPageNbrImage");
         return readPageNbrImage(false);
     }
     
+    /**
+     * Read the page for which the page number have been set in <code>pageNbr</code>
+     * @param usePreloadImage True if the preloaded image is the one to use.<br />false otherwise
+     * @return false if the page number is not in range, true otherwise
+     */
     private boolean readPageNbrImage(boolean usePreloadImage) {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "readPageNbrImage", usePreloadImage);
         if (!imageHandler.isImageInRange(pageNbr)) {
+            Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readPageNbrImage", false);
             return false;
         }
         if (dualPageReadMode && !imageHandler.isImageInRange(pageNbr+1)) {
+            Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readPageNbrImage", false);
             return false;
         }
         readComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // Ended in readComponent.setImage(...)
@@ -659,6 +834,7 @@ public class ReadInterface extends javax.swing.JFrame {
         }
         readComponent.setImage(readImage, true, readInterfaceScrollPane);
         imageHandler.preloadNextImage(pageNbr+1, dualPageReadMode);
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readPageNbrImage", true);
         return true;
     }
 
@@ -667,6 +843,8 @@ public class ReadInterface extends javax.swing.JFrame {
      * @return the scrollPane of the reading interface
      */
     public JScrollPane getReadInterfaceScrollPane() {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "getReadInterfaceScrollPane");
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "getReadInterfaceScrollPane", readInterfaceScrollPane);
         return readInterfaceScrollPane;
     }
 
@@ -675,6 +853,8 @@ public class ReadInterface extends javax.swing.JFrame {
      * @return the reading/drawing component of the reading interface
      */
     public ReadComponent getReadComponent() {
+        Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "getReadComponent");
+        Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "getReadComponent", readComponent);
         return readComponent;
     }    
     

@@ -5,11 +5,12 @@ package booknaviger.profiles;
 import booknaviger.MainInterface;
 import booknaviger.booksfolder.BooksFolderSelector;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 
 /**
- *
+ * Class to the dialog to add / remove / modify the profiles
  * @author Inervo
  */
 public class ProfileDialog extends javax.swing.JDialog {
@@ -21,11 +22,13 @@ public class ProfileDialog extends javax.swing.JDialog {
      */
     public ProfileDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        Logger.getLogger(ProfileDialog.class.getName()).entering(ProfileDialog.class.getName(), "ProfileDialog", new Object[] {parent, modal});
         initComponents();
         final DefaultTableModel dtm = (DefaultTableModel) profileTable.getModel();
         for (int i = 0; i < MainInterface.getInstance().getProfiles().getProfilesCount(); i++) {
             dtm.addRow(new String[] {MainInterface.getInstance().getProfiles().getProfilesNames()[i], MainInterface.getInstance().getProfiles().getProfilesFolders()[i]});
         }
+        Logger.getLogger(ProfileDialog.class.getName()).exiting(ProfileDialog.class.getName(), "ProfileDialog");
     }
 
     /**
@@ -130,7 +133,12 @@ public class ProfileDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * The new profile buton is pushed. Add a row in the table and select it to modify the text
+     * @param evt The event associated
+     */
     private void newProfileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProfileButtonActionPerformed
+        Logger.getLogger(ProfileDialog.class.getName()).entering(ProfileDialog.class.getName(), "newProfileButtonActionPerformed");
         DefaultTableModel dtm = (DefaultTableModel) profileTable.getModel();
         String profileName = "profile " + profileTable.getRowCount();
         dtm.addRow(new String[] {profileName, ""});
@@ -140,29 +148,50 @@ public class ProfileDialog extends javax.swing.JDialog {
             ((JTextComponent)profileTable.getEditorComponent()).requestFocus();
             ((JTextComponent)profileTable.getEditorComponent()).selectAll();
         }
+        Logger.getLogger(ProfileDialog.class.getName()).exiting(ProfileDialog.class.getName(), "newProfileButtonActionPerformed");
     }//GEN-LAST:event_newProfileButtonActionPerformed
 
+    /**
+     * The delete profile buton is pushed. Delete the selected row in the table
+     * @param evt The event associated
+     */
     private void deleteProfileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteProfileButtonActionPerformed
+        Logger.getLogger(ProfileDialog.class.getName()).entering(ProfileDialog.class.getName(), "deleteProfileButtonActionPerformed");
         int selectedRow = profileTable.getSelectedRow();
         if (selectedRow == -1) {
+            Logger.getLogger(ProfileDialog.class.getName()).exiting(ProfileDialog.class.getName(), "deleteProfileButtonActionPerformed");
             return;
         }
         if (profileTable.getRowCount() == 1) {
+            Logger.getLogger(ProfileDialog.class.getName()).exiting(ProfileDialog.class.getName(), "deleteProfileButtonActionPerformed");
             return;
         }
         DefaultTableModel dtm = (DefaultTableModel) profileTable.getModel();
         dtm.removeRow(selectedRow);
+        Logger.getLogger(ProfileDialog.class.getName()).exiting(ProfileDialog.class.getName(), "deleteProfileButtonActionPerformed");
     }//GEN-LAST:event_deleteProfileButtonActionPerformed
 
+    /**
+     * The OK button is pressed. All the changes are saved
+     * @param evt the event associated
+     */
     @SuppressWarnings("unchecked")
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        Logger.getLogger(ProfileDialog.class.getName()).entering(ProfileDialog.class.getName(), "okButtonActionPerformed");
         DefaultTableModel dtm = (DefaultTableModel) profileTable.getModel();
         MainInterface.getInstance().getProfiles().setProfiles(dtm.getDataVector());
         setVisible(false);
         dispose();
+        Logger.getLogger(ProfileDialog.class.getName()).exiting(ProfileDialog.class.getName(), "okButtonActionPerformed");
     }//GEN-LAST:event_okButtonActionPerformed
 
+    /**
+     * A double click is performed on the path column of the table. Open the {@link booknaviger.booksfolder.BooksFolderSelector} to select the folder of the profile
+     * @param evt  the event associated
+     * @see BooksFolderSelector
+     */
     private void profileTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_profileTableMouseClicked
+        Logger.getLogger(ProfileDialog.class.getName()).entering(ProfileDialog.class.getName(), "profileTableMouseClicked");
         if (evt.getClickCount() == 2) {
             if (profileTable.getSelectedColumn() == 1) {
                 BooksFolderSelector booksFolderselector = new BooksFolderSelector(null, true);
@@ -173,6 +202,7 @@ public class ProfileDialog extends javax.swing.JDialog {
                 evt.consume();
             }
         }
+        Logger.getLogger(ProfileDialog.class.getName()).exiting(ProfileDialog.class.getName(), "profileTableMouseClicked");
     }//GEN-LAST:event_profileTableMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

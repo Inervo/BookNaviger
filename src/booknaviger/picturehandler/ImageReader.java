@@ -258,7 +258,7 @@ public class ImageReader {
             image = ImageIO.read((File)imageObject);
         } catch (IOException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "file-read", ((File)imageObject).toString());
+            new InfoInterface(InfoInterface.ERROR, "file-read", ((File)imageObject).toString());
         }
         Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readWithFileImageIO");
     }
@@ -290,7 +290,7 @@ public class ImageReader {
             ((InputStream)imageObject).close();
         } catch (IOException ex) {
             Logger.getLogger(ImageReader.class.getName()).log(Level.SEVERE, null, ex);
-            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "file-read", imageObject.toString());
+            new InfoInterface(InfoInterface.ERROR, "file-read", imageObject.toString());
         }
         Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readWithInputStreamImageIO");
     }

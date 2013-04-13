@@ -33,7 +33,7 @@ public class FolderHandler extends AbstractImageHandler {
             allfiles = album.listFiles();
         } catch(SecurityException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "rights", album);
+            new InfoInterface(InfoInterface.ERROR, "rights", album);
         }
         if (allfiles != null) {
             Arrays.sort(allfiles);

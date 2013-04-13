@@ -138,17 +138,17 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
             copyImages();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
             Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "Error with the files during the reporting", ex);
-            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "report-files");
+            new InfoInterface(InfoInterface.ERROR, "report-files");
         } catch (IOException ex) {
             Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "IO error during the reporting", ex);
-            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "report-IO");
+            new InfoInterface(InfoInterface.ERROR, "report-IO");
         }
         try {
             pageXWriter.close();
             cssFileWriter.close();
         } catch (IOException ex) {
             Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "IO error while closing the report files", ex);
-            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "report-IO");
+            new InfoInterface(InfoInterface.ERROR, "report-IO");
         }
         if (cancelAsked) {
             Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "doInBackground", 7);

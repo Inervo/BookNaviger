@@ -39,7 +39,7 @@ public class ZipHandler extends AbstractImageHandler {
             zipFile = new ZipFile(album, Charset.forName("IBM437"));
         } catch (IOException ex) {
             Logger.getLogger(ZipHandler.class.getName()).log(Level.SEVERE, "Cannot read the RAR archive", ex);
-            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "file-read", album.getName());
+            new InfoInterface(InfoInterface.ERROR, "file-read", album.getName());
             Logger.getLogger(RarHandler.class.getName()).exiting(RarHandler.class.getName(), "RarHandler");
             return;
         }
@@ -76,7 +76,7 @@ public class ZipHandler extends AbstractImageHandler {
             return bufferedImage;
         } catch (IOException | NullPointerException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Cannot read the image from zip entry", ex);
-            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "file-read", imageEntries.get(pageNumber).getName());
+            new InfoInterface(InfoInterface.ERROR, "file-read", imageEntries.get(pageNumber).getName());
         }
         Logger.getLogger(ZipHandler.class.getName()).exiting(ZipHandler.class.getName(), "getImage", null);
         return null;

@@ -55,7 +55,7 @@ public class Updater {
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             Logger.getLogger(Updater.class.getName()).log(Level.WARNING, "Can't parse the update feed URL", ex);
             if (ex instanceof ParserConfigurationException || ex instanceof SAXException) {
-                new InfoInterface(MainInterface.getInstance(), InfoInterface.WARNING, "update-parseerror");
+                new InfoInterface(InfoInterface.WARNING, "update-parseerror");
             }
         }
         if (doc == null) {

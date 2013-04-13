@@ -2,6 +2,7 @@
  */
 package booknaviger.exceptioninterface;
 
+import java.awt.Frame;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -10,21 +11,22 @@ import java.util.ResourceBundle;
  * @author Inervo
  */
 public class InfoInterface extends javax.swing.JDialog {
-    
+
     private ResourceBundle resourceBundle = ResourceBundle.getBundle("booknaviger/resources/InfoInterface");
     public final static int INFO = 0;
     public final static int WARNING = 1;
     @SuppressWarnings("FieldNameHidesFieldInSuperclass")
     public final static int ERROR = 2;
 
-    public InfoInterface(java.awt.Frame parent, int infoType, String infoMessage, Object... parameters) {
-        super(parent, false);
+    public InfoInterface(int infoType, String infoMessage, Object... parameters) {
+        super((Frame)null, false);
         initComponents();
         this.setLocationRelativeTo(this.getParent());
         setInfo(infoType, infoMessage, parameters);
         setVisible(true);
+        requestFocus();
     }
-    
+
     private void setInfo(int infoType, String infoMessage, Object... parameters) {
         switch (infoType) {
             case INFO:
@@ -111,7 +113,6 @@ public class InfoInterface extends javax.swing.JDialog {
         setVisible(false);
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel logoLabel;

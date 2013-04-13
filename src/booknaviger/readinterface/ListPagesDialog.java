@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * This dialog show the pages of the currently read album
  * @author Inervo
  */
 public class ListPagesDialog extends javax.swing.JDialog {
@@ -25,16 +25,19 @@ public class ListPagesDialog extends javax.swing.JDialog {
      */
     public ListPagesDialog(ReadInterface readInterface) {
         super(readInterface, true);
+        Logger.getLogger(ListPagesDialog.class.getName()).entering(ListPagesDialog.class.getName(), "ListPagesDialog");
         this.readInterface = readInterface;
         initComponents();
+        Logger.getLogger(ListPagesDialog.class.getName()).exiting(ListPagesDialog.class.getName(), "ListPagesDialog");
     }
     
     /**
-     *
-     * @param pagesName
-     * @param currentPage
+     * Fill the table with the pages name and select the current page
+     * @param pagesName The pages name
+     * @param currentPage The index of the current page
      */
     protected void fillPagesName(final List<String> pagesName, final int currentPage) {
+        Logger.getLogger(ListPagesDialog.class.getName()).entering(ListPagesDialog.class.getName(), "fillPagesName", new Object[] {pagesName, currentPage});
         final DefaultTableModel dtm = (DefaultTableModel) pagesListTable.getModel();
         List<Thread> rows = new ArrayList<>();
         for (int i = 0; i < pagesName.size(); i++) {
@@ -66,6 +69,7 @@ public class ListPagesDialog extends javax.swing.JDialog {
                 pagesListTable.scrollRectToVisible(cellRect);
             }
         });
+        Logger.getLogger(ListPagesDialog.class.getName()).exiting(ListPagesDialog.class.getName(), "fillPagesName");
     }
 
     /**
@@ -141,7 +145,12 @@ public class ListPagesDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Event if a key is pressed while on the pages list
+     * @param evt the event associated (and key pressed)
+     */
     private void pagesListTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_pagesListTableKeyPressed
+        Logger.getLogger(ListPagesDialog.class.getName()).entering(ListPagesDialog.class.getName(), "pagesListTableKeyPressed");
         if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
             this.dispose();
         }
@@ -149,20 +158,32 @@ public class ListPagesDialog extends javax.swing.JDialog {
             evt.consume();
             goReadSelectedPage();
         }
+        Logger.getLogger(ListPagesDialog.class.getName()).exiting(ListPagesDialog.class.getName(), "pagesListTableKeyPressed");
     }//GEN-LAST:event_pagesListTableKeyPressed
 
+    /**
+     * Mouse click event while on the pagesList
+     * @param evt The associated event
+     */
     private void pagesListTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pagesListTableMouseClicked
+        Logger.getLogger(ListPagesDialog.class.getName()).entering(ListPagesDialog.class.getName(), "pagesListTableMouseClicked");
         if (evt.getClickCount() == 2) {
             goReadSelectedPage();
         }
+        Logger.getLogger(ListPagesDialog.class.getName()).exiting(ListPagesDialog.class.getName(), "pagesListTableMouseClicked");
     }//GEN-LAST:event_pagesListTableMouseClicked
 
+    /**
+     * Go to the selected page on the table
+     */
     private void goReadSelectedPage() {
+        Logger.getLogger(ListPagesDialog.class.getName()).entering(ListPagesDialog.class.getName(), "goReadSelectedPage");
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 readInterface.goPage(pagesListTable.getSelectionModel().getMinSelectionIndex() + 1);
+                Logger.getLogger(ListPagesDialog.class.getName()).exiting(ListPagesDialog.class.getName(), "goReadSelectedPage");
             }
         }).start();
         this.dispose();

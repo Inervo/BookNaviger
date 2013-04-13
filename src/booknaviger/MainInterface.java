@@ -1251,7 +1251,7 @@ public final class MainInterface extends javax.swing.JFrame {
                     allfiles = booksDirectory.listFiles();
                 } catch(SecurityException ex) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                    new InfoInterface(null, InfoInterface.ERROR, "rights", booksDirectory);
+                    new InfoInterface(InfoInterface.ERROR, "rights", booksDirectory);
                 }
                 if (allfiles == null) {
                     setActionInProgress(false, null);
@@ -1341,7 +1341,7 @@ public final class MainInterface extends javax.swing.JFrame {
                     allfiles = serie.listFiles();
                 } catch(SecurityException ex) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                    new InfoInterface(null, InfoInterface.ERROR, "rights", serie);
+                    new InfoInterface(InfoInterface.ERROR, "rights", serie);
                 }
                 final DefaultTableModel albumsTableModel = (DefaultTableModel) albumsTable.getModel();
                 try {

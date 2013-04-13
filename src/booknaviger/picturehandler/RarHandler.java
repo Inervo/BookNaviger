@@ -40,7 +40,7 @@ public class RarHandler extends AbstractImageHandler {
             archive = new Archive(album);
         } catch (RarException | IOException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Cannot read the RAR archive", ex);
-            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "file-read", album.getName());
+            new InfoInterface(InfoInterface.ERROR, "file-read", album.getName());
             Logger.getLogger(RarHandler.class.getName()).exiting(RarHandler.class.getName(), "RarHandler");
             return;
         }

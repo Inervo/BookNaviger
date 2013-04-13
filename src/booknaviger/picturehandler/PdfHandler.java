@@ -36,7 +36,7 @@ public class PdfHandler extends AbstractImageHandler {
             pdfDocument.setFile(album.getPath());
         } catch (PDFException | PDFSecurityException | IOException ex) {
             Logger.getLogger(PdfHandler.class.getName()).log(Level.SEVERE, "Cannot read the PDF document", ex);
-            new InfoInterface(MainInterface.getInstance(), InfoInterface.ERROR, "file-read", album.getName());
+            new InfoInterface(InfoInterface.ERROR, "file-read", album.getName());
         }
         Logger.getLogger(PdfHandler.class.getName()).exiting(PdfHandler.class.getName(), "PdfHandler");
     }
