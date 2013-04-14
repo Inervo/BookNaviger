@@ -23,6 +23,8 @@ import booknaviger.readinterface.ReadInterface;
 import booknaviger.searcher.TableSearcher;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,6 +43,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JRadioButtonMenuItem;
@@ -70,6 +73,7 @@ public final class MainInterface extends javax.swing.JFrame {
     private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
     private volatile ReadInterface readInterface = null;
     private Thread actionThread = null;
+    private Preferences preferences = Preferences.userNodeForPackage(MainInterface.class);
     
     /**
      * The holder of the unique MainInterface instance
@@ -233,6 +237,28 @@ public final class MainInterface extends javax.swing.JFrame {
         }
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "initializeLanguageMenuSelection");
     }
+    
+    /**
+     * Read the dimension of {@link MainInterface} in the {@link #preferences}
+     * @return The dimension to set for MainInterface
+     */
+    private Dimension getMainInterfaceWantedDimension() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "getMainInterfaceWantedDimension");
+        Dimension mainInterfaceDimension = new Dimension(preferences.getInt("width", 700), preferences.getInt("height", 500));
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "getMainInterfaceWantedDimension", mainInterfaceDimension);
+        return mainInterfaceDimension;
+    }
+    
+    /**
+     * Read the dimension of {@link MainInterface} in the {@link #preferences}
+     * @return The dimension to set for MainInterface
+     */
+    private Point getMainInterfaceWantedLocation() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "getMainInterfaceWantedLocation");
+        Point mainInterfaceLocation = new Point(preferences.getInt("X-location", 0), preferences.getInt("Y-location", 0));
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "getMainInterfaceWantedLocation", mainInterfaceLocation);
+        return mainInterfaceLocation;
+    }
 
     /**
      * This method is called from within the constructor to initialize the
@@ -386,6 +412,8 @@ public final class MainInterface extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("BookNaviger"); // NOI18N
+        setLocation(getMainInterfaceWantedLocation());
+        setPreferredSize(getMainInterfaceWantedDimension());
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -449,7 +477,7 @@ public final class MainInterface extends javax.swing.JFrame {
 
         getContentPane().add(mainToolBar, java.awt.BorderLayout.PAGE_START);
 
-        booksPreviewSplitPane.setDividerLocation(280);
+        booksPreviewSplitPane.setDividerLocation(preferences.getInt("divider-location", 280));
         booksPreviewSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         booksPreviewSplitPane.setMinimumSize(new java.awt.Dimension(400, 400));
         booksPreviewSplitPane.setPreferredSize(new java.awt.Dimension(458, 400));
@@ -1522,6 +1550,7 @@ public final class MainInterface extends javax.swing.JFrame {
        if (readInterface != null) {
            readInterface.exit();
        }
+       savePreferences();
        this.dispose();
        profiles.saveProfilesProperties();
        if (serie != null) {
@@ -1535,7 +1564,20 @@ public final class MainInterface extends javax.swing.JFrame {
        LogInterface.getInstance().dispose();
        System.exit(0);
        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "exit");
-   }
+    }
+    
+    /**
+     * Save in the preferences the size and location of the mainInterface
+     */
+    private void savePreferences() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "savePreferences");
+        preferences.putInt("width", getWidth());
+        preferences.putInt("height", getHeight());
+        preferences.putInt("X-location", getX());
+        preferences.putInt("Y-location", getY());
+        preferences.putInt("divider-location", booksPreviewSplitPane.getDividerLocation());
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "savePreferences");
+    }
    
     /**
      * Get the preview component
