@@ -74,6 +74,7 @@ public final class MainInterface extends javax.swing.JFrame {
     private volatile ReadInterface readInterface = null;
     private Thread actionThread = null;
     private Preferences preferences = Preferences.userNodeForPackage(MainInterface.class);
+    private boolean firstLaunch = true;
     
     /**
      * The holder of the unique MainInterface instance
@@ -1068,7 +1069,6 @@ public final class MainInterface extends javax.swing.JFrame {
                 busyIconTimer.start();
             }
         } else {
-            this.actionThread = null;
             this.setCursor(Cursor.getDefaultCursor());
             busyIconTimer.stop();
             statusAnimationLabel.setIcon(idleIcon);
@@ -1095,8 +1095,8 @@ public final class MainInterface extends javax.swing.JFrame {
     
     /**
      * Select a specific serie and then a specific album in this serie
-     * @param serieToSelect the serie string to select
-     * @param albumToSelect the album string to select
+     * @param serieToSelect the serie path string to select
+     * @param albumToSelect the album path string to select
      * @return the thread that run the selection
      */
     protected Thread changeSelectedBook(final String serieToSelect, final String albumToSelect) {
@@ -1107,6 +1107,9 @@ public final class MainInterface extends javax.swing.JFrame {
             public void run() {
                 Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "changeSelectedBookThread");
                 try {
+                    while (firstLaunch) {                    
+                        Thread.sleep(1);
+                    }
                     if (actionThread != null) {
                         if (actionThread.getState() != Thread.State.TERMINATED) {
                             actionThread.join();
@@ -1269,11 +1272,11 @@ public final class MainInterface extends javax.swing.JFrame {
                 Object[][] seriesData =  new BooksFolderAnalyser(booksDirectory).listSeries();
                 if (seriesData == null) {
                     Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The profile folder doesn't exist or can't be read : {0}", booksDirectory);
+                    firstLaunch = false;
                     setActionInProgress(false, null);
                     Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listSeries");
                     return;
                 }
-                final List<Thread> rows = new ArrayList<>();
                 for (final Object[] serieData : seriesData) {
                     Thread tampon = new Thread(new Runnable() {
 
@@ -1282,16 +1285,13 @@ public final class MainInterface extends javax.swing.JFrame {
                             seriesTableModel.addRow(new Object[]{serieData[0], serieData[1]});
                         }
                     });
-                    SwingUtilities.invokeLater(tampon);
-                    rows.add(tampon);
-                }
-                for (Thread thread : rows) {
                     try {
-                        thread.join();
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                        SwingUtilities.invokeAndWait(tampon);
+                    } catch (InterruptedException | InvocationTargetException ex) {
+                        Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+                firstLaunch = false;
                 setActionInProgress(false, null);
                 Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listSeries");
             }
@@ -1347,14 +1347,13 @@ public final class MainInterface extends javax.swing.JFrame {
                 } catch (InterruptedException | InvocationTargetException ex) {
                     Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                previewComponent.setNoPreviewImage();
                 String[][] albumsData = new BooksFolderAnalyser(serie).listAlbums();
                 if (albumsData == null) {
-                    previewComponent.setNoPreviewImage();
                     setActionInProgress(false, null);
                     Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listAlbums");
                     return;
                 }
-                List<Thread> rows = new ArrayList<>();
                 for (final String[] albumData : albumsData) {
                     Thread tampon = new Thread(new Runnable() {
 
@@ -1363,16 +1362,12 @@ public final class MainInterface extends javax.swing.JFrame {
                             albumsTableModel.addRow(new Object[]{albumData[0], albumData[1]});
                         }
                     });
-                    SwingUtilities.invokeLater(tampon);
-                    rows.add(tampon);
-                }       
-                for (Thread thread : rows) {
                     try {
-                        thread.join();
-                    } catch (InterruptedException ex) {
+                    SwingUtilities.invokeAndWait(tampon);
+                    } catch (InterruptedException | InvocationTargetException ex) {
                         Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                     }
-                }
+                }       
                 try {
                     SwingUtilities.invokeAndWait(new Runnable() {
 
@@ -1504,6 +1499,7 @@ public final class MainInterface extends javax.swing.JFrame {
                     previewComponent.setImage(previewImage);
                 } else {
                     Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for directory. album : {0}", album);
+                    previewComponent.setNoPreviewImage();
                 }
             }
             else if (album.getName().toLowerCase().endsWith(".zip") || album.getName().toLowerCase().endsWith(".cbz")) {
@@ -1513,6 +1509,7 @@ public final class MainInterface extends javax.swing.JFrame {
                     previewComponent.setImage(previewImage);
                 } else {
                     Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for zip. album : {0}", album);
+                    previewComponent.setNoPreviewImage();
                 }
             }
             else if (album.getName().toLowerCase().endsWith(".rar") || album.getName().toLowerCase().endsWith(".cbr")) {
@@ -1522,6 +1519,7 @@ public final class MainInterface extends javax.swing.JFrame {
                     previewComponent.setImage(previewImage);
                 } else {
                     Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for rar. album : {0}", album);
+                    previewComponent.setNoPreviewImage();
                 }
             }
             else if (album.getName().toLowerCase().endsWith(".pdf")) {
@@ -1531,6 +1529,7 @@ public final class MainInterface extends javax.swing.JFrame {
                     previewComponent.setImage(previewImage);
                 } else {
                     Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for pdf. album : {0}", album);
+                    previewComponent.setNoPreviewImage();
                 }
             }
             else {

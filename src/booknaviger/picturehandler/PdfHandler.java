@@ -51,10 +51,12 @@ public class PdfHandler extends AbstractImageHandler {
         BufferedImage bufferedImage;
         try {
             bufferedImage = (BufferedImage) pdfDocument.getPageImages(--pageNumber).get(0);
-        }
-        catch (ClassCastException ex) {
+        } catch (ClassCastException ex) {
             Image image = (Image) pdfDocument.getPageImages(pageNumber).get(0);
             bufferedImage = new ImageReader(image).convertImageToBufferedImage();
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            Logger.getLogger(PdfHandler.class.getName()).exiting(PdfHandler.class.getName(), "getImage", null);
+            return null;
         }
         Logger.getLogger(PdfHandler.class.getName()).exiting(PdfHandler.class.getName(), "getImage", bufferedImage);
         return bufferedImage;

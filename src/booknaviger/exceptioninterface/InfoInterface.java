@@ -33,6 +33,7 @@ public class InfoInterface extends javax.swing.JDialog {
         setInfo(infoType, infoMessage, parameters);
         setVisible(true);
         requestFocus();
+        okButton.requestFocusInWindow();
         Logger.getLogger(InfoInterface.class.getName()).exiting(InfoInterface.class.getName(), "InfoInterface");
     }
 
@@ -85,6 +86,14 @@ public class InfoInterface extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         logoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        logoLabel.setFocusable(false);
+        logoLabel.setRequestFocusEnabled(false);
+
+        infoLabel.setFocusable(false);
+        infoLabel.setRequestFocusEnabled(false);
+
+        messageLabel.setFocusable(false);
+        messageLabel.setRequestFocusEnabled(false);
 
         okButton.setText("OK");
         okButton.addActionListener(new java.awt.event.ActionListener() {

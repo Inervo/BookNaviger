@@ -3,7 +3,6 @@
 
 package booknaviger.picturehandler;
 
-import booknaviger.MainInterface;
 import booknaviger.exceptioninterface.InfoInterface;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -38,9 +37,11 @@ public class ZipHandler extends AbstractImageHandler {
         try {
             zipFile = new ZipFile(album, Charset.forName("IBM437"));
         } catch (IOException ex) {
-            Logger.getLogger(ZipHandler.class.getName()).log(Level.SEVERE, "Cannot read the RAR archive", ex);
-            new InfoInterface(InfoInterface.ERROR, "file-read", album.getName());
-            Logger.getLogger(RarHandler.class.getName()).exiting(RarHandler.class.getName(), "RarHandler");
+            Logger.getLogger(ZipHandler.class.getName()).log(Level.SEVERE, "Cannot read the ZIP archive", ex);
+            if (!ex.getMessage().equals("zip file is empty")) {
+                new InfoInterface(InfoInterface.ERROR, "file-read", album.getName());
+            }
+            Logger.getLogger(ZipHandler.class.getName()).exiting(ZipHandler.class.getName(), "ZipHandler");
             return;
         }
         

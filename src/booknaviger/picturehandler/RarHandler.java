@@ -44,6 +44,12 @@ public class RarHandler extends AbstractImageHandler {
             Logger.getLogger(RarHandler.class.getName()).exiting(RarHandler.class.getName(), "RarHandler");
             return;
         }
+        if (archive.isEncrypted()) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "RAR archive encrypted");
+            new InfoInterface(InfoInterface.ERROR, "file-read", album.getName());
+            Logger.getLogger(RarHandler.class.getName()).exiting(RarHandler.class.getName(), "RarHandler");
+            return;
+        }
         List<FileHeader> fh = archive.getFileHeaders();
         Collections.sort(fh, new Comparator<FileHeader>() {
 
@@ -121,12 +127,13 @@ public class RarHandler extends AbstractImageHandler {
             try {
                 a.extractFile(fh, os);
             } catch (RarException ex) {
-                Logger.getLogger(RarHandler.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(RarHandler.class.getName()).log(Level.SEVERE, "Cannot extract the file from the RAR", ex);
+                new InfoInterface(InfoInterface.ERROR, "file-read", fh.getFileNameString());
             } finally {
                 try {
                     os.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(RarHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(RarHandler.class.getName()).log(Level.SEVERE, "Cannot close the OutputStream", ex);
                 }
             }
             Logger.getLogger(ExtractFileFromRar.class.getName()).exiting(ExtractFileFromRar.class.getName(), "run");
