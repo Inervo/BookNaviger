@@ -72,7 +72,7 @@ public class ImageReader {
             }
             if (tampon.getWidth(null) == -1 || tampon.getHeight(null) == -1) {
                 Logger.getLogger(ImageReader.class.getName()).log(Level.SEVERE, "Image can't be read and converted for showing on screen");
-                new InfoInterface(InfoInterface.ERROR, "image-convert");
+                new InfoInterface(InfoInterface.InfoLevel.ERROR, "image-convert");
                 Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "convertImageToBufferedImage", null);
                 return null;
             }
@@ -265,7 +265,7 @@ public class ImageReader {
             image = ImageIO.read((File)imageObject);
         } catch (IOException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            new InfoInterface(InfoInterface.ERROR, "file-read", ((File)imageObject).toString());
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "file-read", ((File)imageObject).toString());
         }
         Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readWithFileImageIO");
     }
@@ -297,10 +297,10 @@ public class ImageReader {
             ((InputStream)imageObject).close();
         } catch (IOException ex) {
             Logger.getLogger(ImageReader.class.getName()).log(Level.SEVERE, null, ex);
-            new InfoInterface(InfoInterface.ERROR, "file-read", imageObject.toString());
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "file-read", imageObject.toString());
         } catch (ArrayIndexOutOfBoundsException ex) {
             Logger.getLogger(ImageReader.class.getName()).log(Level.SEVERE, "Image can't be read and converted for showing on screen");
-            new InfoInterface(InfoInterface.ERROR, "image-convert");
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "image-convert");
             Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readWithInputStreamImageIO");
         }
         Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readWithInputStreamImageIO");

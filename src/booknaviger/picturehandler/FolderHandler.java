@@ -3,7 +3,6 @@
 
 package booknaviger.picturehandler;
 
-import booknaviger.MainInterface;
 import booknaviger.exceptioninterface.InfoInterface;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -33,11 +32,12 @@ public class FolderHandler extends AbstractImageHandler {
             allfiles = album.listFiles();
         } catch(SecurityException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            new InfoInterface(InfoInterface.ERROR, "rights", album);
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "rights", album);
         }
-        if (allfiles != null) {
-            Arrays.sort(allfiles);
+        if (allfiles == null) {
+            return;
         }
+        Arrays.sort(allfiles);
         for (int i = 0; i < allfiles.length; i++) {
             if (!allfiles[i].isHidden() && isAnImage(allfiles[i].getName())) {
                 imagefiles.add(allfiles[i]);

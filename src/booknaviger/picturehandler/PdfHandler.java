@@ -3,7 +3,6 @@
 
 package booknaviger.picturehandler;
 
-import booknaviger.MainInterface;
 import booknaviger.exceptioninterface.InfoInterface;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -36,7 +35,7 @@ public class PdfHandler extends AbstractImageHandler {
             pdfDocument.setFile(album.getPath());
         } catch (PDFException | PDFSecurityException | IOException ex) {
             Logger.getLogger(PdfHandler.class.getName()).log(Level.SEVERE, "Cannot read the PDF document", ex);
-            new InfoInterface(InfoInterface.ERROR, "file-read", album.getName());
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "file-read", album.getName());
         }
         Logger.getLogger(PdfHandler.class.getName()).exiting(PdfHandler.class.getName(), "PdfHandler");
     }

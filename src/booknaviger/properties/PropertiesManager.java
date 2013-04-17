@@ -34,7 +34,7 @@ public class PropertiesManager {
             properties.load(new FileReader(propertiesFile));
         } catch (IOException ex) {
             Logger.getLogger(PropertiesManager.class.getName()).log(Level.SEVERE, "The properties couldn't be loaded", ex);
-            new InfoInterface(InfoInterface.ERROR, "properties-load", propertiesFile.toString());
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "properties-load", propertiesFile.toString());
         }
         Logger.getLogger(PropertiesManager.class.getName()).exiting(PropertiesManager.class.getName(), "PropertiesManager");
     }
@@ -84,7 +84,7 @@ public class PropertiesManager {
             properties.store(new FileWriter(propertiesFile), "Every properties is written here");
         } catch (IOException ex) {
             Logger.getLogger(PropertiesManager.class.getName()).log(Level.SEVERE, "Couldn't save the properties", ex);
-            new InfoInterface(InfoInterface.ERROR, "properties-save", propertiesFile.toString());
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "properties-save", propertiesFile.toString());
         }
         Logger.getLogger(PropertiesManager.class.getName()).exiting(PropertiesManager.class.getName(), "saveProperties");
     }

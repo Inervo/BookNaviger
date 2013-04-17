@@ -39,7 +39,7 @@ public class ZipHandler extends AbstractImageHandler {
         } catch (IOException ex) {
             Logger.getLogger(ZipHandler.class.getName()).log(Level.SEVERE, "Cannot read the ZIP archive", ex);
             if (!ex.getMessage().equals("zip file is empty")) {
-                new InfoInterface(InfoInterface.ERROR, "file-read", album.getName());
+                new InfoInterface(InfoInterface.InfoLevel.ERROR, "file-read", album.getName());
             }
             Logger.getLogger(ZipHandler.class.getName()).exiting(ZipHandler.class.getName(), "ZipHandler");
             return;
@@ -77,7 +77,7 @@ public class ZipHandler extends AbstractImageHandler {
             return bufferedImage;
         } catch (IOException | NullPointerException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Cannot read the image from zip entry", ex);
-            new InfoInterface(InfoInterface.ERROR, "file-read", imageEntries.get(pageNumber).getName());
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "file-read", imageEntries.get(pageNumber).getName());
         }
         Logger.getLogger(ZipHandler.class.getName()).exiting(ZipHandler.class.getName(), "getImage", null);
         return null;

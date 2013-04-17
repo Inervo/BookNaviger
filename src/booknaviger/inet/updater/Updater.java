@@ -3,7 +3,6 @@
 
 package booknaviger.inet.updater;
 
-import booknaviger.MainInterface;
 import booknaviger.exceptioninterface.InfoInterface;
 import booknaviger.properties.PropertiesManager;
 import java.io.IOException;
@@ -55,7 +54,7 @@ public class Updater {
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             Logger.getLogger(Updater.class.getName()).log(Level.WARNING, "Can't parse the update feed URL", ex);
             if (ex instanceof ParserConfigurationException || ex instanceof SAXException) {
-                new InfoInterface(InfoInterface.WARNING, "update-parseerror");
+                new InfoInterface(InfoInterface.InfoLevel.WARNING, "update-parseerror");
             }
         }
         if (doc == null) {

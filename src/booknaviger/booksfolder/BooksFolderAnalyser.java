@@ -54,7 +54,7 @@ public class BooksFolderAnalyser {
             });
         } catch(SecurityException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            new InfoInterface(InfoInterface.ERROR, "rights", booksDirectory);
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "rights", booksDirectory);
         }
         if (allfiles == null) {
             Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listSeries", null);
@@ -64,7 +64,10 @@ public class BooksFolderAnalyser {
         final File[] allFilesValue = allfiles;
         List<Object[]> series = new ArrayList<>();
         for (int i = 0; allFilesValue.length > i; i++) {
-            series.add(new Object[] {allFilesValue[i].getName(), new BooksFolderAnalyser(allFilesValue[i]).listAlbumsFiles().length});
+            File[] albumsFiles = new BooksFolderAnalyser(allFilesValue[i]).listAlbumsFiles();
+            if (albumsFiles != null) {
+                series.add(new Object[] {allFilesValue[i].getName(), albumsFiles.length});
+            }
         }
         Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listSeries", series.toArray(new Object[0][0]));
         return series.toArray(new Object[0][0]);
@@ -124,7 +127,7 @@ public class BooksFolderAnalyser {
             });
         } catch(SecurityException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            new InfoInterface(InfoInterface.ERROR, "rights", booksDirectory);
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "rights", booksDirectory);
         }
         Logger.getLogger(BooksFolderAnalyser.class.getName()).entering(BooksFolderAnalyser.class.getName(), "listAlbumsFiles", allFiles);
         return allFiles;

@@ -3,7 +3,6 @@
 
 package booknaviger.picturehandler;
 
-import booknaviger.MainInterface;
 import booknaviger.exceptioninterface.InfoInterface;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
@@ -40,13 +39,13 @@ public class RarHandler extends AbstractImageHandler {
             archive = new Archive(album);
         } catch (RarException | IOException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Cannot read the RAR archive", ex);
-            new InfoInterface(InfoInterface.ERROR, "file-read", album.getName());
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "file-read", album.getName());
             Logger.getLogger(RarHandler.class.getName()).exiting(RarHandler.class.getName(), "RarHandler");
             return;
         }
         if (archive.isEncrypted()) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "RAR archive encrypted");
-            new InfoInterface(InfoInterface.ERROR, "file-read", album.getName());
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "file-read", album.getName());
             Logger.getLogger(RarHandler.class.getName()).exiting(RarHandler.class.getName(), "RarHandler");
             return;
         }
@@ -128,7 +127,7 @@ public class RarHandler extends AbstractImageHandler {
                 a.extractFile(fh, os);
             } catch (RarException ex) {
                 Logger.getLogger(RarHandler.class.getName()).log(Level.SEVERE, "Cannot extract the file from the RAR", ex);
-                new InfoInterface(InfoInterface.ERROR, "file-read", fh.getFileNameString());
+                new InfoInterface(InfoInterface.InfoLevel.ERROR, "file-read", fh.getFileNameString());
             } finally {
                 try {
                     os.close();

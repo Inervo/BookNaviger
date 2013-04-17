@@ -5,6 +5,7 @@ package booknaviger;
 import booknaviger.booksfolder.BooksFolderAnalyser;
 import booknaviger.booksfolder.BooksFolderSelector;
 import booknaviger.exceptioninterface.ExceptionHandler;
+import booknaviger.exceptioninterface.InfoInterface;
 import booknaviger.exceptioninterface.LogInterface;
 import booknaviger.inet.htmlreport.ReportModeSelector;
 import booknaviger.inet.updater.NewUpdateAvailableDialog;
@@ -1492,48 +1493,53 @@ public final class MainInterface extends javax.swing.JFrame {
             Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "PreviewImageLoader");
             setActionInProgress(true, this);
             Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Preview the album {0}", album);
-            if (album.isDirectory()) {
-                imageHandler = new FolderHandler(album);
-                BufferedImage previewImage = imageHandler.getImage(1);
-                if (previewImage != null) {
-                    previewComponent.setImage(previewImage);
-                } else {
-                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for directory. album : {0}", album);
+            try {
+                if (album.isDirectory()) {
+                    imageHandler = new FolderHandler(album);
+                    BufferedImage previewImage = imageHandler.getImage(1);
+                    if (previewImage != null) {
+                        previewComponent.setImage(previewImage);
+                    } else {
+                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for directory. album : {0}", album);
+                        previewComponent.setNoPreviewImage();
+                    }
+                }
+                else if (album.getName().toLowerCase().endsWith(".zip") || album.getName().toLowerCase().endsWith(".cbz")) {
+                    imageHandler = new ZipHandler(album);
+                    BufferedImage previewImage = imageHandler.getImage(1);
+                    if (previewImage != null) {
+                        previewComponent.setImage(previewImage);
+                    } else {
+                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for zip. album : {0}", album);
+                        previewComponent.setNoPreviewImage();
+                    }
+                }
+                else if (album.getName().toLowerCase().endsWith(".rar") || album.getName().toLowerCase().endsWith(".cbr")) {
+                    imageHandler = new RarHandler(album);
+                    BufferedImage previewImage = imageHandler.getImage(1);
+                    if (previewImage != null) {
+                        previewComponent.setImage(previewImage);
+                    } else {
+                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for rar. album : {0}", album);
+                        previewComponent.setNoPreviewImage();
+                    }
+                }
+                else if (album.getName().toLowerCase().endsWith(".pdf")) {
+                    imageHandler = new PdfHandler(album);
+                    BufferedImage previewImage = imageHandler.getImage(1);
+                    if (previewImage != null) {
+                        previewComponent.setImage(previewImage);
+                    } else {
+                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for pdf. album : {0}", album);
+                        previewComponent.setNoPreviewImage();
+                    }
+                }
+                else {
                     previewComponent.setNoPreviewImage();
                 }
-            }
-            else if (album.getName().toLowerCase().endsWith(".zip") || album.getName().toLowerCase().endsWith(".cbz")) {
-                imageHandler = new ZipHandler(album);
-                BufferedImage previewImage = imageHandler.getImage(1);
-                if (previewImage != null) {
-                    previewComponent.setImage(previewImage);
-                } else {
-                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for zip. album : {0}", album);
-                    previewComponent.setNoPreviewImage();
-                }
-            }
-            else if (album.getName().toLowerCase().endsWith(".rar") || album.getName().toLowerCase().endsWith(".cbr")) {
-                imageHandler = new RarHandler(album);
-                BufferedImage previewImage = imageHandler.getImage(1);
-                if (previewImage != null) {
-                    previewComponent.setImage(previewImage);
-                } else {
-                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for rar. album : {0}", album);
-                    previewComponent.setNoPreviewImage();
-                }
-            }
-            else if (album.getName().toLowerCase().endsWith(".pdf")) {
-                imageHandler = new PdfHandler(album);
-                BufferedImage previewImage = imageHandler.getImage(1);
-                if (previewImage != null) {
-                    previewComponent.setImage(previewImage);
-                } else {
-                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for pdf. album : {0}", album);
-                    previewComponent.setNoPreviewImage();
-                }
-            }
-            else {
-                previewComponent.setNoPreviewImage();
+            } catch (Exception ex) {
+                Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+                new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
             }
             setActionInProgress(false, null);
             Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "PreviewImageLoader");

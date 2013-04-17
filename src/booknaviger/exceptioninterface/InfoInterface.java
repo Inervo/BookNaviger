@@ -14,47 +14,80 @@ import java.util.logging.Logger;
 public class InfoInterface extends javax.swing.JDialog {
 
     private ResourceBundle resourceBundle = ResourceBundle.getBundle("booknaviger/resources/InfoInterface");
-    public final static int INFO = 0;
-    public final static int WARNING = 1;
-    @SuppressWarnings("FieldNameHidesFieldInSuperclass")
-    public final static int ERROR = 2;
 
     /**
      * Constructor. Everything is done here.
-     * @param infoType The info level {@link #INFO}, {@link #WARNING} or {@link #ERROR}
+     * @param infoLevel The info level {@link #INFO}, {@link #WARNING} or {@link #ERROR}
      * @param infoMessage The message which will be get from the properties of this class
      * @param parameters The optional parameters which must be set with the message
      */
-    public InfoInterface(int infoType, String infoMessage, Object... parameters) {
+    public InfoInterface(InfoLevel infoLevel, String infoMessage, Object... parameters) {
         super((Frame)null, false);
-        Logger.getLogger(InfoInterface.class.getName()).entering(InfoInterface.class.getName(), "InfoInterface", new Object[] {infoType, infoMessage, parameters});
+        Logger.getLogger(InfoInterface.class.getName()).entering(InfoInterface.class.getName(), "InfoInterface", new Object[] {infoLevel, infoMessage, parameters});
         initComponents();
         this.setLocationRelativeTo(this.getParent());
-        setInfo(infoType, infoMessage, parameters);
+        setInfo(infoLevel, infoMessage, parameters);
         setVisible(true);
         requestFocus();
         okButton.requestFocusInWindow();
         Logger.getLogger(InfoInterface.class.getName()).exiting(InfoInterface.class.getName(), "InfoInterface");
     }
+    
+    public static final class InfoLevel {
+        public static final InfoLevel INFO = new InfoLevel("INFO", 0);
+        public static final InfoLevel WARNING = new InfoLevel("WARNING", 1);
+        @SuppressWarnings("FieldNameHidesFieldInSuperclass")
+        public static final InfoLevel ERROR = new InfoLevel("ERROR", 2);
+        
+        private final String levelName;
+        private final int levelValue;
+        
+
+        protected InfoLevel(String levelName, int levelValue) {
+            this.levelName = levelName;
+            this.levelValue = levelValue;
+        }
+        
+        /**
+        * Get the integer value for this level.  This integer value
+        * can be used for efficient ordering comparisons between
+        * Level objects.
+        * @return the integer value for this level.
+        */
+       public final int intValue() {
+           return levelValue;
+       }
+       
+       /**
+        * Get the String value for this level.  This String value
+        * can be used for understanding the meaning of the
+        * Level objects.
+        * @return the String value for this level.
+        */
+       public final String stringValue() {
+           return levelName;
+       }
+        
+    }
 
     /**
      * Set the information of this event
-     * @param infoType The info level {@link #INFO}, {@link #WARNING} or {@link #ERROR}
+     * @param infoLevel The info level {@link #INFO}, {@link #WARNING} or {@link #ERROR}
      * @param infoMessage The message which will be get from the properties of this class
      * @param parameters The optional parameters which must be set with the message
      */
-    private void setInfo(int infoType, String infoMessage, Object... parameters) {
-        Logger.getLogger(InfoInterface.class.getName()).entering(InfoInterface.class.getName(), "InfoInterface", new Object[] {infoType, infoMessage, parameters});
-        switch (infoType) {
-            case INFO:
+    private void setInfo(InfoLevel infoLevel, String infoMessage, Object... parameters) {
+        Logger.getLogger(InfoInterface.class.getName()).entering(InfoInterface.class.getName(), "InfoInterface", new Object[] {infoLevel, infoMessage, parameters});
+        switch (infoLevel.stringValue()) {
+            case "INFO":
                 setTitle(resourceBundle.getString("infoInterface.info.title"));
                 logoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/infologos/info.png")));
                 break;
-            case WARNING:
+            case "WARNING":
                 setTitle(resourceBundle.getString("infoInterface.warning.title"));
                 logoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/infologos/warning.png")));
                 break;
-            case ERROR:
+            case "ERROR":
                 setTitle(resourceBundle.getString("infoInterface.error.title"));
                 logoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/infologos/error.png")));
                 break;
