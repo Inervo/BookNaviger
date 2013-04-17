@@ -86,6 +86,7 @@ public class ProfileDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
+        profileTable.setFillsViewportHeight(true);
         profileTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 profileTableMouseClicked(evt);

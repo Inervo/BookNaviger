@@ -515,6 +515,7 @@ public final class MainInterface extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        seriesTable.setFillsViewportHeight(true);
         seriesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         seriesTable.setShowHorizontalLines(false);
         seriesTable.setShowVerticalLines(false);
@@ -563,6 +564,7 @@ public final class MainInterface extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        albumsTable.setFillsViewportHeight(true);
         albumsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         albumsTable.setShowHorizontalLines(false);
         albumsTable.setShowVerticalLines(false);
