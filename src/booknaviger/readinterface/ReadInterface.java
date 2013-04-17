@@ -3,6 +3,7 @@
 package booknaviger.readinterface;
 
 import booknaviger.MainInterface;
+import booknaviger.exceptioninterface.InfoInterface;
 import booknaviger.macworld.MacOSXApplicationAdapter;
 import booknaviger.macworld.TrackPadAdapter;
 import booknaviger.picturehandler.AbstractImageHandler;
@@ -686,10 +687,15 @@ public class ReadInterface extends javax.swing.JFrame {
      */
     private void listPages() {
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "listPages");
-        ListPagesDialog listPagesDialog = new ListPagesDialog(this);
-        listPagesDialog.fillPagesName(imageHandler.getPagesName(), pageNbr-1);
-        listPagesDialog.setLocationRelativeTo(this);
-        listPagesDialog.setVisible(true);
+        try {
+            ListPagesDialog listPagesDialog = new ListPagesDialog(this);
+            listPagesDialog.fillPagesName(imageHandler.getPagesName(), pageNbr-1);
+            listPagesDialog.setLocationRelativeTo(this);
+            listPagesDialog.setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(ReadInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
+        }
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "listPages");
     }
     
@@ -808,32 +814,37 @@ public class ReadInterface extends javax.swing.JFrame {
      */
     private boolean readPageNbrImage(boolean usePreloadImage) {
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "readPageNbrImage", usePreloadImage);
-        if (!imageHandler.isImageInRange(pageNbr)) {
-            Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readPageNbrImage", false);
-            return false;
-        }
-        if (dualPageReadMode && !imageHandler.isImageInRange(pageNbr+1)) {
-            Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readPageNbrImage", false);
-            return false;
-        }
-        readComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // Ended in readComponent.setImage(...)
-        BufferedImage readImage = null;
-        if (usePreloadImage) {
-            readImage = imageHandler.getPreloadedImage();
-        }
-        if (readImage == null) {
-            if (dualPageReadMode) {
-                readImage = ImageReader.combine2Images(imageHandler.getImage(pageNbr), imageHandler.getImage(pageNbr+1));
-            } else {
-                readImage = imageHandler.getImage(pageNbr);
+        try {
+            if (!imageHandler.isImageInRange(pageNbr)) {
+                Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readPageNbrImage", false);
+                return false;
             }
+            if (dualPageReadMode && !imageHandler.isImageInRange(pageNbr+1)) {
+                Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readPageNbrImage", false);
+                return false;
+            }
+            readComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // Ended in readComponent.setImage(...)
+            BufferedImage readImage = null;
+            if (usePreloadImage) {
+                readImage = imageHandler.getPreloadedImage();
+            }
+            if (readImage == null) {
+                if (dualPageReadMode) {
+                    readImage = ImageReader.combine2Images(imageHandler.getImage(pageNbr), imageHandler.getImage(pageNbr+1));
+                } else {
+                    readImage = imageHandler.getImage(pageNbr);
+                }
+            }
+            if (readImage == null) {
+                readImage = new ImageReader(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/ReadComponent").getString("no_image"))).getImage()).convertImageToBufferedImage();
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "can't read image");
+            }
+            readComponent.setImage(readImage, true, readInterfaceScrollPane);
+            imageHandler.preloadNextImage(pageNbr+1, dualPageReadMode);
+        } catch (Exception ex) {
+            Logger.getLogger(ReadInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
         }
-        if (readImage == null) {
-            readImage = new ImageReader(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/ReadComponent").getString("no_image"))).getImage()).convertImageToBufferedImage();
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "can't read image");
-        }
-        readComponent.setImage(readImage, true, readInterfaceScrollPane);
-        imageHandler.preloadNextImage(pageNbr+1, dualPageReadMode);
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readPageNbrImage", true);
         return true;
     }

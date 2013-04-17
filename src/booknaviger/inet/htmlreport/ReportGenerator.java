@@ -67,34 +67,36 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
     public ReportGenerator(boolean advancedMode, File baseDir, final GenerationProgress gp) {
         super();
         Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "ReportGenerator", new Object[] {advancedMode, baseDir, gp});
-        this.advancedMode = advancedMode;
-        this.baseDir = baseDir;
-        this.generationProgressDialog = gp;
-        Logger.getLogger(ReportGenerator.class.getName()).log(Level.INFO, "Starting the html report");
-        String folder = System.getProperty("user.home");
-        if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-            folder = FileSystemView.getFileSystemView().getDefaultDirectory().toString();
-        }
-        folder = folder.concat(File.separatorChar + "HTMLReport");
-        deleteHTMLReportDirectory(new File(folder));
-        new File(folder).mkdir();
-        reportFolder = folder + File.separatorChar;
-        if (advancedMode) {
-            new File(reportFolder + "thumbnails").mkdir();
-        }
-        addPropertyChangeListener(new PropertyChangeListener() {
-
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if("progress".equals(evt.getPropertyName())) {
-                    int newValue = (Integer) evt.getNewValue();
-                    if (gp.getActionProgressBarValue() > newValue) {
-                        return;
-                    }
-                    gp.setActionProgressBarValue(newValue);
-                }
+        try {
+            this.advancedMode = advancedMode;
+            this.baseDir = baseDir;
+            this.generationProgressDialog = gp;
+            Logger.getLogger(ReportGenerator.class.getName()).log(Level.INFO, "Starting the html report");
+            String homeFolder = OSBasics.getHomeDir();
+            homeFolder = homeFolder.concat(File.separatorChar + "HTMLReport");
+            deleteHTMLReportDirectory(new File(homeFolder));
+            new File(homeFolder).mkdir();
+            reportFolder = homeFolder + File.separatorChar;
+            if (advancedMode) {
+                new File(reportFolder + "thumbnails").mkdir();
             }
-        });
+            addPropertyChangeListener(new PropertyChangeListener() {
+
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {
+                    if("progress".equals(evt.getPropertyName())) {
+                        int newValue = (Integer) evt.getNewValue();
+                        if (gp.getActionProgressBarValue() > newValue) {
+                            return;
+                        }
+                        gp.setActionProgressBarValue(newValue);
+                    }
+                }
+            });
+        } catch (Exception ex) {
+            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
+        }
         Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "ReportGenerator");
     }
 
@@ -120,41 +122,46 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
     @Override
     protected Integer doInBackground() {
         Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "doInBackground");
-        nbrOfAlbums = 0;
-        nbrOfProcessedAlbums = 0;
-        findNbrOfAlbums();
         try {
-            pageXWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(reportFolder + "index.html")), "UTF-8"));
-            cssFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(reportFolder + "style.css")), "UTF-8"));
-            createCss();
-            copyImages();
-            createHeader(pageXWriter);
-            createContent();
+            nbrOfAlbums = 0;
+            nbrOfProcessedAlbums = 0;
+            findNbrOfAlbums();
+            try {
+                pageXWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(reportFolder + "index.html")), "UTF-8"));
+                cssFileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(reportFolder + "style.css")), "UTF-8"));
+                createCss();
+                copyImages();
+                createHeader(pageXWriter);
+                createContent();
+                if (cancelAsked) {
+                    Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "doInBackground", 7);
+                    return 7;
+                }
+                createFooter();
+            } catch (FileNotFoundException | UnsupportedEncodingException ex) {
+                Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "Error with the files during the reporting", ex);
+                new InfoInterface(InfoInterface.InfoLevel.ERROR, "report-files");
+            } catch (IOException ex) {
+                Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "IO error during the reporting", ex);
+                new InfoInterface(InfoInterface.InfoLevel.ERROR, "report-IO");
+            }
+            try {
+                pageXWriter.close();
+                cssFileWriter.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "IO error while closing the report files", ex);
+                new InfoInterface(InfoInterface.InfoLevel.ERROR, "report-IO");
+            }
             if (cancelAsked) {
                 Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "doInBackground", 7);
                 return 7;
             }
-            createFooter();
-        } catch (FileNotFoundException | UnsupportedEncodingException ex) {
-            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "Error with the files during the reporting", ex);
-            new InfoInterface(InfoInterface.InfoLevel.ERROR, "report-files");
-        } catch (IOException ex) {
-            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "IO error during the reporting", ex);
-            new InfoInterface(InfoInterface.InfoLevel.ERROR, "report-IO");
+            OSBasics.openFile(reportFolder);
+            OSBasics.openURI("file://" + reportFolder.replace('\\', '/').concat("index.html"));
+        } catch (Exception ex) {
+            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
         }
-        try {
-            pageXWriter.close();
-            cssFileWriter.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, "IO error while closing the report files", ex);
-            new InfoInterface(InfoInterface.InfoLevel.ERROR, "report-IO");
-        }
-        if (cancelAsked) {
-            Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "doInBackground", 7);
-            return 7;
-        }
-        OSBasics.openFile(reportFolder);
-        OSBasics.openURI("file://" + reportFolder.replace('\\', '/').concat("index.html"));
         Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "doInBackground", 0);
         return 0;
     }

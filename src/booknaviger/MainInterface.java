@@ -209,10 +209,15 @@ public final class MainInterface extends javax.swing.JFrame {
 
             @Override
             public void run() {
-                Updater updater = new Updater();
-                if (updater.isNewVersionAvailable()) {
-                    Logger.getLogger(MainInterface.class.getName()).log(Level.FINE, "A new version is available. Showing info interface");
-                    new NewUpdateAvailableDialog(MainInterface.getInstance(), updater.getVersionNumber(), updater.getDownloadURLString()).setVisible(true);
+                try {
+                    Updater updater = new Updater();
+                    if (updater.isNewVersionAvailable()) {
+                        Logger.getLogger(MainInterface.class.getName()).log(Level.FINE, "A new version is available. Showing info interface");
+                        new NewUpdateAvailableDialog(MainInterface.getInstance(), updater.getVersionNumber(), updater.getDownloadURLString()).setVisible(true);
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+                    new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
                 }
                 Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "checkForNewVersion");
             }
@@ -1043,14 +1048,19 @@ public final class MainInterface extends javax.swing.JFrame {
      */
     private void restartInterface() {
         Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "restartInterface");
-        this.setVisible(false);
-        this.dispose();
-        reinitializeMainInterface();
-        MainInterface.getInstance().setVisible(true);
-        MainInterface.getInstance().changeSelectedBook(PropertiesManager.getInstance().getKey("lastSelectedSerie"), PropertiesManager.getInstance().getKey("lastSelectedAlbum")).start();
-        LogInterface.getInstance().dispose();
-        LogInterface.reinitializeLogInterface();
-        ExceptionHandler.reinitializeLogInterfaceLink();
+        try {
+            this.setVisible(false);
+            this.dispose();
+            reinitializeMainInterface();
+            MainInterface.getInstance().setVisible(true);
+            MainInterface.getInstance().changeSelectedBook(PropertiesManager.getInstance().getKey("lastSelectedSerie"), PropertiesManager.getInstance().getKey("lastSelectedAlbum")).start();
+            LogInterface.getInstance().dispose();
+            LogInterface.reinitializeLogInterface();
+            ExceptionHandler.reinitializeLogInterfaceLink();
+        } catch (Exception ex) {
+            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
+        }
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "restartInterface");
     }
     
@@ -1108,36 +1118,10 @@ public final class MainInterface extends javax.swing.JFrame {
             public void run() {
                 Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "changeSelectedBookThread");
                 try {
-                    while (firstLaunch) {                    
-                        Thread.sleep(1);
-                    }
-                    if (actionThread != null) {
-                        if (actionThread.getState() != Thread.State.TERMINATED) {
-                            actionThread.join();
-                        }
-                    }
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                if (serieToSelect != null) {
-                    serie = new File(serieToSelect);
-                    if (!serie.exists()) {
-                        Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The serie to select doesn't exist : {0}", serie);
-                        serie = null;
-                        album = null;
-                        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBookThread");
-                        return;
-                    }
-                    Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Selecting the serie : {0}", serie);
-                    for (int i = 0; i < seriesTable.getRowCount(); i++) {
-                        String rowValue = (String) seriesTable.getValueAt(i, 0);
-                        if (rowValue.equals(serie.getName())) {
-                            seriesTable.getSelectionModel().setSelectionInterval(i, i);
-                            seriesTable.scrollRectToVisible(seriesTable.getCellRect(i, 0, true));
-                            break;
-                        }
-                    }
                     try {
+                        while (firstLaunch) {                    
+                            Thread.sleep(1);
+                        }
                         if (actionThread != null) {
                             if (actionThread.getState() != Thread.State.TERMINATED) {
                                 actionThread.join();
@@ -1146,26 +1130,57 @@ public final class MainInterface extends javax.swing.JFrame {
                     } catch (InterruptedException ex) {
                         Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    if (albumToSelect == null) {
-                        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBookThread");
-                        return;
-                    }
-                    album = new File(albumToSelect);
-                    if (!album.exists()) {
-                        Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The album to select doesn't exist : {0}", album);
-                        album = null;
-                        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBookThread");
-                        return;
-                    }
-                    Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Selecting the album : {0}", album);
-                    for (int i = 0; i < albumsTable.getRowCount(); i++) {
-                        String rowValue = (String) albumsTable.getValueAt(i, 0) + albumsTable.getValueAt(i, 1);
-                        if (rowValue.equals(album.getName())) {
-                            albumsTable.getSelectionModel().setSelectionInterval(i, i);
-                            albumsTable.scrollRectToVisible(albumsTable.getCellRect(i, 0, true));
-                            break;
+                    if (serieToSelect != null) {
+                        serie = new File(serieToSelect);
+                        if (!serie.exists()) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The serie to select doesn't exist : {0}", serie);
+                            serie = null;
+                            album = null;
+                            Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBookThread");
+                            return;
+                        }
+                        Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Selecting the serie : {0}", serie);
+                        for (int i = 0; i < seriesTable.getRowCount(); i++) {
+                            String rowValue = (String) seriesTable.getValueAt(i, 0);
+                            if (rowValue.equals(serie.getName())) {
+                                seriesTable.getSelectionModel().setSelectionInterval(i, i);
+                                seriesTable.scrollRectToVisible(seriesTable.getCellRect(i, 0, true));
+                                break;
+                            }
+                        }
+                        try {
+                            if (actionThread != null) {
+                                if (actionThread.getState() != Thread.State.TERMINATED) {
+                                    actionThread.join();
+                                }
+                            }
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        if (albumToSelect == null) {
+                            Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBookThread");
+                            return;
+                        }
+                        album = new File(albumToSelect);
+                        if (!album.exists()) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The album to select doesn't exist : {0}", album);
+                            album = null;
+                            Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBookThread");
+                            return;
+                        }
+                        Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Selecting the album : {0}", album);
+                        for (int i = 0; i < albumsTable.getRowCount(); i++) {
+                            String rowValue = (String) albumsTable.getValueAt(i, 0) + albumsTable.getValueAt(i, 1);
+                            if (rowValue.equals(album.getName())) {
+                                albumsTable.getSelectionModel().setSelectionInterval(i, i);
+                                albumsTable.scrollRectToVisible(albumsTable.getCellRect(i, 0, true));
+                                break;
+                            }
                         }
                     }
+                } catch (Exception ex) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+                    new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
                 }
             }
         });
@@ -1179,16 +1194,21 @@ public final class MainInterface extends javax.swing.JFrame {
     public void refreshProfilesList() {
         Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "refreshProfilesList");
         Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Refresh the profiles list items and combo box");
-        refreshProfileComboBox();
-        refreshProfileRadioButtonMenuItem();
-        if (booksDirectory == null) {
-            if (!profiles.getCurrentProfileFolder().equals("")) {
+        try {
+            refreshProfileComboBox();
+            refreshProfileRadioButtonMenuItem();
+            if (booksDirectory == null) {
+                if (!profiles.getCurrentProfileFolder().equals("")) {
+                    booksDirectory = new File(profiles.getCurrentProfileFolder());
+                    listSeries();
+                }
+            } else if (!booksDirectory.toString().equals(profiles.getCurrentProfileFolder())) {
                 booksDirectory = new File(profiles.getCurrentProfileFolder());
                 listSeries();
             }
-        } else if (!booksDirectory.toString().equals(profiles.getCurrentProfileFolder())) {
-            booksDirectory = new File(profiles.getCurrentProfileFolder());
-            listSeries();
+        } catch (Exception ex) {
+            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
         }
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "refreshProfilesList");
     }
@@ -1253,46 +1273,51 @@ public final class MainInterface extends javax.swing.JFrame {
             @Override
             public void run() {
                 Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Refreshing the serie list");
-                serie = null;
-                album = null;
-                
-                final DefaultTableModel seriesTableModel = (DefaultTableModel) seriesTable.getModel();
-                final DefaultTableModel albumsTableModel = (DefaultTableModel) albumsTable.getModel();
                 try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
+                    serie = null;
+                    album = null;
 
-                        @Override
-                        public void run() {
-                            seriesTableModel.setRowCount(0);
-                            albumsTableModel.setRowCount(0);
-                        }
-                    });
-                } catch (InterruptedException | InvocationTargetException ex) {
-                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                Object[][] seriesData =  new BooksFolderAnalyser(booksDirectory).listSeries();
-                if (seriesData == null) {
-                    Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The profile folder doesn't exist or can't be read : {0}", booksDirectory);
-                    firstLaunch = false;
-                    setActionInProgress(false, null);
-                    Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listSeries");
-                    return;
-                }
-                for (final Object[] serieData : seriesData) {
-                    Thread tampon = new Thread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            seriesTableModel.addRow(new Object[]{serieData[0], serieData[1]});
-                        }
-                    });
+                    final DefaultTableModel seriesTableModel = (DefaultTableModel) seriesTable.getModel();
+                    final DefaultTableModel albumsTableModel = (DefaultTableModel) albumsTable.getModel();
                     try {
-                        SwingUtilities.invokeAndWait(tampon);
+                        SwingUtilities.invokeAndWait(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                seriesTableModel.setRowCount(0);
+                                albumsTableModel.setRowCount(0);
+                            }
+                        });
                     } catch (InterruptedException | InvocationTargetException ex) {
                         Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    Object[][] seriesData =  new BooksFolderAnalyser(booksDirectory).listSeries();
+                    if (seriesData == null) {
+                        Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The profile folder doesn't exist or can't be read : {0}", booksDirectory);
+                        firstLaunch = false;
+                        setActionInProgress(false, null);
+                        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listSeries");
+                        return;
+                    }
+                    for (final Object[] serieData : seriesData) {
+                        Thread tampon = new Thread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                seriesTableModel.addRow(new Object[]{serieData[0], serieData[1]});
+                            }
+                        });
+                        try {
+                            SwingUtilities.invokeAndWait(tampon);
+                        } catch (InterruptedException | InvocationTargetException ex) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    firstLaunch = false;
+                } catch (Exception ex) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+                    new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
                 }
-                firstLaunch = false;
                 setActionInProgress(false, null);
                 Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listSeries");
             }
@@ -1318,69 +1343,74 @@ public final class MainInterface extends javax.swing.JFrame {
             @Override
             public void run() {
                 Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Refreshing the album list");
-                threadedPreviewLoader.stop();
-                serie = null;
-                album = null;
-                while (threadedPreviewLoader.isAlive()) {
-                    try {
-                    Thread.sleep(1);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-                serie = new File(booksDirectory.toString() + File.separator + seriesTable.getValueAt(selectedRow, 0).toString());
-                if (!serie.exists()) {
-                    Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The serie folder doesn't exist : {0}", serie);
-                    setActionInProgress(false, null);
-                    Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listAlbums");
-                    return;
-                }
-                Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Serie \"{0}\" Selected", serie);
-                final DefaultTableModel albumsTableModel = (DefaultTableModel) albumsTable.getModel();
                 try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            albumsTableModel.setRowCount(0);
+                    threadedPreviewLoader.stop();
+                    serie = null;
+                    album = null;
+                    while (threadedPreviewLoader.isAlive()) {
+                        try {
+                        Thread.sleep(1);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                         }
-                    });
-                } catch (InterruptedException | InvocationTargetException ex) {
-                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                previewComponent.setNoPreviewImage();
-                String[][] albumsData = new BooksFolderAnalyser(serie).listAlbums();
-                if (albumsData == null) {
-                    setActionInProgress(false, null);
-                    Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listAlbums");
-                    return;
-                }
-                for (final String[] albumData : albumsData) {
-                    Thread tampon = new Thread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            albumsTableModel.addRow(new Object[]{albumData[0], albumData[1]});
-                        }
-                    });
+                    }
+                    serie = new File(booksDirectory.toString() + File.separator + seriesTable.getValueAt(selectedRow, 0).toString());
+                    if (!serie.exists()) {
+                        Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The serie folder doesn't exist : {0}", serie);
+                        setActionInProgress(false, null);
+                        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listAlbums");
+                        return;
+                    }
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Serie \"{0}\" Selected", serie);
+                    final DefaultTableModel albumsTableModel = (DefaultTableModel) albumsTable.getModel();
                     try {
-                    SwingUtilities.invokeAndWait(tampon);
+                        SwingUtilities.invokeAndWait(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                albumsTableModel.setRowCount(0);
+                            }
+                        });
+                    } catch (InterruptedException | InvocationTargetException ex) {
+                        Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    previewComponent.setNoPreviewImage();
+                    String[][] albumsData = new BooksFolderAnalyser(serie).listAlbums();
+                    if (albumsData == null) {
+                        setActionInProgress(false, null);
+                        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listAlbums");
+                        return;
+                    }
+                    for (final String[] albumData : albumsData) {
+                        Thread tampon = new Thread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                albumsTableModel.addRow(new Object[]{albumData[0], albumData[1]});
+                            }
+                        });
+                        try {
+                        SwingUtilities.invokeAndWait(tampon);
+                        } catch (InterruptedException | InvocationTargetException ex) {
+                            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }       
+                    try {
+                        SwingUtilities.invokeAndWait(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                if (albumsTableModel.getRowCount() != 0) {
+                                    albumsTable.getSelectionModel().setSelectionInterval(0, 0);
+                                }
+                            }
+                        });
                     } catch (InterruptedException | InvocationTargetException ex) {
                         Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                     }
-                }       
-                try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            if (albumsTableModel.getRowCount() != 0) {
-                                albumsTable.getSelectionModel().setSelectionInterval(0, 0);
-                            }
-                        }
-                    });
-                } catch (InterruptedException | InvocationTargetException ex) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+                    new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
                 }
                 setActionInProgress(false, null);
                 Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "listAlbums");
@@ -1443,13 +1473,18 @@ public final class MainInterface extends javax.swing.JFrame {
                     readInterface.setVisible(false);
                     readInterface.dispose();
                 }
-                readInterface = new ReadInterface(imageHandler);
-                readInterface.setVisible(true);
-                readInterface.requestFocus();
-                readInterface.revalidate();
-                readInterface.goPage(page);
-                PropertiesManager.getInstance().setKey("lastReadedSerie", serie.toString());
-                PropertiesManager.getInstance().setKey("lastReadedAlbum", album.toString());
+                try {
+                    readInterface = new ReadInterface(imageHandler);
+                    readInterface.setVisible(true);
+                    readInterface.requestFocus();
+                    readInterface.revalidate();
+                    readInterface.goPage(page);
+                    PropertiesManager.getInstance().setKey("lastReadedSerie", serie.toString());
+                    PropertiesManager.getInstance().setKey("lastReadedAlbum", album.toString());
+                } catch (Exception ex) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+                    new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
+                }
                 Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "launchReadInterface");
             }
         }).start();

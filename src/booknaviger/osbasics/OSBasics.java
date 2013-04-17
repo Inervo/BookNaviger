@@ -12,6 +12,7 @@ import java.net.URISyntaxException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.filechooser.FileSystemView;
 
 /**
  * @author Inervo
@@ -83,6 +84,21 @@ public class OSBasics {
         Logger.getLogger(OSBasics.class.getName()).log(Level.CONFIG, "Appdir is \"{0}\"", appDataDir.toString());
         Logger.getLogger(OSBasics.class.getName()).exiting(OSBasics.class.getName(), "getAppDataDir", appDataDir.toString());
         return appDataDir.toString();
+    }
+    
+    /**
+     * Retreive the home folder
+     * @return The path to the folder
+     */
+    public static String getHomeDir() {
+        Logger.getLogger(OSBasics.class.getName()).entering(OSBasics.class.getName(), "getHomeDir");
+        String folder = System.getProperty("user.home");
+        if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+            folder = FileSystemView.getFileSystemView().getDefaultDirectory().toString();
+        }
+        Logger.getLogger(OSBasics.class.getName()).log(Level.CONFIG, "HomeDir is \"{0}\"", folder);
+        Logger.getLogger(OSBasics.class.getName()).exiting(OSBasics.class.getName(), "getHomeDir", folder);
+        return folder;
     }
 
 }

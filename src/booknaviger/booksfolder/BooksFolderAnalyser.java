@@ -36,41 +36,48 @@ public class BooksFolderAnalyser {
      */
     public Object[][] listSeries() {
         Logger.getLogger(BooksFolderAnalyser.class.getName()).entering(BooksFolderAnalyser.class.getName(), "listSeries");
-        File[] allfiles = null;
-        if (booksDirectory == null || !booksDirectory.exists()) {
-            Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listSeries", null);
-            return null;
-        }
         try {
-            allfiles = booksDirectory.listFiles(new FileFilter() {
-
-                @Override
-                public boolean accept(File pathname) {
-                    if (pathname.isDirectory() && !pathname.isHidden()) {
-                        return true;
-                    }
-                    return false;
-                }
-            });
-        } catch(SecurityException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            new InfoInterface(InfoInterface.InfoLevel.ERROR, "rights", booksDirectory);
-        }
-        if (allfiles == null) {
-            Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listSeries", null);
-            return null;
-        }
-        Arrays.sort(allfiles);
-        final File[] allFilesValue = allfiles;
-        List<Object[]> series = new ArrayList<>();
-        for (int i = 0; allFilesValue.length > i; i++) {
-            File[] albumsFiles = new BooksFolderAnalyser(allFilesValue[i]).listAlbumsFiles();
-            if (albumsFiles != null) {
-                series.add(new Object[] {allFilesValue[i].getName(), albumsFiles.length});
+            File[] allfiles = null;
+            if (booksDirectory == null || !booksDirectory.exists()) {
+                Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listSeries", null);
+                return null;
             }
+            try {
+                allfiles = booksDirectory.listFiles(new FileFilter() {
+
+                    @Override
+                    public boolean accept(File pathname) {
+                        if (pathname.isDirectory() && !pathname.isHidden()) {
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+            } catch(SecurityException ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                new InfoInterface(InfoInterface.InfoLevel.ERROR, "rights", booksDirectory);
+            }
+            if (allfiles == null) {
+                Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listSeries", null);
+                return null;
+            }
+            Arrays.sort(allfiles);
+            final File[] allFilesValue = allfiles;
+            List<Object[]> series = new ArrayList<>();
+            for (int i = 0; allFilesValue.length > i; i++) {
+                File[] albumsFiles = new BooksFolderAnalyser(allFilesValue[i]).listAlbumsFiles();
+                if (albumsFiles != null) {
+                    series.add(new Object[] {allFilesValue[i].getName(), albumsFiles.length});
+                }
+            }
+            Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listSeries", series.toArray(new Object[0][0]));
+            return series.toArray(new Object[0][0]);
+        } catch (Exception ex) {
+            Logger.getLogger(BooksFolderAnalyser.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
         }
-        Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listSeries", series.toArray(new Object[0][0]));
-        return series.toArray(new Object[0][0]);
+        Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listSeries", new Object[][] {});
+        return new Object[0][0];
     }
     
     /**
@@ -79,26 +86,33 @@ public class BooksFolderAnalyser {
      */
     public String[][] listAlbums() {
         Logger.getLogger(BooksFolderAnalyser.class.getName()).entering(BooksFolderAnalyser.class.getName(), "listAlbums");
-        File[] allfiles = listAlbumsFiles();
-        if (allfiles == null) {
-            Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listAlbums", null);
-            return null;
-        }
-        Arrays.sort(allfiles);
-        final File[] allFilesValue = allfiles;
-        final List<String[]> albums = new ArrayList<>();
-        for (int i = 0; i < allFilesValue.length; i++) {
-            if (allFilesValue[i].isDirectory()) {
-                albums.add(new String [] {allFilesValue[i].getName(), ""});
+        try {
+            File[] allfiles = listAlbumsFiles();
+            if (allfiles == null) {
+                Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listAlbums", null);
+                return null;
             }
-            else {
-                String albumFullName = allFilesValue[i].getName();
-                int indexOfExtension = albumFullName.lastIndexOf(".");
-                albums.add(new String [] {albumFullName.substring(0, indexOfExtension), albumFullName.substring(indexOfExtension)});
-           }
+            Arrays.sort(allfiles);
+            final File[] allFilesValue = allfiles;
+            final List<String[]> albums = new ArrayList<>();
+            for (int i = 0; i < allFilesValue.length; i++) {
+                if (allFilesValue[i].isDirectory()) {
+                    albums.add(new String [] {allFilesValue[i].getName(), ""});
+                }
+                else {
+                    String albumFullName = allFilesValue[i].getName();
+                    int indexOfExtension = albumFullName.lastIndexOf(".");
+                    albums.add(new String [] {albumFullName.substring(0, indexOfExtension), albumFullName.substring(indexOfExtension)});
+               }
+            }
+            Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listAlbums", albums.toArray(new String[0][0]));
+            return albums.toArray(new String[0][0]);
+        } catch (Exception ex) {
+            Logger.getLogger(BooksFolderAnalyser.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
         }
-        Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listAlbums");
-        return albums.toArray(new String[0][0]);
+        Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listAlbums", new String[0][0]);
+        return new String[0][0];
     }
    
     /**
@@ -107,30 +121,37 @@ public class BooksFolderAnalyser {
      */
     public File[] listAlbumsFiles() {
         Logger.getLogger(BooksFolderAnalyser.class.getName()).entering(BooksFolderAnalyser.class.getName(), "listAlbumsFiles");
-        if (booksDirectory == null || !booksDirectory.exists()) {
-            Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listAlbumsFiles", null);
-            return null;
-        }
-        File[] allFiles = null;
         try {
-            allFiles = booksDirectory.listFiles(new FileFilter() {
+            if (booksDirectory == null || !booksDirectory.exists()) {
+                Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listAlbumsFiles", null);
+                return null;
+            }
+            File[] allFiles = null;
+            try {
+                allFiles = booksDirectory.listFiles(new FileFilter() {
 
-                @Override
-                public boolean accept(File pathname) {
-                    if (!pathname.isHidden() && (pathname.isDirectory() || pathname.getName().toLowerCase().endsWith(".zip")
-                            || pathname.getName().toLowerCase().endsWith(".cbz") || pathname.getName().toLowerCase().endsWith(".rar")
-                            || pathname.getName().toLowerCase().endsWith(".cbr") || pathname.getName().toLowerCase().endsWith(".pdf"))) {
-                        return true;
+                    @Override
+                    public boolean accept(File pathname) {
+                        if (!pathname.isHidden() && (pathname.isDirectory() || pathname.getName().toLowerCase().endsWith(".zip")
+                                || pathname.getName().toLowerCase().endsWith(".cbz") || pathname.getName().toLowerCase().endsWith(".rar")
+                                || pathname.getName().toLowerCase().endsWith(".cbr") || pathname.getName().toLowerCase().endsWith(".pdf"))) {
+                            return true;
+                        }
+                        return false;
                     }
-                    return false;
-                }
-            });
-        } catch(SecurityException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            new InfoInterface(InfoInterface.InfoLevel.ERROR, "rights", booksDirectory);
+                });
+            } catch(SecurityException ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                new InfoInterface(InfoInterface.InfoLevel.ERROR, "rights", booksDirectory);
+            }
+            Logger.getLogger(BooksFolderAnalyser.class.getName()).entering(BooksFolderAnalyser.class.getName(), "listAlbumsFiles", allFiles);
+            return allFiles;
+        } catch (Exception ex) {
+            Logger.getLogger(BooksFolderAnalyser.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+            new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
         }
-        Logger.getLogger(BooksFolderAnalyser.class.getName()).entering(BooksFolderAnalyser.class.getName(), "listAlbumsFiles", allFiles);
-        return allFiles;
+        Logger.getLogger(BooksFolderAnalyser.class.getName()).entering(BooksFolderAnalyser.class.getName(), "listAlbumsFiles", null);
+        return null;
     }
     
 }
