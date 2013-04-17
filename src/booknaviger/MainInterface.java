@@ -133,7 +133,7 @@ public final class MainInterface extends javax.swing.JFrame {
      */
     private void macInit() {
         Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "macInit");
-        if (MacOSXApplicationAdapter.isMac()) {
+        if (OSBasics.isMac()) {
             new MacOSXApplicationAdapter(this);
         }
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "macInit");
@@ -328,6 +328,7 @@ public final class MainInterface extends javax.swing.JFrame {
         aboutMenuItem = new javax.swing.JMenuItem();
 
         aboutDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        aboutDialog.setLocationRelativeTo(null);
 
         closeAboutDialogButton.setText("Close");
         closeAboutDialogButton.addActionListener(new java.awt.event.ActionListener() {
@@ -515,6 +516,7 @@ public final class MainInterface extends javax.swing.JFrame {
             }
         });
         seriesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        seriesTable.setShowHorizontalLines(false);
         seriesTable.setShowVerticalLines(false);
         seriesTable.getTableHeader().setReorderingAllowed(false);
         seriesTable.getColumnModel().getColumn(0).setHeaderValue(resourceBundle.getString("seriesTable.title"));

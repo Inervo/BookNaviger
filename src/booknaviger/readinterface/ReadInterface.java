@@ -4,14 +4,15 @@ package booknaviger.readinterface;
 
 import booknaviger.MainInterface;
 import booknaviger.exceptioninterface.InfoInterface;
-import booknaviger.macworld.MacOSXApplicationAdapter;
 import booknaviger.macworld.TrackPadAdapter;
+import booknaviger.osbasics.OSBasics;
 import booknaviger.picturehandler.AbstractImageHandler;
 import booknaviger.picturehandler.ImageReader;
 import booknaviger.properties.PropertiesManager;
 import java.awt.AWTException;
 import java.awt.Cursor;
 import java.awt.SystemTray;
+import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +24,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 
 /**
  * Form of the reading interface
@@ -46,8 +48,8 @@ public class ReadInterface extends javax.swing.JFrame {
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "ReadInterface", abstractImageHandler);
         this.imageHandler = abstractImageHandler;
         initComponents();
-        if (MacOSXApplicationAdapter.isMac()) {
-            tpa = new TrackPadAdapter(this); // TODO : don't work !! WHYYYYY ???
+        if (OSBasics.isMac()) {
+            tpa = new TrackPadAdapter(this);
             tpa.addListenerOn(getRootPane());
         }
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "ReadInterface");
@@ -97,6 +99,7 @@ public class ReadInterface extends javax.swing.JFrame {
         navigationReadInterfaceMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/navigate.png"))); // NOI18N
         navigationReadInterfaceMenu.setText(resourceBundle.getString("navigateReadInterfaceMenu")); // NOI18N
 
+        previousPageReadInterfaceMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_LEFT, 0));
         previousPageReadInterfaceMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/previousPage.png"))); // NOI18N
         previousPageReadInterfaceMenuItem.setText(resourceBundle.getString("previousPageReadInterfaceMenuItemText")); // NOI18N
         previousPageReadInterfaceMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -106,6 +109,7 @@ public class ReadInterface extends javax.swing.JFrame {
         });
         navigationReadInterfaceMenu.add(previousPageReadInterfaceMenuItem);
 
+        nextPageReadInterfaceMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0));
         nextPageReadInterfaceMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/nextPage.png"))); // NOI18N
         nextPageReadInterfaceMenuItem.setText(resourceBundle.getString("nextPageReadInterfaceMenuItemText")); // NOI18N
         nextPageReadInterfaceMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -116,6 +120,7 @@ public class ReadInterface extends javax.swing.JFrame {
         navigationReadInterfaceMenu.add(nextPageReadInterfaceMenuItem);
         navigationReadInterfaceMenu.add(navigationReadInterfaceSeparator1);
 
+        tenPagesBeforeReadInterfaceMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_UP, 0));
         tenPagesBeforeReadInterfaceMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/previous10.png"))); // NOI18N
         tenPagesBeforeReadInterfaceMenuItem.setText(resourceBundle.getString("tenPagesBeforeReadInterfaceMenuItemText")); // NOI18N
         tenPagesBeforeReadInterfaceMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -125,6 +130,7 @@ public class ReadInterface extends javax.swing.JFrame {
         });
         navigationReadInterfaceMenu.add(tenPagesBeforeReadInterfaceMenuItem);
 
+        tenPagesAfterReadInterfaceMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_DOWN, 0));
         tenPagesAfterReadInterfaceMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/next10.png"))); // NOI18N
         tenPagesAfterReadInterfaceMenuItem.setText(resourceBundle.getString("tenPagesAfterReadInterfaceMenuItemText")); // NOI18N
         tenPagesAfterReadInterfaceMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -135,6 +141,7 @@ public class ReadInterface extends javax.swing.JFrame {
         navigationReadInterfaceMenu.add(tenPagesAfterReadInterfaceMenuItem);
         navigationReadInterfaceMenu.add(navigationReadInterfaceSeparator2);
 
+        firstPageReadInterfaceMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_HOME, 0));
         firstPageReadInterfaceMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/homePage.png"))); // NOI18N
         firstPageReadInterfaceMenuItem.setText(resourceBundle.getString("firstPageReadInterfaceMenuItemText")); // NOI18N
         firstPageReadInterfaceMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -144,6 +151,7 @@ public class ReadInterface extends javax.swing.JFrame {
         });
         navigationReadInterfaceMenu.add(firstPageReadInterfaceMenuItem);
 
+        lastPageReadInterfaceMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_END, 0));
         lastPageReadInterfaceMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/endPage.png"))); // NOI18N
         lastPageReadInterfaceMenuItem.setText(resourceBundle.getString("lastPageReadInterfaceMenuItemText")); // NOI18N
         lastPageReadInterfaceMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -154,6 +162,7 @@ public class ReadInterface extends javax.swing.JFrame {
         navigationReadInterfaceMenu.add(lastPageReadInterfaceMenuItem);
         navigationReadInterfaceMenu.add(navigationReadInterfaceSeparator3);
 
+        listPagesReadInterfaceMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, 0));
         listPagesReadInterfaceMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/listOfPages.png"))); // NOI18N
         listPagesReadInterfaceMenuItem.setText(resourceBundle.getString("listPagesReadInterfaceMenuItemText")); // NOI18N
         listPagesReadInterfaceMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -171,6 +180,7 @@ public class ReadInterface extends javax.swing.JFrame {
         zoomMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/zoom.png"))); // NOI18N
         zoomMenu.setText(resourceBundle.getString("zoomReadInterfaceMenuText")); // NOI18N
 
+        zoomDefaultReadInterfaceMenuItem.setAccelerator(KeyStroke.getKeyStroke('0'));
         zoomDefaultReadInterfaceMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/normalZoom.png"))); // NOI18N
         zoomDefaultReadInterfaceMenuItem.setText(resourceBundle.getString("zoomDefaultReadInterfaceMenuItemText")); // NOI18N
         zoomDefaultReadInterfaceMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -180,6 +190,7 @@ public class ReadInterface extends javax.swing.JFrame {
         });
         zoomMenu.add(zoomDefaultReadInterfaceMenuItem);
 
+        zoomInReadInterfaceMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PLUS, 0));
         zoomInReadInterfaceMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/zoomIn.png"))); // NOI18N
         zoomInReadInterfaceMenuItem.setText(resourceBundle.getString("zoomInReadInterfaceMenuItemText")); // NOI18N
         zoomInReadInterfaceMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -189,6 +200,7 @@ public class ReadInterface extends javax.swing.JFrame {
         });
         zoomMenu.add(zoomInReadInterfaceMenuItem);
 
+        zoomOutReadInterfaceMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_MINUS, 0));
         zoomOutReadInterfaceMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/zoomOut.png"))); // NOI18N
         zoomOutReadInterfaceMenuItem.setText(resourceBundle.getString("zoomOutReadInterfaceMenuItemText")); // NOI18N
         zoomOutReadInterfaceMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -199,6 +211,7 @@ public class ReadInterface extends javax.swing.JFrame {
         zoomMenu.add(zoomOutReadInterfaceMenuItem);
         zoomMenu.add(zoomSeparator);
 
+        fitHorizontallyReadInterfaceCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, 0));
         fitHorizontallyReadInterfaceCheckBoxMenuItem.setText(resourceBundle.getString("fitHorizontallyReadInterfaceMenuItemText")); // NOI18N
         fitHorizontallyReadInterfaceCheckBoxMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/fitHorizontal.png"))); // NOI18N
         fitHorizontallyReadInterfaceCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -208,6 +221,7 @@ public class ReadInterface extends javax.swing.JFrame {
         });
         zoomMenu.add(fitHorizontallyReadInterfaceCheckBoxMenuItem);
 
+        fitVerticallyReadInterfaceCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, 0));
         fitVerticallyReadInterfaceCheckBoxMenuItem.setText(resourceBundle.getString("fitVerticallyReadInterfaceMenuItemText")); // NOI18N
         fitVerticallyReadInterfaceCheckBoxMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/fitVertical.png"))); // NOI18N
         fitVerticallyReadInterfaceCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -222,6 +236,7 @@ public class ReadInterface extends javax.swing.JFrame {
         rotateMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/rotation.png"))); // NOI18N
         rotateMenu.setText(resourceBundle.getString("rotateReadInterfaceMenuText")); // NOI18N
 
+        rotateInitialRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, 0));
         rotateButtonGroup.add(rotateInitialRadioButtonMenuItem);
         rotateInitialRadioButtonMenuItem.setSelected(true);
         rotateInitialRadioButtonMenuItem.setText(resourceBundle.getString("rotateDefaultReadInterfaceRadioButtonMenuItemText")); // NOI18N
@@ -233,6 +248,7 @@ public class ReadInterface extends javax.swing.JFrame {
         });
         rotateMenu.add(rotateInitialRadioButtonMenuItem);
 
+        rotate90RadioButtonMenuItem.setAccelerator(Locale.getDefault().getLanguage().equals(new Locale("fr").getLanguage()) ? KeyStroke.getKeyStroke('Q') : KeyStroke.getKeyStroke('A'));
         rotateButtonGroup.add(rotate90RadioButtonMenuItem);
         rotate90RadioButtonMenuItem.setText(resourceBundle.getString("rotate90ReadInterfaceRadioButtonMenuItemText")); // NOI18N
         rotate90RadioButtonMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/90CW.png"))); // NOI18N
@@ -243,6 +259,7 @@ public class ReadInterface extends javax.swing.JFrame {
         });
         rotateMenu.add(rotate90RadioButtonMenuItem);
 
+        rotate180RadioButtonMenuItem.setAccelerator(Locale.getDefault().getLanguage().equals(new Locale("fr").getLanguage()) ? KeyStroke.getKeyStroke('Z') : KeyStroke.getKeyStroke('W'));
         rotateButtonGroup.add(rotate180RadioButtonMenuItem);
         rotate180RadioButtonMenuItem.setText(resourceBundle.getString("rotateReverseReadInterfaceRadioButtonMenuItemText")); // NOI18N
         rotate180RadioButtonMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/180.png"))); // NOI18N
@@ -253,6 +270,7 @@ public class ReadInterface extends javax.swing.JFrame {
         });
         rotateMenu.add(rotate180RadioButtonMenuItem);
 
+        rotate270RadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, 0));
         rotateButtonGroup.add(rotate270RadioButtonMenuItem);
         rotate270RadioButtonMenuItem.setText(resourceBundle.getString("rotate270ReadInterfaceRadioButtonMenuItemText")); // NOI18N
         rotate270RadioButtonMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/90CCW.png"))); // NOI18N
@@ -265,6 +283,7 @@ public class ReadInterface extends javax.swing.JFrame {
 
         displayReadInterfaceMenu.add(rotateMenu);
 
+        doublePagesCheckBoxMenuItem.setAccelerator(KeyStroke.getKeyStroke('2'));
         doublePagesCheckBoxMenuItem.setText(resourceBundle.getString("twoPagesReadInterfaceCheckboxMenuItemText")); // NOI18N
         doublePagesCheckBoxMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/readmenu/doublePage.png"))); // NOI18N
         doublePagesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -300,7 +319,7 @@ public class ReadInterface extends javax.swing.JFrame {
         setBackground(new java.awt.Color(0, 0, 0));
         setExtendedState(MAXIMIZED_BOTH);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(0, 0));
+        setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 readInterfaceKeyPressed(evt);
@@ -387,7 +406,7 @@ public class ReadInterface extends javax.swing.JFrame {
             readComponent.zoomOut();
         } else if (evt.getKeyChar() == '+') {
             readComponent.zoomIn();
-        } else if (evt.getKeyCode() == KeyEvent.VK_0) {
+        } else if (evt.getKeyChar() == '0') {
             readComponent.normalZoom();
         } else if (Locale.getDefault().getLanguage().equals(new Locale("fr").getLanguage()) && evt.getKeyCode() == KeyEvent.VK_Z) {
             rotate180RadioButtonMenuItem.setSelected(true);
@@ -407,13 +426,15 @@ public class ReadInterface extends javax.swing.JFrame {
         } else if (evt.getKeyCode() == KeyEvent.VK_S) {
             rotateInitialRadioButtonMenuItem.setSelected(true);
             readComponent.rotateImage(0);
-        } else if (evt.getKeyCode() == KeyEvent.VK_1) {
+        } else if (evt.getKeyChar() == '1') {
             dualPageReadMode = false;
             doublePagesCheckBoxMenuItem.setSelected(false);
+            doublePagesCheckBoxMenuItem.setAccelerator(KeyStroke.getKeyStroke('2'));
             readPageNbrImage();
-        } else if (evt.getKeyCode() == KeyEvent.VK_2) {
+        } else if (evt.getKeyChar() == '2') {
             dualPageReadMode = true;
             doublePagesCheckBoxMenuItem.setSelected(true);
+            doublePagesCheckBoxMenuItem.setAccelerator(KeyStroke.getKeyStroke('1'));
             readPageNbrImage();
         } else if (evt.getKeyCode() == KeyEvent.VK_H) {
             fitHorizontallyReadInterfaceCheckBoxMenuItem.setSelected(!fitHorizontallyReadInterfaceCheckBoxMenuItem.isSelected());
@@ -530,6 +551,11 @@ public class ReadInterface extends javax.swing.JFrame {
     private void doublePagesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doublePagesCheckBoxMenuItemActionPerformed
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "doublePagesCheckBoxMenuItemActionPerformed");
         dualPageReadMode = !dualPageReadMode;
+        if (dualPageReadMode) {
+            doublePagesCheckBoxMenuItem.setAccelerator(KeyStroke.getKeyStroke('1'));
+        } else {
+            doublePagesCheckBoxMenuItem.setAccelerator(KeyStroke.getKeyStroke('2'));
+        }
         readPageNbrImage();
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "doublePagesCheckBoxMenuItemActionPerformed");
     }//GEN-LAST:event_doublePagesCheckBoxMenuItemActionPerformed

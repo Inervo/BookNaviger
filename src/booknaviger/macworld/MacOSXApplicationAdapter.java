@@ -81,16 +81,6 @@ public class MacOSXApplicationAdapter {
     }
     
     /**
-     * Check if this instance is running on a Mac OS X
-     * @return true if it's a mac<br />false otherwise
-     */
-    public static boolean isMac() {
-        Logger.getLogger(MacOSXApplicationAdapter.class.getName()).entering(MacOSXApplicationAdapter.class.getName(), "isMac");
-        Logger.getLogger(MacOSXApplicationAdapter.class.getName()).exiting(MacOSXApplicationAdapter.class.getName(), "isMac", System.getProperty("os.name").toLowerCase().startsWith("mac os x"));
-        return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
-    }
-    
-    /**
      * Set the properties for the mac interface
      */
     public static void setMacInterfaceAndCommands() {

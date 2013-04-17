@@ -28,6 +28,7 @@ public class ListPagesDialog extends javax.swing.JDialog {
         Logger.getLogger(ListPagesDialog.class.getName()).entering(ListPagesDialog.class.getName(), "ListPagesDialog");
         this.readInterface = readInterface;
         initComponents();
+        setLocationRelativeTo(null);
         Logger.getLogger(ListPagesDialog.class.getName()).exiting(ListPagesDialog.class.getName(), "ListPagesDialog");
     }
     

@@ -6,6 +6,7 @@ package booknaviger;
 import booknaviger.exceptioninterface.ExceptionHandler;
 import booknaviger.exceptioninterface.InfoInterface;
 import booknaviger.macworld.MacOSXApplicationAdapter;
+import booknaviger.osbasics.OSBasics;
 import booknaviger.properties.PropertiesManager;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -49,7 +50,7 @@ public class BookNaviger {
     private static void preInterface() {
         Logger.getLogger(BookNaviger.class.getName()).entering(BookNaviger.class.getName(), "preInterface");
         try {
-            if (MacOSXApplicationAdapter.isMac()) {
+            if (OSBasics.isMac()) {
                 MacOSXApplicationAdapter.setMacInterfaceAndCommands();
             }
             try {

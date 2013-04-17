@@ -20,6 +20,9 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="previousPageReadInterfaceMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="LEFT"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/booknaviger/resources/graphics/readmenu/previousPage.png"/>
                 </Property>
@@ -33,6 +36,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="nextPageReadInterfaceMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="RIGHT"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/booknaviger/resources/graphics/readmenu/nextPage.png"/>
                 </Property>
@@ -48,6 +54,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="tenPagesBeforeReadInterfaceMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="PAGE_UP"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/booknaviger/resources/graphics/readmenu/previous10.png"/>
                 </Property>
@@ -61,6 +70,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="tenPagesAfterReadInterfaceMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="PAGE_DOWN"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/booknaviger/resources/graphics/readmenu/next10.png"/>
                 </Property>
@@ -76,6 +88,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="firstPageReadInterfaceMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="HOME"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/booknaviger/resources/graphics/readmenu/homePage.png"/>
                 </Property>
@@ -89,6 +104,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="lastPageReadInterfaceMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="END"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/booknaviger/resources/graphics/readmenu/endPage.png"/>
                 </Property>
@@ -104,6 +122,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="listPagesReadInterfaceMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="L"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/booknaviger/resources/graphics/readmenu/listOfPages.png"/>
                 </Property>
@@ -139,6 +160,9 @@
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="zoomDefaultReadInterfaceMenuItem">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="KeyStroke.getKeyStroke(&apos;0&apos;)" type="code"/>
+                    </Property>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/booknaviger/resources/graphics/readmenu/normalZoom.png"/>
                     </Property>
@@ -152,6 +176,9 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="zoomInReadInterfaceMenuItem">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="PLUS"/>
+                    </Property>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/booknaviger/resources/graphics/readmenu/zoomIn.png"/>
                     </Property>
@@ -165,6 +192,9 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="zoomOutReadInterfaceMenuItem">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="MINUS"/>
+                    </Property>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/booknaviger/resources/graphics/readmenu/zoomOut.png"/>
                     </Property>
@@ -180,6 +210,9 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="fitHorizontallyReadInterfaceCheckBoxMenuItem">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="H"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="booknaviger/resources/ReadInterface.properties" key="fitHorizontallyReadInterfaceMenuItemText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
@@ -193,6 +226,9 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JCheckBoxMenuItem" name="fitVerticallyReadInterfaceCheckBoxMenuItem">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="V"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <ResourceString bundle="booknaviger/resources/ReadInterface.properties" key="fitVerticallyReadInterfaceMenuItemText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
@@ -218,6 +254,9 @@
               <SubComponents>
                 <MenuItem class="javax.swing.JRadioButtonMenuItem" name="rotateInitialRadioButtonMenuItem">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="S"/>
+                    </Property>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="rotateButtonGroup"/>
                     </Property>
@@ -235,6 +274,9 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JRadioButtonMenuItem" name="rotate90RadioButtonMenuItem">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="Locale.getDefault().getLanguage().equals(new Locale(&quot;fr&quot;).getLanguage()) ? KeyStroke.getKeyStroke(&apos;Q&apos;) : KeyStroke.getKeyStroke(&apos;A&apos;)" type="code"/>
+                    </Property>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="rotateButtonGroup"/>
                     </Property>
@@ -251,6 +293,9 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JRadioButtonMenuItem" name="rotate180RadioButtonMenuItem">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="Locale.getDefault().getLanguage().equals(new Locale(&quot;fr&quot;).getLanguage()) ? KeyStroke.getKeyStroke(&apos;Z&apos;) : KeyStroke.getKeyStroke(&apos;W&apos;)" type="code"/>
+                    </Property>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="rotateButtonGroup"/>
                     </Property>
@@ -267,6 +312,9 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JRadioButtonMenuItem" name="rotate270RadioButtonMenuItem">
                   <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="D"/>
+                    </Property>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="rotateButtonGroup"/>
                     </Property>
@@ -285,6 +333,9 @@
             </Menu>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="doublePagesCheckBoxMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="KeyStroke.getKeyStroke(&apos;2&apos;)" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="booknaviger/resources/ReadInterface.properties" key="twoPagesReadInterfaceCheckboxMenuItemText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
@@ -344,6 +395,9 @@
       <Connection code="MAXIMIZED_BOTH" type="code"/>
     </Property>
     <Property name="undecorated" type="boolean" value="true"/>
+    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+      <Connection code="Toolkit.getDefaultToolkit().getScreenSize()" type="code"/>
+    </Property>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
