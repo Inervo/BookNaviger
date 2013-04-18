@@ -107,7 +107,7 @@ public class ImageReader {
             Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readImage", image);
             return image;
         }
-        if (imageObject instanceof java.util.zip.InflaterInputStream) {
+        if (imageObject instanceof java.util.zip.InflaterInputStream || imageObject.getClass().getName().equals("java.util.zip.ZipFile$ZipFileInputStream")) {
             readWithInputStreamImageIO();
             Logger.getLogger(ImageReader.class.getName()).exiting(ImageReader.class.getName(), "readImage", image);
             return image;
