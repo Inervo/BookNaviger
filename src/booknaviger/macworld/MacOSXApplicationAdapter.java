@@ -5,7 +5,7 @@
 
 package booknaviger.macworld;
 
-import booknaviger.BookNavigerApp;
+import booknaviger.MainInterface;
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
 import com.apple.eawt.AppEvent.AppReOpenedEvent;
@@ -14,69 +14,80 @@ import com.apple.eawt.AppReOpenedListener;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
 import java.awt.SystemTray;
-import org.jdesktop.application.Application;
-import org.jdesktop.application.ResourceMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
+ * Class used for everything Mac OS X related
  * @author Inervo
  */
 public class MacOSXApplicationAdapter {
 
-    BookNavigerApp bna = null;
 
     /**
-     * Constructeur de l'adapteur de l'application pour Mac OS X
-     * @param bna instance de BookNavigerApp
+     * Constructor to the adapter for Mac OS X
+     * @param mainInterface instance (which could still be in construction) of mainInterface
      */
-    public MacOSXApplicationAdapter(final BookNavigerApp bna) {
-        this.bna = bna;
+    public MacOSXApplicationAdapter(final MainInterface mainInterface) {
+        Logger.getLogger(MacOSXApplicationAdapter.class.getName()).entering(MacOSXApplicationAdapter.class.getName(), "MacOSXApplicationAdapter", mainInterface);
+        Logger.getLogger(MacOSXApplicationAdapter.class.getName()).log(Level.INFO, "Binding to the Mac OS X handlers");
         com.apple.eawt.Application.getApplication().setAboutHandler(new AboutHandler() {
 
             /**
-             * Handle sur le menu about
-             * @param ae Event
+             * Handle on the about dialog
+             * @param ae About Event
              */
             @Override
             public void handleAbout(AboutEvent ae) {
-                bna.getBnv().showAboutBox();
+                MainInterface.getInstance().openAboutDialog();
             }
         });
         com.apple.eawt.Application.getApplication().setQuitHandler(new QuitHandler() {
 
             /**
-             * Handle sur le quit
-             * @param ae Event
+             * Handle on the quit menu
+             * @param ae Exit Event
              */
             @Override
             public void handleQuitRequestWith(QuitEvent qe, QuitResponse qr) {
-                bna.exit();
+                MainInterface.getInstance().exit();
             }
         });
         com.apple.eawt.Application.getApplication().addAppEventListener(new AppReOpenedListener() {
 
             /**
-             * Handle sur le fait de cliquer sur le logo de l'appli
-             * @param ae Event
+             * Handle on the reopen app
+             * @param ae reopen Event
              */
             @Override
             public void appReOpened(AppReOpenedEvent aroe) {
-                if (bna == null)
+                if (MainInterface.getInstance().isDisplayable() && !MainInterface.getInstance().isVisible()) {
+                    MainInterface.getInstance().setVisible(true);
+                }
+                if (MainInterface.getInstance().getReadInterface() == null) {
                     return;
-                if (bna.getBnv() == null)
-                    return;
-                if (bna.getBnv().getFrame().isDisplayable() && !bna.getBnv().getFrame().isVisible())
-                    bna.getBnv().getFrame().setVisible(true);
-                if (bna.getBnv().getReadView() == null)
-                    return;
-                if (bna.getBnv().getReadView().isDisplayable() && !bna.getBnv().getReadView().isVisible()) {
-                    bna.getBnv().getReadView().setVisible(true);
+                }
+                if (MainInterface.getInstance().getReadInterface().isDisplayable() && !MainInterface.getInstance().getReadInterface().isVisible()) {
+                    MainInterface.getInstance().getReadInterface().setVisible(true);
+                    MainInterface.getInstance().getReadInterface().requestFocus();
                     SystemTray sysTray = SystemTray.getSystemTray();
                     sysTray.remove(sysTray.getTrayIcons()[0]);
                 }
             }
         });
-        ResourceMap resourceMap = Application.getInstance().getContext().getResourceMap();
-        com.apple.eawt.Application.getApplication().setDockIconImage(resourceMap.getImageIcon("Application.logo").getImage());
+        com.apple.eawt.FullScreenUtilities.setWindowCanFullScreen(mainInterface, true);
+        com.apple.eawt.Application.getApplication().setDockIconImage(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/Application").getString("appLogoIcon"))).getImage());
+        Logger.getLogger(MacOSXApplicationAdapter.class.getName()).exiting(MacOSXApplicationAdapter.class.getName(), "MacOSXApplicationAdapter");
+    }
+    
+    /**
+     * Set the properties for the mac interface
+     */
+    public static void setMacInterfaceAndCommands() {
+        Logger.getLogger(MacOSXApplicationAdapter.class.getName()).entering(MacOSXApplicationAdapter.class.getName(), "setMacInterfaceAndCommands");
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "BookNaviger"); // <--Useless / --> -Xcode:name="BookNaviger"
+        System.setProperty("apple.awt.fileDialogForDirectories", "true");
+        Logger.getLogger(MacOSXApplicationAdapter.class.getName()).entering(MacOSXApplicationAdapter.class.getName(), "setMacInterfaceAndCommands");
     }
 }

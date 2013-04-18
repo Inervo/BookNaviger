@@ -4,137 +4,100 @@
  */
 package booknaviger;
 
-import booknaviger.errorhandler.KnownErrorBox;
+import booknaviger.picturehandler.ImageReader;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.MediaTracker;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-import org.jdesktop.application.Application;
 
 /**
- *
+ * This class is for the preview of an album
  * @author Inervo
  */
-public class PreviewComponent extends JComponent {
+public final class PreviewComponent extends JComponent {
 
-    private Image previewImage;
+    private BufferedImage previewImage;
     private int imageWidth;
     private int imageHeight;
-    private BookNavigerView bnv;
+    private int newWidth;
+    private int newHeight;
+    private int statusToolBarHeigh;
 
     /**
-     * Initialisation du composant
+     * Constructor. Set a no preview image by default
      */
     public PreviewComponent() {
+        Logger.getLogger(PreviewComponent.class.getName()).entering(PreviewComponent.class.getName(), "PreviewComponent");
         setNoPreviewImage();
-    }
-
-    public void setBnv(BookNavigerView bnv) {
-        this.bnv = bnv;
+        Logger.getLogger(PreviewComponent.class.getName()).exiting(PreviewComponent.class.getName(), "PreviewComponent");
     }
 
     /**
-     * Chargement de la nouvelle image pour le preview via un toolkit
-     * @param image L'Image à charger
+     * Set the heigh of the statusToolBar.<br />This is used to calculate the picture size ratio.
+     * @param statusToolBarHeigh The status toolbar heigh
      */
-    public void setImage(final Image image) {
-        final int width = image.getWidth(null);
-        final int height = image.getHeight(null);
-        final BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = bi.createGraphics();
-        g2d.drawImage(image, 0, 0, width, height, this);
-        g2d.dispose();
+    protected void setStatusToolBarHeigh(int statusToolBarHeigh) {
+        Logger.getLogger(PreviewComponent.class.getName()).entering(PreviewComponent.class.getName(), "setStatusToolBarHeigh", statusToolBarHeigh);
+        this.statusToolBarHeigh = statusToolBarHeigh;
+        Logger.getLogger(PreviewComponent.class.getName()).log(Level.CONFIG, "StatusToolBar heigh set to {0}", statusToolBarHeigh);
+        Logger.getLogger(PreviewComponent.class.getName()).exiting(PreviewComponent.class.getName(), "setStatusToolBarHeigh");
+    }
+
+    /**
+     * Define the image to preview
+     * @param image The image to preview
+     */
+    protected void setImage(final BufferedImage image) {
+        Logger.getLogger(PreviewComponent.class.getName()).entering(PreviewComponent.class.getName(), "setImage", image);
+        final int width = image.getWidth();
+        final int height = image.getHeight();
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
-                if (previewImage != null)
+                if (previewImage != null) {
                     previewImage.flush();
-                previewImage = bi;
+                }
+                Logger.getLogger(PreviewComponent.class.getName()).log(Level.INFO, "A new preview image is being set");
+                previewImage = image;
                 imageWidth = width;
                 imageHeight = height;
-                forceRepaint();
+                refresh();
+                Logger.getLogger(PreviewComponent.class.getName()).exiting(PreviewComponent.class.getName(), "setImage");
             }
         });
     }
 
     /**
-     * Chargement de la nouvelle image pour le preview via un toolkit
-     * @param imagePath Le File correspondant à l'image à charger
-     * @throws IOException
+     * Set a default image when no image is available
      */
-    public void setNewImage(File imagePath) {
-        Image tampon = Toolkit.getDefaultToolkit().createImage(imagePath.toString());
-        MediaTracker mt = new MediaTracker(this);
-        mt.addImage(tampon, 0);
-        try {
-            mt.waitForID(0);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(PreviewComponent.class.getName()).log(Level.SEVERE, "wait for image loading interrupted", ex);
-        }
-        if (tampon.getWidth(null) == -1 && tampon.getHeight(null) == -1) {
-            new KnownErrorBox(null, KnownErrorBox.ERROR_LOGO, "Error_Reading_Image", imagePath.toString());
-            setNoPreviewImage();
-            return;
-        }
-        setImage(tampon);
+    protected void setNoPreviewImage() {
+        Logger.getLogger(PreviewComponent.class.getName()).entering(PreviewComponent.class.getName(), "setNoPreviewImage");
+        Logger.getLogger(PreviewComponent.class.getName()).log(Level.INFO, "Image \"no preview image\" is being set");
+        Image image = new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/PreviewComponent").getString("no-preview_image"))).getImage();
+        setImage(new ImageReader(image).convertImageToBufferedImage());
+        Logger.getLogger(PreviewComponent.class.getName()).exiting(PreviewComponent.class.getName(), "setNoPreviewImage");
     }
-
+    
     /**
-     * Chargement de la nouvelle image pour le preview via un ImageIO.read
-     * @param imagePath Le File correspondant à l'image à charger
-     * @throws IOException
+     * Refresh the picture size, and the component size, and repaint the component
      */
-    public void setNewImageIO(File imagePath) throws IOException {
-        Image tampon = ImageIO.read(imagePath).getScaledInstance(-1, -1, 1);
-        setImage(tampon);
-    }
-
-    /**
-     * Chargement de la nouvelle image pour le preview via un ImageIO.read, puis ferme l'inputStream
-     * @param imageStream Le flux correspondant à l'image à charger
-     * @throws IOException
-     */
-    public void setNewImageStream(InputStream imageStream) throws IOException {
-        Image tampon = ImageIO.read(imageStream).getScaledInstance(-1, -1, 1);
-        imageStream.close();
-        setImage(tampon);
-    }
-
-    /**
-     * Force le composant à se faire repeindre
-     */
-    public void forceRepaint() {
-        paintComponent(getGraphics());
-    }
-
-    public final void setNoPreviewImage() {
-        setImage(Application.getInstance(BookNavigerApp.class).getContext().getResourceMap(PreviewComponent.class).getImageIcon("NoPreview.imageIcon").getImage());
-    }
-
-    @Override
-    public void paintComponent(Graphics g) {
+    protected void refresh() {
+        Logger.getLogger(PreviewComponent.class.getName()).entering(PreviewComponent.class.getName(), "refresh");
         int width = getParent().getWidth();
-        int height = getParent().getHeight() - bnv.mainToolBar.getHeight();
+        int height = getParent().getHeight() - statusToolBarHeigh;
         int maxWidth = (width / 5) + (width / 2);
-        int newWidth = 0;
-        int newHeight = 0;
 
-        if (previewImage == null)
+        if (previewImage == null) {
             return;
-
+        }
+        Logger.getLogger(PreviewComponent.class.getName()).log(Level.FINER, "Refreshing the previewComponent");
         if (imageWidth > (maxWidth)) {
             newWidth = maxWidth;
             float scale = (float) newWidth / (float) imageWidth;
@@ -154,36 +117,18 @@ public class PreviewComponent extends JComponent {
                 newHeight = (int) ((float) imageHeight * scale);
             }
         }
+        
+        this.setPreferredSize(new Dimension(newWidth, getHeight()));
+        repaint();
+        Logger.getLogger(PreviewComponent.class.getName()).exiting(PreviewComponent.class.getName(), "refresh");
+    }
 
-        /*if (imageHeight > height) {
-            newHeight = height;
-            float scale = (float) newHeight / (float) imageHeight;
-            newWidth = (int) ((float) imageWidth * scale);
-        }
-        if (imageWidth > maxWidth) {
-            newWidth = maxWidth;
-            float scale = (float) newWidth / (float) imageWidth;
-            newHeight = (int) ((float) imageHeight * scale);
-        }
-        if (newHeight > height) {
-            float scale = (float) height / (float) newHeight;
-            newHeight = height;
-            newWidth = (int) ((float) newWidth * scale);
-        }
-        if (newHeight == 0) {
-            newHeight = height;
-            float scale = (float) newHeight / (float) imageHeight;
-            newWidth = (int) ((float) imageWidth * scale);
-        }
-        if (newWidth > maxWidth) {
-            newWidth = maxWidth;
-            float scale = (float) newWidth / (float) imageWidth;
-            newHeight = (int) ((float) imageHeight * scale);
-        }*/
-
-        this.setPreferredSize(new Dimension(newWidth, newHeight));
+    @Override
+    protected void paintComponent(Graphics g) {
+        Logger.getLogger(PreviewComponent.class.getName()).entering(PreviewComponent.class.getName(), "paintComponent");
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.clearRect(0, 0, width, height);
+        g2d.setColor(getBackground());
+        g2d.fillRect(0, 0, getWidth(), getHeight());
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
         g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
@@ -192,5 +137,6 @@ public class PreviewComponent extends JComponent {
         g2d.drawImage(previewImage, 0, ((this.getHeight() - newHeight) / 2), newWidth, newHeight, this);
         g2d.dispose();
         revalidate();
+        Logger.getLogger(PreviewComponent.class.getName()).exiting(PreviewComponent.class.getName(), "paintComponent");
     }
 }
