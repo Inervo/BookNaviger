@@ -24,6 +24,7 @@ public class ProfileDialog extends javax.swing.JDialog {
         super(parent, modal);
         Logger.getLogger(ProfileDialog.class.getName()).entering(ProfileDialog.class.getName(), "ProfileDialog", new Object[] {parent, modal});
         initComponents();
+        setLocationRelativeTo(parent);
         final DefaultTableModel dtm = (DefaultTableModel) profileTable.getModel();
         for (int i = 0; i < MainInterface.getInstance().getProfiles().getProfilesCount(); i++) {
             dtm.addRow(new String[] {MainInterface.getInstance().getProfiles().getProfilesNames()[i], MainInterface.getInstance().getProfiles().getProfilesFolders()[i]});

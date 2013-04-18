@@ -328,7 +328,6 @@ public final class MainInterface extends javax.swing.JFrame {
         aboutMenuItem = new javax.swing.JMenuItem();
 
         aboutDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        aboutDialog.setLocationRelativeTo(null);
 
         closeAboutDialogButton.setText("Close");
         closeAboutDialogButton.addActionListener(new java.awt.event.ActionListener() {
@@ -852,6 +851,7 @@ public final class MainInterface extends javax.swing.JFrame {
     public void openAboutDialog() {
         Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "openAboutDialog");
         aboutDialog.pack();
+        aboutDialog.setLocationRelativeTo(this);
         aboutDialog.setVisible(true);
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "openAboutDialog");
     }
@@ -1054,6 +1054,7 @@ public final class MainInterface extends javax.swing.JFrame {
         Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "restartInterface");
         try {
             this.setVisible(false);
+            savePreferences();
             this.dispose();
             reinitializeMainInterface();
             MainInterface.getInstance().setVisible(true);

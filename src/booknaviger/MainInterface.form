@@ -12,7 +12,6 @@
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JDialog(this)"/>
-        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="aboutDialog.setLocationRelativeTo(null);"/>
       </AuxValues>
 
       <Layout>
