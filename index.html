@@ -4,7 +4,7 @@
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Booknaviger : Book reading software" />
+    <meta name="description" content="Booknaviger : A simple way to have a books library" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
@@ -19,7 +19,7 @@
           <a id="forkme_banner" href="https://github.com/Inervo/BookNaviger">View on GitHub</a>
 
           <h1 id="project_title">Booknaviger</h1>
-          <h2 id="project_tagline">Book reading software</h2>
+          <h2 id="project_tagline">A simple way to have a books library</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/Inervo/BookNaviger/zipball/master">Download this project as a .zip file</a>
@@ -31,9 +31,51 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>BookNaviger</h3>
+        <h1>Overview</h1>
 
-<p>A software to read books</p>
+<h2>What is it ?</h2>
+
+<p>BookNaviger is a software which allow you to :</p>
+
+<ul>
+<li>organize your books folder by serie and albums</li>
+<li>read theses books</li>
+</ul><h2>What does it look like</h2>
+
+<p>[SCREENSHOTS SOON]</p>
+
+<h1>More info</h1>
+
+<h2>Main features</h2>
+
+<ul>
+<li>Organize your books by series' name</li>
+<li>Organize each books album within its serie</li>
+<li>Preview the selected album</li>
+<li>Read the selected album
+
+<ul>
+<li>Rotate the picture</li>
+<li>Dual page's read mode</li>
+<li>Zoom in or out the picture, or fit to the horizontal or vertical size</li>
+</ul>
+</li>
+<li>Multi-profiles (one profile is one books' root folder)</li>
+<li>Generate a web page with the list of your books (either a simple list - just text - , or a detailed one with thumbnails of each album)</li>
+</ul><h2>Compatibility &amp; requirements</h2>
+
+<p><strong>Cross-Plateforms :</strong> BookNaviger is written in Java. It means it works (at least, it's supposed to work) everywhere that the Java Virtual Machine (JVM) is installed.
+The JVM version needed is Java 7 (you can get it <a href="http://java.com/download/index.jsp">here</a>).</p>
+
+<h3>Known bugs</h3>
+
+<p>Some bugs still exists on Mac OS X :</p>
+
+<ul>
+<li>Folders with foreign charaters (à, é, è, ë, ê, ù, ...) can't be read if the file is launched from the interface. You need to launch it from the terminal with the command <code>java -jar ./BookNaviger.jar</code>.</li>
+<li>The trackpad special mouvements (swipe, rotate, magnify) can't control the navigation anymore.
+Boths theses bugs are related to Java 7 for Mac OS X which no longer relies on Apple. Nothing i can do on my side. Wait and see...</li>
+</ul>
       </section>
     </div>
 
