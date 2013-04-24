@@ -1,8 +1,8 @@
-BookNaviger
-===========
+# Overview
+##  What is it ?
+BookNaviger is a software which allow you to :
+* organize your books folder by serie and albums
+* read theses books
 
-Book reading software
-
-(wiki, website, everything under construction)
-
-Windows / Mac OS X / Linux installers download page : http://code.google.com/p/booknaviger/downloads/list
+# Website
+http://inervo.github.io/BookNaviger/
