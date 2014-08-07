@@ -95,23 +95,19 @@ public abstract class AbstractImageHandler {
     public synchronized void preloadNextImage(final int nextPageNumber, final boolean dualPageReadMode) {
         Logger.getLogger(AbstractImageHandler.class.getName()).entering(AbstractImageHandler.class.getName(), "preloadNextImage", new Object[] {nextPageNumber, dualPageReadMode});
         preloadingInProgress = true;
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                if (preloadedImage != null) {
-                    preloadedImage.flush();
-                    preloadedImage = null;
-                }
-                Logger.getLogger(AbstractImageHandler.class.getName()).log(Level.CONFIG, "Preload page {0}", nextPageNumber);
-                if (dualPageReadMode) {
-                    preloadedImage = ImageReader.combine2Images(getImage(nextPageNumber+1), getImage(nextPageNumber+2));
-                } else {
-                    preloadedImage = getImage(nextPageNumber);
-                }
-                preloadingInProgress = false;
-                Logger.getLogger(AbstractImageHandler.class.getName()).exiting(AbstractImageHandler.class.getName(), "preloadNextImage");
+        new Thread(() -> {
+            if (preloadedImage != null) {
+                preloadedImage.flush();
+                preloadedImage = null;
             }
+            Logger.getLogger(AbstractImageHandler.class.getName()).log(Level.CONFIG, "Preload page {0}", nextPageNumber);
+            if (dualPageReadMode) {
+                preloadedImage = ImageReader.combine2Images(getImage(nextPageNumber+1), getImage(nextPageNumber+2));
+            } else {
+                preloadedImage = getImage(nextPageNumber);
+            }
+            preloadingInProgress = false;
+            Logger.getLogger(AbstractImageHandler.class.getName()).exiting(AbstractImageHandler.class.getName(), "preloadNextImage");
         }).start();
      }
 

@@ -19,6 +19,9 @@ public class NewUpdateAvailableDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form NewUpdateAvailableDialog
+     * @param parent the parent frame
+     * @param versionNumber the new version number as string
+     * @param downloadURLString the download url
      */
     public NewUpdateAvailableDialog(java.awt.Frame parent, String versionNumber, String downloadURLString) {
         super(parent, true);

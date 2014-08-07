@@ -107,20 +107,16 @@ public class ReadComponent extends JComponent {
         }
         firstPageReached = false;
         lastPageReached = false;
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                if (readImage != null) {
-                    readImage.flush();
-                }
-                readInterfaceScrollPane = readInterfaceScroll;
-                readImage = image;
-                image.flush();
-                renderImage();
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Started in readInterface.readPageNbrImage()
-                Logger.getLogger(ReadComponent.class.getName()).exiting(ReadComponent.class.getName(), "setImage");
+        SwingUtilities.invokeLater(() -> {
+            if (readImage != null) {
+                readImage.flush();
             }
+            readInterfaceScrollPane = readInterfaceScroll;
+            readImage = image;
+            image.flush();
+            renderImage();
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Started in readInterface.readPageNbrImage()
+            Logger.getLogger(ReadComponent.class.getName()).exiting(ReadComponent.class.getName(), "setImage");
         });
     }
     
@@ -218,12 +214,8 @@ public class ReadComponent extends JComponent {
             rotationDegree += 360;
         }
         currentOrientation = rotationWanted;
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); // Ended in readComponent.setImage(...)
-            }
+        SwingUtilities.invokeLater(() -> {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         });
         setImage(ImageReader.rotatePicture(readImage, rotationDegree));
         Logger.getLogger(ReadComponent.class.getName()).exiting(ReadComponent.class.getName(), "rotateImage");
@@ -234,15 +226,11 @@ public class ReadComponent extends JComponent {
      */
     public void zoomIn() {
         Logger.getLogger(ReadComponent.class.getName()).entering(ReadComponent.class.getName(), "zoomIn");
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                zoom += zoomModifier;
-                resizeComponentToRenderImageDimension();
-                repaint();
-                Logger.getLogger(ReadComponent.class.getName()).exiting(ReadComponent.class.getName(), "zoomIn");
-            }
+        SwingUtilities.invokeLater(() -> {
+            zoom += zoomModifier;
+            resizeComponentToRenderImageDimension();
+            repaint();
+            Logger.getLogger(ReadComponent.class.getName()).exiting(ReadComponent.class.getName(), "zoomIn");
         });
     }
     
@@ -251,18 +239,14 @@ public class ReadComponent extends JComponent {
      */
     public void zoomOut() {
         Logger.getLogger(ReadComponent.class.getName()).entering(ReadComponent.class.getName(), "zoomOut");
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                zoom -= zoomModifier;
-                if (zoom < zoomModifier) {
-                    zoom = zoomModifier;
-                }
-                resizeComponentToRenderImageDimension();
-                repaint();
-                Logger.getLogger(ReadComponent.class.getName()).exiting(ReadComponent.class.getName(), "zoomout");
+        SwingUtilities.invokeLater(() -> {
+            zoom -= zoomModifier;
+            if (zoom < zoomModifier) {
+                zoom = zoomModifier;
             }
+            resizeComponentToRenderImageDimension();
+            repaint();
+            Logger.getLogger(ReadComponent.class.getName()).exiting(ReadComponent.class.getName(), "zoomout");
         });
     }
     
@@ -271,15 +255,11 @@ public class ReadComponent extends JComponent {
      */
     public void normalZoom() {
         Logger.getLogger(ReadComponent.class.getName()).entering(ReadComponent.class.getName(), "normalZoom");
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                zoom = 1;
-                resizeComponentToRenderImageDimension();
-                repaint();
-                Logger.getLogger(ReadComponent.class.getName()).exiting(ReadComponent.class.getName(), "normalZoom");
-            }
+        SwingUtilities.invokeLater(() -> {
+            zoom = 1;
+            resizeComponentToRenderImageDimension();
+            repaint();
+            Logger.getLogger(ReadComponent.class.getName()).exiting(ReadComponent.class.getName(), "normalZoom");
         });
     }
     

@@ -38,9 +38,9 @@ public class FolderHandler extends AbstractImageHandler {
             return;
         }
         Arrays.sort(allfiles);
-        for (int i = 0; i < allfiles.length; i++) {
-            if (!allfiles[i].isHidden() && isAnImage(allfiles[i].getName())) {
-                imagefiles.add(allfiles[i]);
+        for (File allfile : allfiles) {
+            if (!allfile.isHidden() && isAnImage(allfile.getName())) {
+                imagefiles.add(allfile);
             }
         }
         Logger.getLogger(FolderHandler.class.getName()).exiting(FolderHandler.class.getName(), "FolderHandler");
@@ -68,8 +68,8 @@ public class FolderHandler extends AbstractImageHandler {
     public List<String> getPagesName() {
         Logger.getLogger(FolderHandler.class.getName()).entering(FolderHandler.class.getName(), "getPagesName");
         List<String> pagesTitle = new ArrayList<>(imagefiles.size());
-        for (int i = 0; i < imagefiles.size(); i++) {
-            pagesTitle.add(imagefiles.get(i).getName());
+        for (File imagefile : imagefiles) {
+            pagesTitle.add(imagefile.getName());
         }
         Logger.getLogger(FolderHandler.class.getName()).entering(FolderHandler.class.getName(), "getPagesName", pagesTitle);
         return pagesTitle;

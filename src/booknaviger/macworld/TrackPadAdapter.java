@@ -50,7 +50,6 @@ public class TrackPadAdapter extends GestureAdapter {
      *
      * @param gpe
      */
-    @Override
     public void gestureBegan(GesturePhaseEvent gpe) {
         System.out.println("gesture began");
         value = 0;
@@ -61,7 +60,6 @@ public class TrackPadAdapter extends GestureAdapter {
      *
      * @param me
      */
-    @Override
     public void magnify(MagnificationEvent me) {
         System.out.println("magnify");
         if (actionPerformed) {
@@ -82,7 +80,6 @@ public class TrackPadAdapter extends GestureAdapter {
      *
      * @param re
      */
-    @Override
     public void rotate(RotationEvent re) {
         System.out.println("rotate");
         if (actionPerformed) {
@@ -103,7 +100,6 @@ public class TrackPadAdapter extends GestureAdapter {
      *
      * @param se
      */
-    @Override
     public void swipedLeft(SwipeEvent se) {
         System.out.println("swipe left");
         readInterface.goNextImage();
@@ -113,7 +109,6 @@ public class TrackPadAdapter extends GestureAdapter {
      *
      * @param se
      */
-    @Override
     public void swipedRight(SwipeEvent se) {
         System.out.println("swipe right");
         readInterface.goPreviousImage();

@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  */
 public final class Profiles {
     
-    private List<String[]> profiles = new ArrayList<>();
+    private final List<String[]> profiles = new ArrayList<>();
     private int currentProfile = 0;
 
     /**
@@ -99,12 +99,12 @@ public final class Profiles {
         String currentProfileName = getCurrentProfileName();
         this.profiles.clear();
         currentProfile = 0;
-        for (Vector<String> profile : profiles) {
+        profiles.stream().map((profile) -> {
             this.profiles.add(new String[] {profile.get(0), profile.get(1)});
-            if (profile.get(0).equals(currentProfileName)) {
-                setNewCurrentProfile(currentProfileName);
-            }
-        }
+            return profile;
+        }).filter((profile) -> (profile.get(0).equals(currentProfileName))).forEach((_item) -> {
+            setNewCurrentProfile(currentProfileName);
+        });
         MainInterface.getInstance().refreshProfilesList();
         Logger.getLogger(Profiles.class.getName()).exiting(Profiles.class.getName(), "setProfiles");
     }
@@ -198,9 +198,9 @@ public final class Profiles {
     public void saveProfilesProperties() {
         Logger.getLogger(Profiles.class.getName()).entering(Profiles.class.getName(), "saveProfilesProperties");
         StringBuilder profileString = new StringBuilder();
-        for (int i = 0; i < profiles.size(); i++) {
-            profileString.append(profiles.get(i)[0]).append(",").append(profiles.get(i)[1]).append(";");
-        }
+        profiles.stream().forEach((profile) -> {
+            profileString.append(profile[0]).append(",").append(profile[1]).append(";");
+        });
         PropertiesManager.getInstance().setKey("profiles", profileString.toString());
         PropertiesManager.getInstance().setKey("lastSelectedProfile", getCurrentProfileName());
         Logger.getLogger(Profiles.class.getName()).exiting(Profiles.class.getName(), "saveProfilesProperties");

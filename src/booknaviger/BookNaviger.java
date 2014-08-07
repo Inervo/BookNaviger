@@ -29,18 +29,15 @@ public class BookNaviger {
         preInterface();
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
                 MainInterface.getInstance().setVisible(true);
-                } catch (Exception ex) {
-                    Logger.getLogger(BookNaviger.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
-                    new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
-                }
-                Logger.getLogger(BookNaviger.class.getName()).log(Level.INFO, "MainInterface is now showing");
-                MainInterface.getInstance().changeSelectedBook(PropertiesManager.getInstance().getKey("lastSelectedSerie"), PropertiesManager.getInstance().getKey("lastSelectedAlbum")).start();
+            } catch (Exception ex) {
+                Logger.getLogger(BookNaviger.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+                new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
             }
+            Logger.getLogger(BookNaviger.class.getName()).log(Level.INFO, "MainInterface is now showing");
+            MainInterface.getInstance().changeSelectedBook(PropertiesManager.getInstance().getKey("lastSelectedSerie"), PropertiesManager.getInstance().getKey("lastSelectedAlbum")).start();
         });
     }
     

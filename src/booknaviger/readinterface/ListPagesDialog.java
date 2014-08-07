@@ -43,32 +43,24 @@ public class ListPagesDialog extends javax.swing.JDialog {
         List<Thread> rows = new ArrayList<>();
         for (int i = 0; i < pagesName.size(); i++) {
             final int index = i;
-            Thread tampon = new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    dtm.addRow(new String[] {pagesName.get(index)});
-                }
+            Thread tampon = new Thread(() -> {
+                dtm.addRow(new String[] {pagesName.get(index)});
             });
             SwingUtilities.invokeLater(tampon);
             rows.add(tampon);
         }
-        for (Thread thread : rows) {
+        rows.stream().forEach((thread) -> {
             try {
                 thread.join();
             } catch (InterruptedException ex) {
                 Logger.getLogger(ListPagesDialog.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                pagesListTable.getSelectionModel().setSelectionInterval(currentPage, currentPage);
-                Rectangle cellRect = pagesListTable.getCellRect(currentPage, 0, true);
-                cellRect.y += 1;
-                pagesListTable.scrollRectToVisible(cellRect);
-            }
+        });
+        SwingUtilities.invokeLater(() -> {
+            pagesListTable.getSelectionModel().setSelectionInterval(currentPage, currentPage);
+            Rectangle cellRect = pagesListTable.getCellRect(currentPage, 0, true);
+            cellRect.y += 1;
+            pagesListTable.scrollRectToVisible(cellRect);
         });
         Logger.getLogger(ListPagesDialog.class.getName()).exiting(ListPagesDialog.class.getName(), "fillPagesName");
     }
@@ -179,13 +171,9 @@ public class ListPagesDialog extends javax.swing.JDialog {
      */
     private void goReadSelectedPage() {
         Logger.getLogger(ListPagesDialog.class.getName()).entering(ListPagesDialog.class.getName(), "goReadSelectedPage");
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                readInterface.goPage(pagesListTable.getSelectionModel().getMinSelectionIndex() + 1);
-                Logger.getLogger(ListPagesDialog.class.getName()).exiting(ListPagesDialog.class.getName(), "goReadSelectedPage");
-            }
+        new Thread(() -> {
+            readInterface.goPage(pagesListTable.getSelectionModel().getMinSelectionIndex() + 1);
+            Logger.getLogger(ListPagesDialog.class.getName()).exiting(ListPagesDialog.class.getName(), "goReadSelectedPage");
         }).start();
         this.dispose();
     }

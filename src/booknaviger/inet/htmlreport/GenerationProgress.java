@@ -17,6 +17,8 @@ public class GenerationProgress extends javax.swing.JDialog {
 
     /**
      * Creates new form GenerationProgress
+     * @param parent the parent frame
+     * @param modal is this dialog modal
      */
     public GenerationProgress(java.awt.Frame parent, boolean modal) {
         super(parent, modal);

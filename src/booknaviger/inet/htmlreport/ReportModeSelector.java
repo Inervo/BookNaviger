@@ -18,6 +18,8 @@ public class ReportModeSelector extends javax.swing.JDialog {
 
     /**
      * Creates new form ReportModeSelector
+     * @param parent the parent frame
+     * @param modal is this dialog modal
      */
     public ReportModeSelector(java.awt.Frame parent, boolean modal) {
         super(parent, modal);

@@ -3,7 +3,6 @@
 
 package booknaviger.osbasics;
 
-import booknaviger.macworld.MacOSXApplicationAdapter;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -106,8 +105,8 @@ public class OSBasics {
      * @return true if it's a mac<br />false otherwise
      */
     public static boolean isMac() {
-        Logger.getLogger(MacOSXApplicationAdapter.class.getName()).entering(MacOSXApplicationAdapter.class.getName(), "isMac");
-        Logger.getLogger(MacOSXApplicationAdapter.class.getName()).exiting(MacOSXApplicationAdapter.class.getName(), "isMac", System.getProperty("os.name").toLowerCase().startsWith("mac os x"));
+        Logger.getLogger(OSBasics.class.getName()).entering(OSBasics.class.getName(), "isMac");
+        Logger.getLogger(OSBasics.class.getName()).exiting(OSBasics.class.getName(), "isMac", System.getProperty("os.name").toLowerCase().startsWith("mac os x"));
         return System.getProperty("os.name").toLowerCase().startsWith("mac os x");
     }
 

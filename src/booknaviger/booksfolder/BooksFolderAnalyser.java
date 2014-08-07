@@ -5,7 +5,6 @@ package booknaviger.booksfolder;
 
 import booknaviger.exceptioninterface.InfoInterface;
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,15 +42,8 @@ public class BooksFolderAnalyser {
                 return null;
             }
             try {
-                allfiles = booksDirectory.listFiles(new FileFilter() {
-
-                    @Override
-                    public boolean accept(File pathname) {
-                        if (pathname.isDirectory() && !pathname.isHidden()) {
-                            return true;
-                        }
-                        return false;
-                    }
+                allfiles = booksDirectory.listFiles((File pathname) -> {
+                    return pathname.isDirectory() && !pathname.isHidden();
                 });
             } catch(SecurityException ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
@@ -95,15 +87,14 @@ public class BooksFolderAnalyser {
             Arrays.sort(allfiles);
             final File[] allFilesValue = allfiles;
             final List<String[]> albums = new ArrayList<>();
-            for (int i = 0; i < allFilesValue.length; i++) {
-                if (allFilesValue[i].isDirectory()) {
-                    albums.add(new String [] {allFilesValue[i].getName(), ""});
-                }
-                else {
-                    String albumFullName = allFilesValue[i].getName();
+            for (File allFilesValue1 : allFilesValue) {
+                if (allFilesValue1.isDirectory()) {
+                    albums.add(new String[]{allFilesValue1.getName(), ""});
+                } else {
+                    String albumFullName = allFilesValue1.getName();
                     int indexOfExtension = albumFullName.lastIndexOf(".");
                     albums.add(new String [] {albumFullName.substring(0, indexOfExtension), albumFullName.substring(indexOfExtension)});
-               }
+                }
             }
             Logger.getLogger(BooksFolderAnalyser.class.getName()).exiting(BooksFolderAnalyser.class.getName(), "listAlbums", albums.toArray(new String[0][0]));
             return albums.toArray(new String[0][0]);
@@ -128,17 +119,10 @@ public class BooksFolderAnalyser {
             }
             File[] allFiles = null;
             try {
-                allFiles = booksDirectory.listFiles(new FileFilter() {
-
-                    @Override
-                    public boolean accept(File pathname) {
-                        if (!pathname.isHidden() && (pathname.isDirectory() || pathname.getName().toLowerCase().endsWith(".zip")
-                                || pathname.getName().toLowerCase().endsWith(".cbz") || pathname.getName().toLowerCase().endsWith(".rar")
-                                || pathname.getName().toLowerCase().endsWith(".cbr") || pathname.getName().toLowerCase().endsWith(".pdf"))) {
-                            return true;
-                        }
-                        return false;
-                    }
+                allFiles = booksDirectory.listFiles((File pathname) -> {
+                    return !pathname.isHidden() && (pathname.isDirectory() || pathname.getName().toLowerCase().endsWith(".zip")
+                            || pathname.getName().toLowerCase().endsWith(".cbz") || pathname.getName().toLowerCase().endsWith(".rar")
+                            || pathname.getName().toLowerCase().endsWith(".cbr") || pathname.getName().toLowerCase().endsWith(".pdf"));
                 });
             } catch(SecurityException ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

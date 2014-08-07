@@ -15,7 +15,6 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Level;
@@ -50,13 +49,7 @@ public class RarHandler extends AbstractImageHandler {
             return;
         }
         List<FileHeader> fh = archive.getFileHeaders();
-        Collections.sort(fh, new Comparator<FileHeader>() {
-
-                @Override
-                public int compare(FileHeader o1, FileHeader o2) {
-                    return o1.getFileNameString().compareTo(o2.getFileNameString());
-                }
-            });
+        Collections.sort(fh, (FileHeader o1, FileHeader o2) -> o1.getFileNameString().compareTo(o2.getFileNameString()));
         ListIterator<FileHeader> it = fh.listIterator();
         while (it.hasNext()) {
             FileHeader currentEntry = it.next();
@@ -91,9 +84,9 @@ public class RarHandler extends AbstractImageHandler {
     public List<String> getPagesName() {
         Logger.getLogger(RarHandler.class.getName()).entering(RarHandler.class.getName(), "getPagesName");
         List<String> pagesTitle = new ArrayList<>(compressedFilesHeaders.size());
-        for (int i = 0; i < compressedFilesHeaders.size(); i++) {
-            pagesTitle.add(compressedFilesHeaders.get(i).getFileNameString());
-        }
+        compressedFilesHeaders.stream().forEach((compressedFilesHeader) -> {
+            pagesTitle.add(compressedFilesHeader.getFileNameString());
+        });
         Logger.getLogger(RarHandler.class.getName()).exiting(RarHandler.class.getName(), "getPagesName", pagesTitle);
         return pagesTitle;
     }

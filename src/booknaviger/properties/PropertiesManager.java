@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public class PropertiesManager {
     
     private File propertiesFile = null;
-    private Properties properties = new Properties();
+    private final Properties properties = new Properties();
     
     /**
      * Constructor to set the properties file path, and load it.

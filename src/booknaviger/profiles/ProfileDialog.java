@@ -15,10 +15,12 @@ import javax.swing.text.JTextComponent;
  */
 public class ProfileDialog extends javax.swing.JDialog {
     
-    private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/ProfileDialog");
+    private final ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/ProfileDialog");
 
     /**
      * Creates new form ProfileDialog
+     * @param parent the parent frame
+     * @param modal is this dialog modal
      */
     public ProfileDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);

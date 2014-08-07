@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  */
 public class InfoInterface extends javax.swing.JDialog {
 
-    private ResourceBundle resourceBundle = ResourceBundle.getBundle("booknaviger/resources/InfoInterface");
+    private final ResourceBundle resourceBundle = ResourceBundle.getBundle("booknaviger/resources/InfoInterface");
 
     /**
      * Constructor. Everything is done here.

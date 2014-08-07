@@ -4,6 +4,7 @@ package booknaviger.readinterface;
 
 import booknaviger.MainInterface;
 import booknaviger.exceptioninterface.InfoInterface;
+import booknaviger.macworld.MacOSXApplicationAdapter;
 import booknaviger.macworld.TrackPadAdapter;
 import booknaviger.osbasics.OSBasics;
 import booknaviger.picturehandler.AbstractImageHandler;
@@ -15,7 +16,6 @@ import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -35,7 +35,7 @@ public class ReadInterface extends javax.swing.JFrame {
     private AbstractImageHandler imageHandler = null;
     private int pageNbr = 0;
     private boolean dualPageReadMode = false;
-    private ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/ReadInterface");
+    private final ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/ReadInterface");
     TrackPadAdapter tpa = null;
 
     /**
@@ -49,8 +49,9 @@ public class ReadInterface extends javax.swing.JFrame {
         this.imageHandler = abstractImageHandler;
         initComponents();
         if (OSBasics.isMac()) {
-            tpa = new TrackPadAdapter(this);
-            tpa.addListenerOn(getRootPane());
+            // tpa = new TrackPadAdapter(this);
+            // tpa.addListenerOn(getRootPane());
+            MacOSXApplicationAdapter.setFullScreenMode(this);
         }
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "ReadInterface");
     }
@@ -682,17 +683,13 @@ public class ReadInterface extends javax.swing.JFrame {
             SystemTray tray = SystemTray.getSystemTray();
             TrayIcon trayIcon = new TrayIcon(new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/Application").getString("appLogoIcon"))).getImage(), java.util.ResourceBundle.getBundle("booknaviger/resources/Application").getString("appTitle"));
             trayIcon.setImageAutoSize(true);
-            trayIcon.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Logger.getLogger(ReadInterface.class.getName()).log(Level.INFO, "Restoring from minimize");
-                    MainInterface.getInstance().setVisible(true);
-                    setVisible(true);
-                    toFront();
-                    SystemTray sysTray = SystemTray.getSystemTray();
-                    sysTray.remove(sysTray.getTrayIcons()[0]);
-                }
+            trayIcon.addActionListener((ActionEvent e) -> {
+                Logger.getLogger(ReadInterface.class.getName()).log(Level.INFO, "Restoring from minimize");
+                MainInterface.getInstance().setVisible(true);
+                setVisible(true);
+                toFront();
+                SystemTray sysTray = SystemTray.getSystemTray();
+                sysTray.remove(sysTray.getTrayIcons()[0]);
             });
             try {
                 tray.add(trayIcon);

@@ -57,20 +57,16 @@ public final class PreviewComponent extends JComponent {
         Logger.getLogger(PreviewComponent.class.getName()).entering(PreviewComponent.class.getName(), "setImage", image);
         final int width = image.getWidth();
         final int height = image.getHeight();
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                if (previewImage != null) {
-                    previewImage.flush();
-                }
-                Logger.getLogger(PreviewComponent.class.getName()).log(Level.INFO, "A new preview image is being set");
-                previewImage = image;
-                imageWidth = width;
-                imageHeight = height;
-                refresh();
-                Logger.getLogger(PreviewComponent.class.getName()).exiting(PreviewComponent.class.getName(), "setImage");
+        SwingUtilities.invokeLater(() -> {
+            if (previewImage != null) {
+                previewImage.flush();
             }
+            Logger.getLogger(PreviewComponent.class.getName()).log(Level.INFO, "A new preview image is being set");
+            previewImage = image;
+            imageWidth = width;
+            imageHeight = height;
+            refresh();
+            Logger.getLogger(PreviewComponent.class.getName()).exiting(PreviewComponent.class.getName(), "setImage");
         });
     }
 

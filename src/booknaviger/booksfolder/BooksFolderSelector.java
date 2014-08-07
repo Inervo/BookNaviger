@@ -15,6 +15,8 @@ public class BooksFolderSelector extends javax.swing.JDialog {
 
     /**
      * Creates new form BooksFolderSelector
+     * @param parent the parent frame
+     * @param modal is this dialog modal
      */
     public BooksFolderSelector(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -56,6 +58,7 @@ public class BooksFolderSelector extends javax.swing.JDialog {
 
     /**
      * Modification du dossier contenant les bouquins
+     * @return the folder selected
      */
     public String selectFolder() {
         Logger.getLogger(BooksFolderSelector.class.getName()).entering(BooksFolderSelector.class.getName(), "selectFolder");

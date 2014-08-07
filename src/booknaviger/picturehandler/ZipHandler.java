@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.ListIterator;
@@ -47,13 +46,7 @@ public class ZipHandler extends AbstractImageHandler {
         
         Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
         List<? extends ZipEntry> entries = Collections.list(zipEntries);
-        Collections.sort(entries, new Comparator<ZipEntry>() {
-
-            @Override
-            public int compare(ZipEntry o1, ZipEntry o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
+        Collections.sort(entries, (ZipEntry o1, ZipEntry o2) -> o1.getName().compareTo(o2.getName()));
         ListIterator<? extends ZipEntry> it = entries.listIterator();
         while(it.hasNext()) {
             ZipEntry currentEntry = it.next();
@@ -103,9 +96,9 @@ public class ZipHandler extends AbstractImageHandler {
     public List<String> getPagesName() {
         Logger.getLogger(ZipHandler.class.getName()).entering(ZipHandler.class.getName(), "getPagesName");
         List<String> pagesTitle = new ArrayList<>(imageEntries.size());
-        for (int i = 0; i < imageEntries.size(); i++) {
-            pagesTitle.add(imageEntries.get(i).getName());
-        }
+        imageEntries.stream().forEach((imageEntry) -> {
+            pagesTitle.add(imageEntry.getName());
+        });
         Logger.getLogger(ZipHandler.class.getName()).entering(ZipHandler.class.getName(), "getPagesName", pagesTitle);
         return pagesTitle;
     }

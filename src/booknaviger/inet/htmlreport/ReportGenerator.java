@@ -15,11 +15,9 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,7 +34,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.SwingWorker;
-import javax.swing.filechooser.FileSystemView;
 
 /**
  * Class used to create the html report
@@ -80,17 +77,13 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
             if (advancedMode) {
                 new File(reportFolder + "thumbnails").mkdir();
             }
-            addPropertyChangeListener(new PropertyChangeListener() {
-
-                @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    if("progress".equals(evt.getPropertyName())) {
-                        int newValue = (Integer) evt.getNewValue();
-                        if (gp.getActionProgressBarValue() > newValue) {
-                            return;
-                        }
-                        gp.setActionProgressBarValue(newValue);
+            addPropertyChangeListener((PropertyChangeEvent evt) -> {
+                if("progress".equals(evt.getPropertyName())) {
+                    int newValue = (Integer) evt.getNewValue();
+                    if (gp.getActionProgressBarValue() > newValue) {
+                        return;
                     }
+                    gp.setActionProgressBarValue(newValue);
                 }
             });
         } catch (Exception ex) {
@@ -113,9 +106,9 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
     @Override
     protected void process(List<String> chunks) {
         Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "process", chunks);
-        for (String string : chunks) {
+        chunks.stream().forEach((string) -> {
             generationProgressDialog.setActionLabelValue(string);
-        }
+        });
         Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "process");
     }
 
@@ -498,6 +491,7 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
      * @param albumId the album unique id (used for file name)
      * @throws IOException If an error occur during the creation of the thumbnail
      */
+    @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch"})
     private void createThumbnail(String serie, String albumString, int serieId, int albumId) throws IOException {
         Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "createThumbnail", new Object[] {serie, albumString, serieId, albumId});
         File album = new File(baseDir.toString() + File.separatorChar + serie + File.separatorChar + albumString);
@@ -514,7 +508,9 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
                 previewImage = new PdfHandler(album).getImage(1);
             }
             BufferedImage thumbnailImage = ImageReader.getThumbnailImage(previewImage);
-            previewImage.flush();
+            if (previewImage != null) {
+                previewImage.flush();
+            }
             if (thumbnailImage != null) {
                 ImageIO.write(thumbnailImage, "png", destinationFile);
             }
@@ -573,12 +569,11 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         long foldersize = 0;
 
         File[] filelist = folder.listFiles();
-        for (int i = 0; i < filelist.length; i++) {
-            if (filelist[i].isDirectory()) {
-                foldersize += getFolderSizeAsLong(filelist[i]);
-            }
-            else {
-                foldersize += filelist[i].length();
+        for (File filelist1 : filelist) {
+            if (filelist1.isDirectory()) {
+                foldersize += getFolderSizeAsLong(filelist1);
+            } else {
+                foldersize += filelist1.length();
             }
         }
         Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "getFolderSize", foldersize);
@@ -670,13 +665,12 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
         Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "deleteHTMLReportDirectory", path);
         if( path.exists() ) {
             File[] files = path.listFiles();
-            for(int i=0; i < files.length; i++) {
-               if(files[i].isDirectory()) {
-                 deleteHTMLReportDirectory(files[i]);
-               }
-               else {
-                 files[i].delete();
-               }
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteHTMLReportDirectory(file);
+                } else {
+                    file.delete();
+                }
             }
             path.delete();
         }
@@ -688,28 +682,14 @@ public class ReportGenerator extends SwingWorker<Integer, String> {
      */
     private void findNbrOfAlbums() {
         Logger.getLogger(ReportGenerator.class.getName()).entering(ReportGenerator.class.getName(), "findNbrOfAlbums");
-        File[] series = baseDir.listFiles(new FileFilter() {
-
-            @Override
-            public boolean accept(File pathname) {
-                String name = pathname.getName();
-                if (!pathname.isHidden() && pathname.isDirectory()) {
-                    return true;
-                }
-                return false;
-            }
+        File[] series = baseDir.listFiles((File pathname) -> {
+            String name = pathname.getName();
+            return !pathname.isHidden() && pathname.isDirectory();
         });
         for (File serie : series) {
-            nbrOfAlbums += serie.listFiles(new FileFilter() {
-
-                @Override
-                public boolean accept(File pathname) {
-                    String name = pathname.getName();
-                    if (!pathname.isHidden() && (pathname.isDirectory() || name.toLowerCase().endsWith(".zip") || name.toLowerCase().endsWith("cbz") || name.toLowerCase().endsWith(".rar") || name.toLowerCase().endsWith(".cbr") || name.toLowerCase().endsWith(".pdf"))) {
-                        return true;
-                    }
-                    return false;
-                }
+            nbrOfAlbums += serie.listFiles((File pathname) -> {
+                String name = pathname.getName();
+                return !pathname.isHidden() && (pathname.isDirectory() || name.toLowerCase().endsWith(".zip") || name.toLowerCase().endsWith("cbz") || name.toLowerCase().endsWith(".rar") || name.toLowerCase().endsWith(".cbr") || name.toLowerCase().endsWith(".pdf"));
             }).length;
         }
         Logger.getLogger(ReportGenerator.class.getName()).exiting(ReportGenerator.class.getName(), "findNbrOfAlbums");
