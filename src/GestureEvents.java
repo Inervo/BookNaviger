@@ -1,12 +1,11 @@
+import booknaviger.readinterface.ReadComponent;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.Scene;
-import javafx.scene.input.RotateEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 
 /**
@@ -22,36 +21,34 @@ public class GestureEvents extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        RepaintManager.currentManager(null).setDoubleBufferingEnabled(false);
         launch(args);
     }
-    private Stage primaryStage;
     
     @Override
     public void start(Stage primaryStage) {
-
-        AnchorPane root = new AnchorPane();
         final SwingNode swingnode = new SwingNode();
+//        swingnode.setCache(true);
+//        swingnode.setCacheHint(CacheHint.SPEED);
         createAndSetSwingContent(swingnode);
+//        Group group = new Group();
+//        group.getChildren().add(swingnode);
         StackPane pane = new StackPane();
         pane.getChildren().add(swingnode);
         
         Scene scene = new Scene(pane, 500, 500);
-        scene.setOnRotate((RotateEvent event) -> {
-            System.out.println("coucou, ca tourne");
-            event.consume();
-        });
-        this.primaryStage = primaryStage;
+//        scene.setOnRotate((RotateEvent event) -> {
+//            System.out.println("coucou, ca tourne");
+//            event.consume();
+//        });
 
         primaryStage.setScene(scene);
-        
+        primaryStage.show();        
     }
     
     private void createAndSetSwingContent(final SwingNode swingNode) {
         SwingUtilities.invokeLater(() -> {
-            swingNode.setContent(new JButton("Click me!"));
-            Platform.runLater(() -> {
-                primaryStage.show();
-            });
+            swingNode.setContent(new JScrollPane(new ReadComponent()));
         });
     }
 }

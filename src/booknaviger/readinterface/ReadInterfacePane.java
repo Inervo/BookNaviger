@@ -1,5 +1,6 @@
 /*
  */
+
 package booknaviger.readinterface;
 
 import booknaviger.MainInterface;
@@ -27,12 +28,11 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
 /**
- * Form of the reading interface
+ *
  * @author Inervo
  */
-public class ReadInterface extends javax.swing.JFrame {
-    
-    private AbstractImageHandler imageHandler = null;
+public class ReadInterfacePane extends javax.swing.JPanel {
+private AbstractImageHandler imageHandler = null;
     private int pageNbr = 0;
     private boolean dualPageReadMode = false;
     private final ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/ReadInterface");
@@ -44,14 +44,14 @@ public class ReadInterface extends javax.swing.JFrame {
      * Could be {@link booknaviger.picturehandler.ZipHandler}, {@link booknaviger.picturehandler.RarHandler},
      * {@link booknaviger.picturehandler.PdfHandler} or {@link booknaviger.picturehandler.FolderHandler}
      */
-    public ReadInterface(AbstractImageHandler abstractImageHandler) {
+    public ReadInterfacePane(AbstractImageHandler abstractImageHandler) {
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "ReadInterface", abstractImageHandler);
         this.imageHandler = abstractImageHandler;
         initComponents();
         if (OSBasics.isMac()) {
             // tpa = new TrackPadAdapter(this);
             // tpa.addListenerOn(getRootPane());
-            MacOSXApplicationAdapter.setFullScreenMode(this);
+//            MacOSXApplicationAdapter.setFullScreenMode(this);
         }
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "ReadInterface");
     }
@@ -316,10 +316,7 @@ public class ReadInterface extends javax.swing.JFrame {
         });
         readInterfacePopupMenu.add(exitReadInterfaceMenuItem);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
-        setExtendedState(MAXIMIZED_BOTH);
-        setUndecorated(true);
         setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -347,27 +344,25 @@ public class ReadInterface extends javax.swing.JFrame {
         );
         readComponentLayout.setVerticalGroup(
             readComponentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 340, Short.MAX_VALUE)
+            .add(0, 322, Short.MAX_VALUE)
         );
 
         readInterfaceScrollPane.setViewportView(readComponent);
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 475, Short.MAX_VALUE)
+            .add(0, 428, Short.MAX_VALUE)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE))
+                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 355, Short.MAX_VALUE)
+            .add(0, 337, Short.MAX_VALUE)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE))
+                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE))
         );
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     /**
@@ -509,7 +504,7 @@ public class ReadInterface extends javax.swing.JFrame {
      * The "ten page backward" menu item is being triggered
      * @param evt the event associated
      */
-    private void tenPagesBeforeReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tenPagesBeforeReadInterfaceMenuItemActionPerformed
+    private void tenPagesBeforeReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) 	{//GEN-FIRST:event_tenPagesBeforeReadInterfaceMenuItemActionPerformed
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "tenPagesBeforeReadInterfaceMenuItemActionPerformed");
         goPrevious10Image();
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "tenPagesBeforeReadInterfaceMenuItemActionPerformed");
@@ -669,7 +664,7 @@ public class ReadInterface extends javax.swing.JFrame {
         Logger.getLogger(ReadInterface.class.getName()).log(Level.INFO, "quitting read interface");
         this.setVisible(false);
         PropertiesManager.getInstance().setKey("lastReadedPage", String.valueOf(pageNbr));
-        this.dispose();
+//        this.dispose();
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "exit");
     }
     
@@ -687,7 +682,7 @@ public class ReadInterface extends javax.swing.JFrame {
                 Logger.getLogger(ReadInterface.class.getName()).log(Level.INFO, "Restoring from minimize");
                 MainInterface.getInstance().setVisible(true);
                 setVisible(true);
-                toFront();
+//                toFront();
                 SystemTray sysTray = SystemTray.getSystemTray();
                 sysTray.remove(sysTray.getTrayIcons()[0]);
             });
@@ -699,7 +694,7 @@ public class ReadInterface extends javax.swing.JFrame {
             this.setVisible(false);
             MainInterface.getInstance().setVisible(false);
         } else {
-            this.setExtendedState(javax.swing.JFrame.ICONIFIED);
+//            this.setExtendedState(javax.swing.JFrame.ICONIFIED);
             MainInterface.getInstance().setExtendedState(javax.swing.JFrame.ICONIFIED);
         }
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "minimize");
@@ -711,10 +706,10 @@ public class ReadInterface extends javax.swing.JFrame {
     private void listPages() {
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "listPages");
         try {
-            ListPagesDialog listPagesDialog = new ListPagesDialog(this);
-            listPagesDialog.fillPagesName(imageHandler.getPagesName(), pageNbr-1);
-            listPagesDialog.setLocationRelativeTo(this);
-            listPagesDialog.setVisible(true);
+//            ListPagesDialog listPagesDialog = new ListPagesDialog(this);
+//            listPagesDialog.fillPagesName(imageHandler.getPagesName(), pageNbr-1);
+//            listPagesDialog.setLocationRelativeTo(this);
+//            listPagesDialog.setVisible(true);
         } catch (Exception ex) {
             Logger.getLogger(ReadInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
             new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
@@ -890,7 +885,7 @@ public class ReadInterface extends javax.swing.JFrame {
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "getReadComponent");
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "getReadComponent", readComponent);
         return readComponent;
-    }    
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu displayReadInterfaceMenu;

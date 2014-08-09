@@ -20,7 +20,9 @@ import booknaviger.picturehandler.ZipHandler;
 import booknaviger.profiles.ProfileDialog;
 import booknaviger.profiles.Profiles;
 import booknaviger.properties.PropertiesManager;
+import booknaviger.readinterface.FXReadInterface;
 import booknaviger.readinterface.ReadInterface;
+import booknaviger.readinterface.ReadInterfacePane;
 import booknaviger.searcher.TableSearcher;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -44,6 +46,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import javafx.application.Application;
+import javafx.application.Platform;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JRadioButtonMenuItem;
@@ -1441,13 +1445,23 @@ public final class MainInterface extends javax.swing.JFrame {
                 readInterface.dispose();
             }
             try {
-                readInterface = new ReadInterface(imageHandler);
-                readInterface.setVisible(true);
-                readInterface.requestFocus();
-                readInterface.revalidate();
-                readInterface.goPage(page);
-                PropertiesManager.getInstance().setKey("lastReadedSerie", serie.toString());
-                PropertiesManager.getInstance().setKey("lastReadedAlbum", album.toString());
+//                readInterface = new ReadInterface(imageHandler);
+                new Thread(() -> {
+                    Application.launch(FXReadInterface.class);
+                }).start();
+                while (FXReadInterface.INSTANCE == null) {
+                    Thread.sleep(1);
+                }
+                FXReadInterface.INSTANCE.setImageHandler(imageHandler);
+                ReadInterfacePane rifp = FXReadInterface.INSTANCE.createAndSetSwingContent();
+                rifp.goPage(page);
+//                fxri.rip.goPage(page);
+//                readInterface.setVisible(true);
+//                readInterface.requestFocus();
+//                readInterface.revalidate();
+//                readInterface.goPage(page);
+//                PropertiesManager.getInstance().setKey("lastReadedSerie", serie.toString());
+//                PropertiesManager.getInstance().setKey("lastReadedAlbum", album.toString());
             } catch (Exception ex) {
                 Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
                 new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");

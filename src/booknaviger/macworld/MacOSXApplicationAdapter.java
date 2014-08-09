@@ -75,7 +75,7 @@ public class MacOSXApplicationAdapter {
             setFullScreenMode(mainInterface);
             
             // Dock icon
-            Class applicationClass = Class.forName("com.apple.eawt.Application");
+            Class<?> applicationClass = Class.forName("com.apple.eawt.Application");
             Method getApplicationMethod = applicationClass.getMethod("getApplication");
             Method method3 = applicationClass.getMethod("setDockIconImage", new Class[] {Image.class});
             method3.invoke(getApplicationMethod.invoke(applicationClass), new javax.swing.ImageIcon(getClass().getResource(java.util.ResourceBundle.getBundle("booknaviger/resources/Application").getString("appLogoIcon"))).getImage());
@@ -88,7 +88,7 @@ public class MacOSXApplicationAdapter {
     public static void setFullScreenMode(Window window) {
         try {
             // Fullscreen
-            Class fullScreenUtilitiesClass = Class.forName("com.apple.eawt.FullScreenUtilities");
+            Class<?> fullScreenUtilitiesClass = Class.forName("com.apple.eawt.FullScreenUtilities");
             Method setWindowCanFullScreenMethod = fullScreenUtilitiesClass.getMethod("setWindowCanFullScreen", new Class[] {Window.class, Boolean.TYPE});
             setWindowCanFullScreenMethod.invoke(fullScreenUtilitiesClass, window, true);
         } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
