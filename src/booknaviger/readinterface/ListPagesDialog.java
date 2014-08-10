@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,14 +18,14 @@ import javax.swing.table.DefaultTableModel;
  * @author Inervo
  */
 public class ListPagesDialog extends javax.swing.JDialog {
-    ReadInterface readInterface = null;
+    ReadInterfacePane readInterface = null;
 
     /**
      * Creates new form ListPagesDialog
      * @param readInterface 
      */
-    public ListPagesDialog(ReadInterface readInterface) {
-        super(readInterface, true);
+    public ListPagesDialog(ReadInterfacePane readInterface) {
+        super((JFrame)null, true);
         Logger.getLogger(ListPagesDialog.class.getName()).entering(ListPagesDialog.class.getName(), "ListPagesDialog");
         this.readInterface = readInterface;
         initComponents();

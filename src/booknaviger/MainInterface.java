@@ -75,7 +75,7 @@ public final class MainInterface extends javax.swing.JFrame {
     private PreviewImageLoader threadedPreviewLoader = new PreviewImageLoader();
     private AbstractImageHandler imageHandler = null;
     private final ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
-    private volatile ReadInterface readInterface = null;
+    private volatile ReadInterfacePane readInterface = null;
     private Thread actionThread = null;
     private final Preferences preferences = Preferences.userNodeForPackage(MainInterface.class);
     private boolean firstLaunch = true;
@@ -1436,32 +1436,36 @@ public final class MainInterface extends javax.swing.JFrame {
      * Launch the reading interface on the indicated page
      * @param page the page number to show first. First page is page 1
      */
+    @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch"})
     private void launchReadInterface(final int page) {
         Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "launchReadInterface", page);
         new Thread(() -> {
             Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Start the read interface on page {0}", page);
             if (readInterface != null) {
-                readInterface.setVisible(false);
-                readInterface.dispose();
+                readInterface.exit();
             }
             try {
-//                readInterface = new ReadInterface(imageHandler);
                 new Thread(() -> {
-                    Application.launch(FXReadInterface.class);
+                    if (FXReadInterface.INSTANCE == null) {
+                        Application.launch(FXReadInterface.class);
+                    } else {
+                        Platform.runLater(() -> {
+                        FXReadInterface.INSTANCE.showTime();
+                        });
+                    }
                 }).start();
                 while (FXReadInterface.INSTANCE == null) {
                     Thread.sleep(1);
                 }
                 FXReadInterface.INSTANCE.setImageHandler(imageHandler);
-                ReadInterfacePane rifp = FXReadInterface.INSTANCE.createAndSetSwingContent();
-                rifp.goPage(page);
-//                fxri.rip.goPage(page);
-//                readInterface.setVisible(true);
-//                readInterface.requestFocus();
-//                readInterface.revalidate();
-//                readInterface.goPage(page);
-//                PropertiesManager.getInstance().setKey("lastReadedSerie", serie.toString());
-//                PropertiesManager.getInstance().setKey("lastReadedAlbum", album.toString());
+                FXReadInterface.INSTANCE.createAndSetSwingContent();
+                readInterface = FXReadInterface.INSTANCE.getReadInterface();
+                readInterface.goPage(page);
+                readInterface.setVisible(true);
+                readInterface.requestFocus();
+                readInterface.revalidate();
+                PropertiesManager.getInstance().setKey("lastReadedSerie", serie.toString());
+                PropertiesManager.getInstance().setKey("lastReadedAlbum", album.toString());
             } catch (Exception ex) {
                 Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
                 new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
@@ -1607,7 +1611,7 @@ public final class MainInterface extends javax.swing.JFrame {
      * Get the ReadInterface instance
      * @return the readInterface instance
      */
-    public ReadInterface getReadInterface() {
+    public ReadInterfacePane getReadInterface() {
         return readInterface;
     }
 

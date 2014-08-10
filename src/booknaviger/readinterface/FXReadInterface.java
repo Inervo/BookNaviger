@@ -3,20 +3,17 @@
 
 package booknaviger.readinterface;
 
+import booknaviger.osbasics.OSBasics;
 import booknaviger.picturehandler.AbstractImageHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
-import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 
 /**
@@ -24,13 +21,16 @@ import javax.swing.SwingUtilities;
  * @author Inervo
  */
 public class FXReadInterface extends Application {
-    final SwingNode swingNode = new SwingNode();
+    final private SwingNode swingNode = new SwingNode();
     private AbstractImageHandler abstractImageHandler;
-    public ReadInterfacePane rip;
-    public static FXReadInterface INSTANCE;
+    private ReadInterfacePane readInterface = null;
+    private Stage stage = null;
+    public static FXReadInterface INSTANCE = null;
 
+    @SuppressWarnings("LeakingThisInConstructor")
     public FXReadInterface() {
         INSTANCE = this;
+        Platform.setImplicitExit(false);
     }
     
     public void setImageHandler(AbstractImageHandler abstractImageHandler) {
@@ -38,31 +38,46 @@ public class FXReadInterface extends Application {
     }
     
     @Override
-    public void start(Stage primaryStage) {
-//        createAndSetSwingContent();
-
+    public void start(Stage stage) {
         StackPane pane = new StackPane();
         pane.getChildren().add(swingNode);
         
-        Scene scene = new Scene(pane, 800, 600);
+        Scene scene = new Scene(pane, Screen.getPrimary().getVisualBounds().getWidth(), Screen.getPrimary().getVisualBounds().getHeight());
         
+        // TODO : passdown the events to the readInterface
         scene.setOnZoom((ZoomEvent event) -> {
             System.out.println("zoom in progress");
         });
         
-        primaryStage.setTitle("Hello World!");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-//        createAndSetSwingContent(swingNode);
+        this.stage = stage;
+        stage.setTitle("BookNaviger");
+        stage.setScene(scene);
+        showTime();
+    }
+    
+    public void showTime() {
+        stage.show();
+    }
+    
+    public void close() {
+        Platform.runLater(() -> {
+            stage.close();
+        });
+        
     }
 
-    public ReadInterfacePane createAndSetSwingContent() {
-        rip = new ReadInterfacePane(abstractImageHandler);
-//        swingNode.setCache(true);
-//        swingNode.setCacheHint(CacheHint.SPEED);
-        SwingUtilities.invokeLater(() -> {
-            swingNode.setContent(rip);
-        });
-        return rip;
+    public void createAndSetSwingContent() {
+            readInterface = new ReadInterfacePane(abstractImageHandler);
+            if (OSBasics.isMac()) {
+                RepaintManager.currentManager(readInterface).setDoubleBufferingEnabled(false);
+            }
+        
+            SwingUtilities.invokeLater(() -> {
+                swingNode.setContent(readInterface);
+            });
+    }
+
+    public ReadInterfacePane getReadInterface() {
+        return readInterface;
     }
 }

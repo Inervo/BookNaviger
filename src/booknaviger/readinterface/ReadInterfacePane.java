@@ -5,8 +5,6 @@ package booknaviger.readinterface;
 
 import booknaviger.MainInterface;
 import booknaviger.exceptioninterface.InfoInterface;
-import booknaviger.macworld.MacOSXApplicationAdapter;
-// import booknaviger.macworld.TrackPadAdapter;
 import booknaviger.osbasics.OSBasics;
 import booknaviger.picturehandler.AbstractImageHandler;
 import booknaviger.picturehandler.ImageReader;
@@ -24,6 +22,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
@@ -32,7 +31,8 @@ import javax.swing.KeyStroke;
  * @author Inervo
  */
 public class ReadInterfacePane extends javax.swing.JPanel {
-private AbstractImageHandler imageHandler = null;
+    
+    private AbstractImageHandler imageHandler = null;
     private int pageNbr = 0;
     private boolean dualPageReadMode = false;
     private final ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/ReadInterface");
@@ -49,10 +49,8 @@ private AbstractImageHandler imageHandler = null;
         this.imageHandler = abstractImageHandler;
         initComponents();
         if (OSBasics.isMac()) {
-            // tpa = new TrackPadAdapter(this);
-            // tpa.addListenerOn(getRootPane());
-//            MacOSXApplicationAdapter.setFullScreenMode(this);
         }
+        setEnabled(true);
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "ReadInterface");
     }
 
@@ -344,7 +342,7 @@ private AbstractImageHandler imageHandler = null;
         );
         readComponentLayout.setVerticalGroup(
             readComponentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 322, Short.MAX_VALUE)
+            .add(0, 282, Short.MAX_VALUE)
         );
 
         readInterfaceScrollPane.setViewportView(readComponent);
@@ -353,15 +351,15 @@ private AbstractImageHandler imageHandler = null;
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 428, Short.MAX_VALUE)
+            .add(0, 342, Short.MAX_VALUE)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
+                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 337, Short.MAX_VALUE)
+            .add(0, 297, Short.MAX_VALUE)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE))
+                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -664,7 +662,8 @@ private AbstractImageHandler imageHandler = null;
         Logger.getLogger(ReadInterface.class.getName()).log(Level.INFO, "quitting read interface");
         this.setVisible(false);
         PropertiesManager.getInstance().setKey("lastReadedPage", String.valueOf(pageNbr));
-//        this.dispose();
+        FXReadInterface.INSTANCE.close();
+//        Platform.exit();
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "exit");
     }
     
@@ -706,10 +705,10 @@ private AbstractImageHandler imageHandler = null;
     private void listPages() {
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "listPages");
         try {
-//            ListPagesDialog listPagesDialog = new ListPagesDialog(this);
-//            listPagesDialog.fillPagesName(imageHandler.getPagesName(), pageNbr-1);
-//            listPagesDialog.setLocationRelativeTo(this);
-//            listPagesDialog.setVisible(true);
+            ListPagesDialog listPagesDialog = new ListPagesDialog(this);
+            listPagesDialog.fillPagesName(imageHandler.getPagesName(), pageNbr-1);
+            listPagesDialog.setLocationRelativeTo(this);
+            listPagesDialog.setVisible(true);
         } catch (Exception ex) {
             Logger.getLogger(ReadInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
             new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
