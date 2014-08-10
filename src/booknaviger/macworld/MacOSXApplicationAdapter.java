@@ -6,6 +6,7 @@
 package booknaviger.macworld;
 
 import booknaviger.MainInterface;
+import com.apple.mrj.MRJApplicationUtils;
 import java.awt.Image;
 import java.awt.Window;
 import java.lang.reflect.InvocationTargetException;
@@ -27,50 +28,6 @@ public class MacOSXApplicationAdapter {
     public MacOSXApplicationAdapter(final MainInterface mainInterface) {
             Logger.getLogger(MacOSXApplicationAdapter.class.getName()).entering(MacOSXApplicationAdapter.class.getName(), "MacOSXApplicationAdapter", mainInterface);
             Logger.getLogger(MacOSXApplicationAdapter.class.getName()).log(Level.INFO, "Binding to the Mac OS X handlers");
-//        com.apple.eawt.Application.getApplication().setAboutHandler(new AboutHandler() {
-//
-//            /**
-//             * Handle on the about dialog
-//             * @param ae About Event
-//             */
-//            @Override
-//            public void handleAbout(AboutEvent ae) {
-//                MainInterface.getInstance().openAboutDialog();
-//            }
-//        });
-//        com.apple.eawt.Application.getApplication().setQuitHandler(new QuitHandler() {
-//
-//            /**
-//             * Handle on the quit menu
-//             * @param ae Exit Event
-//             */
-//            @Override
-//            public void handleQuitRequestWith(QuitEvent qe, QuitResponse qr) {
-//                MainInterface.getInstance().exit();
-//            }
-//        });
-//        com.apple.eawt.Application.getApplication().addAppEventListener(new AppReOpenedListener() {
-//
-//            /**
-//             * Handle on the reopen app
-//             * @param ae reopen Event
-//             */
-//            @Override
-//            public void appReOpened(AppReOpenedEvent aroe) {
-//                if (MainInterface.getInstance().isDisplayable() && !MainInterface.getInstance().isVisible()) {
-//                    MainInterface.getInstance().setVisible(true);
-//                }
-//                if (MainInterface.getInstance().getReadInterface() == null) {
-//                    return;
-//                }
-//                if (MainInterface.getInstance().getReadInterface().isDisplayable() && !MainInterface.getInstance().getReadInterface().isVisible()) {
-//                    MainInterface.getInstance().getReadInterface().setVisible(true);
-//                    MainInterface.getInstance().getReadInterface().requestFocus();
-//                    SystemTray sysTray = SystemTray.getSystemTray();
-//                    sysTray.remove(sysTray.getTrayIcons()[0]);
-//                }
-//            }
-//        });
         try {
             setFullScreenMode(mainInterface);
             
@@ -82,6 +39,12 @@ public class MacOSXApplicationAdapter {
         } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(MacOSXApplicationAdapter.class.getName()).log(Level.SEVERE, null, ex);
         }
+        MRJApplicationUtils.registerQuitHandler(() -> {
+            MainInterface.getInstance().exit();
+        });
+        MRJApplicationUtils.registerAboutHandler(() -> {
+            MainInterface.getInstance().openAboutDialog();
+        });
         Logger.getLogger(MacOSXApplicationAdapter.class.getName()).exiting(MacOSXApplicationAdapter.class.getName(), "MacOSXApplicationAdapter");
     }
     
