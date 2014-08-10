@@ -90,7 +90,6 @@ public class FXReadInterface extends Application {
             readInterface.goPreviousImage();
         });
         scene.setOnRotate((RotateEvent event) -> {
-            System.out.println("rotate " + event.getTotalAngle());
             if (rotationPerformed) {
                 return;
             }

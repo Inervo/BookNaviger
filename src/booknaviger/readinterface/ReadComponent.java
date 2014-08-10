@@ -111,7 +111,9 @@ public class ReadComponent extends JComponent {
             if (readImage != null) {
                 readImage.flush();
             }
-            readInterfaceScrollPane = readInterfaceScroll;
+            if (readInterfaceScroll != null) {
+                readInterfaceScrollPane = readInterfaceScroll;
+            }
             readImage = image;
             image.flush();
             renderImage();
