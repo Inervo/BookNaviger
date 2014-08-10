@@ -18,8 +18,11 @@ import javax.swing.JDialog;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  * Search in a JTable the value of the key pressed
@@ -29,6 +32,7 @@ public class TableSearcher {
     private final JTextField searchField = new JTextField();
     private final JTable table;
     private final JDialog parentJDialog;
+    private TableRowSorter tableRowSorter;
     
     
     /**
@@ -58,14 +62,14 @@ public class TableSearcher {
                     Logger.getLogger(TableSearcher.class.getName()).exiting(TableSearcher.class.getName(), "QuickSearchListener.keyPressed");
                     return;
                 }
-                searchField.setText(searchField.getText() + String.valueOf(character));
+                searchField.setText(String.valueOf(character));
                 final Search searchClass = new Search();
                 final JDialog jdialog = new JDialog((parentJDialog != null) ? parentJDialog : null);
                 jdialog.setUndecorated(true);
                 jdialog.setSize(150, 20);
                 jdialog.setLocation(table.getTableHeader().getLocationOnScreen());
                 jdialog.add(searchField);
-                jdialog.setVisible(true);
+                searchClass.search();
                 searchField.getDocument().addDocumentListener(new DocumentListener() {
 
                     @Override
@@ -93,7 +97,6 @@ public class TableSearcher {
                     @Override
                     public void focusLost(final FocusEvent e) {
                         jdialog.dispose();
-                        searchField.setText(null);
                     }
                 });
                 AbstractAction exit = new AbstractAction() {
@@ -108,9 +111,13 @@ public class TableSearcher {
                 searchField.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                         KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "exit");
                 searchField.getActionMap().put("exit", exit);
+                jdialog.setVisible(true);
                 Logger.getLogger(TableSearcher.class.getName()).exiting(TableSearcher.class.getName(), "QuickSearchListener.keyPressed");
             }
         });
+        TableModel tableModel = table.getModel();
+        tableRowSorter = new TableRowSorter<>(tableModel);
+        table.setRowSorter(tableRowSorter);
         Logger.getLogger(TableSearcher.class.getName()).entering(TableSearcher.class.getName(), "activateQuickSearch");
     }
     
@@ -123,11 +130,8 @@ public class TableSearcher {
             void search() {
                 Logger.getLogger(Search.class.getName()).entering(Search.class.getName(), "search");
                 String text = searchField.getText();
-                if (text.length() == 0) {
-                    Logger.getLogger(Search.class.getName()).exiting(Search.class.getName(), "search");
-                    return;
-                }
-                Pattern pattern = Pattern.compile(text);
+                tableRowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                Pattern pattern = Pattern.compile("(?i)" + text);
                 for (int row = 0; row < table.getRowCount(); row++) {
                     String value = table.getValueAt(row, 0).toString().toLowerCase();
                     Matcher matcher = pattern.matcher(value.toLowerCase());
@@ -137,6 +141,8 @@ public class TableSearcher {
                         Logger.getLogger(Search.class.getName()).exiting(Search.class.getName(), "search");
                         return;
                     }
+                }
+                if (table.getRowCount() == 0) {
                     searchField.setForeground(Color.RED);
                 }
                 Logger.getLogger(Search.class.getName()).exiting(Search.class.getName(), "search");
