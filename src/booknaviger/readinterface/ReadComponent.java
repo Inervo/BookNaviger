@@ -212,6 +212,8 @@ public class ReadComponent extends JComponent {
         int rotationDegree = rotationWanted - currentOrientation;
         if (rotationDegree < 0) {
             rotationDegree += 360;
+        } else if (rotationDegree >=360) {
+            rotationDegree -= 360;
         }
         currentOrientation = rotationWanted;
         SwingUtilities.invokeLater(() -> {
@@ -247,6 +249,23 @@ public class ReadComponent extends JComponent {
             resizeComponentToRenderImageDimension();
             repaint();
             Logger.getLogger(ReadComponent.class.getName()).exiting(ReadComponent.class.getName(), "zoomout");
+        });
+    }
+    
+    /**
+     * Set the zoom value
+     * @param zoomValue the value to add to the zoom value
+     */
+    public void setZoomValue(double zoomValue) {
+        Logger.getLogger(ReadComponent.class.getName()).entering(ReadComponent.class.getName(), "setZoomValue", zoomValue);
+        SwingUtilities.invokeLater(() -> {
+            zoom = zoom * (float)zoomValue;
+            if (zoom < zoomModifier) {
+                zoom = zoomModifier;
+            }
+            resizeComponentToRenderImageDimension();
+            repaint();
+            Logger.getLogger(ReadComponent.class.getName()).exiting(ReadComponent.class.getName(), "setZoomValue");
         });
     }
     

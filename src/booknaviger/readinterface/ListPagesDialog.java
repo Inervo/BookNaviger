@@ -18,13 +18,13 @@ import javax.swing.table.DefaultTableModel;
  * @author Inervo
  */
 public class ListPagesDialog extends javax.swing.JDialog {
-    ReadInterfacePane readInterface = null;
+    ReadInterface readInterface = null;
 
     /**
      * Creates new form ListPagesDialog
      * @param readInterface 
      */
-    public ListPagesDialog(ReadInterfacePane readInterface) {
+    public ListPagesDialog(ReadInterface readInterface) {
         super((JFrame)null, true);
         Logger.getLogger(ListPagesDialog.class.getName()).entering(ListPagesDialog.class.getName(), "ListPagesDialog");
         this.readInterface = readInterface;

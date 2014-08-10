@@ -1,12 +1,10 @@
 /*
  */
+
 package booknaviger.readinterface;
 
 import booknaviger.MainInterface;
 import booknaviger.exceptioninterface.InfoInterface;
-import booknaviger.macworld.MacOSXApplicationAdapter;
-// import booknaviger.macworld.TrackPadAdapter;
-import booknaviger.osbasics.OSBasics;
 import booknaviger.picturehandler.AbstractImageHandler;
 import booknaviger.picturehandler.ImageReader;
 import booknaviger.properties.PropertiesManager;
@@ -27,10 +25,10 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
 /**
- * Form of the reading interface
+ *
  * @author Inervo
  */
-public class ReadInterface extends javax.swing.JFrame {
+public class ReadInterface extends javax.swing.JPanel {
     
     private AbstractImageHandler imageHandler = null;
     private int pageNbr = 0;
@@ -48,11 +46,8 @@ public class ReadInterface extends javax.swing.JFrame {
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "ReadInterface", abstractImageHandler);
         this.imageHandler = abstractImageHandler;
         initComponents();
-        if (OSBasics.isMac()) {
-            // tpa = new TrackPadAdapter(this);
-            // tpa.addListenerOn(getRootPane());
-            MacOSXApplicationAdapter.setFullScreenMode(this);
-        }
+        setFocusable(true);
+        setEnabled(true);
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "ReadInterface");
     }
 
@@ -316,10 +311,7 @@ public class ReadInterface extends javax.swing.JFrame {
         });
         readInterfacePopupMenu.add(exitReadInterfaceMenuItem);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
-        setExtendedState(MAXIMIZED_BOTH);
-        setUndecorated(true);
         setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -343,31 +335,29 @@ public class ReadInterface extends javax.swing.JFrame {
         readComponent.setLayout(readComponentLayout);
         readComponentLayout.setHorizontalGroup(
             readComponentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 500, Short.MAX_VALUE)
+            .add(0, 0, Short.MAX_VALUE)
         );
         readComponentLayout.setVerticalGroup(
             readComponentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 340, Short.MAX_VALUE)
+            .add(0, 0, Short.MAX_VALUE)
         );
 
         readInterfaceScrollPane.setViewportView(readComponent);
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 475, Short.MAX_VALUE)
+            .add(0, 400, Short.MAX_VALUE)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE))
+                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 355, Short.MAX_VALUE)
+            .add(0, 300, Short.MAX_VALUE)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE))
+                .add(readInterfaceScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
         );
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     /**
@@ -409,16 +399,10 @@ public class ReadInterface extends javax.swing.JFrame {
             readComponent.zoomIn();
         } else if (evt.getKeyChar() == '0') {
             readComponent.normalZoom();
-        } else if (Locale.getDefault().getLanguage().equals(new Locale("fr").getLanguage()) && evt.getKeyCode() == KeyEvent.VK_Z) {
+        } else if (evt.getKeyCode() == KeyEvent.VK_W) {
             rotate180RadioButtonMenuItem.setSelected(true);
             readComponent.rotateImage(180);
-        } else if (Locale.getDefault().getLanguage().equals(new Locale("fr").getLanguage()) && evt.getKeyCode() == KeyEvent.VK_Q) {
-            rotate90RadioButtonMenuItem.setSelected(true);
-            readComponent.rotateImage(90);
-        } else if (!Locale.getDefault().getLanguage().equals(new Locale("fr").getLanguage()) && evt.getKeyCode() == KeyEvent.VK_W) {
-            rotate180RadioButtonMenuItem.setSelected(true);
-            readComponent.rotateImage(180);
-        } else if (!Locale.getDefault().getLanguage().equals(new Locale("fr").getLanguage()) && evt.getKeyCode() == KeyEvent.VK_A) {
+        } else if (evt.getKeyCode() == KeyEvent.VK_A) {
             rotate90RadioButtonMenuItem.setSelected(true);
             readComponent.rotateImage(90);
         } else if (evt.getKeyCode() == KeyEvent.VK_D) {
@@ -437,17 +421,17 @@ public class ReadInterface extends javax.swing.JFrame {
             doublePagesCheckBoxMenuItem.setSelected(true);
             doublePagesCheckBoxMenuItem.setAccelerator(KeyStroke.getKeyStroke('1'));
             readPageNbrImage();
-        } else if (evt.getKeyCode() == KeyEvent.VK_H) {
+        } else if (evt.getKeyChar() == 'h' || evt.getKeyChar() == 'H') {
             fitHorizontallyReadInterfaceCheckBoxMenuItem.setSelected(!fitHorizontallyReadInterfaceCheckBoxMenuItem.isSelected());
             readComponent.changeFitToScreenHorizontally();
-        } else if (evt.getKeyCode() == KeyEvent.VK_V) {
+        } else if (evt.getKeyChar() == 'v' || evt.getKeyChar() == 'V') {
             fitVerticallyReadInterfaceCheckBoxMenuItem.setSelected(!fitVerticallyReadInterfaceCheckBoxMenuItem.isSelected());
             readComponent.changeFitToScreenVertically();
         } else if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
             exit();
-        } else if (evt.getKeyCode() == KeyEvent.VK_M) {
+        } else if (evt.getKeyChar() == 'm' || evt.getKeyChar() == 'M') {
             minimize();
-        } else if (evt.getKeyCode() == KeyEvent.VK_L) {
+        } else if (evt.getKeyChar() == 'l' || evt.getKeyChar() == 'L') {
             listPages();
         }
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "readInterfaceKeyPressed");
@@ -509,7 +493,7 @@ public class ReadInterface extends javax.swing.JFrame {
      * The "ten page backward" menu item is being triggered
      * @param evt the event associated
      */
-    private void tenPagesBeforeReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tenPagesBeforeReadInterfaceMenuItemActionPerformed
+    private void tenPagesBeforeReadInterfaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) 	{//GEN-FIRST:event_tenPagesBeforeReadInterfaceMenuItemActionPerformed
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "tenPagesBeforeReadInterfaceMenuItemActionPerformed");
         goPrevious10Image();
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "tenPagesBeforeReadInterfaceMenuItemActionPerformed");
@@ -669,7 +653,7 @@ public class ReadInterface extends javax.swing.JFrame {
         Logger.getLogger(ReadInterface.class.getName()).log(Level.INFO, "quitting read interface");
         this.setVisible(false);
         PropertiesManager.getInstance().setKey("lastReadedPage", String.valueOf(pageNbr));
-        this.dispose();
+        FXReadInterface.INSTANCE.close();
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "exit");
     }
     
@@ -687,7 +671,8 @@ public class ReadInterface extends javax.swing.JFrame {
                 Logger.getLogger(ReadInterface.class.getName()).log(Level.INFO, "Restoring from minimize");
                 MainInterface.getInstance().setVisible(true);
                 setVisible(true);
-                toFront();
+                FXReadInterface.INSTANCE.showTime();
+                requestFocus();
                 SystemTray sysTray = SystemTray.getSystemTray();
                 sysTray.remove(sysTray.getTrayIcons()[0]);
             });
@@ -697,9 +682,11 @@ public class ReadInterface extends javax.swing.JFrame {
                 Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Exception with the creation of the systray", ex);
             }
             this.setVisible(false);
+            FXReadInterface.INSTANCE.close();
             MainInterface.getInstance().setVisible(false);
         } else {
-            this.setExtendedState(javax.swing.JFrame.ICONIFIED);
+            this.setVisible(false);
+            FXReadInterface.INSTANCE.close();
             MainInterface.getInstance().setExtendedState(javax.swing.JFrame.ICONIFIED);
         }
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "minimize");
@@ -890,7 +877,7 @@ public class ReadInterface extends javax.swing.JFrame {
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "getReadComponent");
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "getReadComponent", readComponent);
         return readComponent;
-    }    
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu displayReadInterfaceMenu;

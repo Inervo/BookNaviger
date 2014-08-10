@@ -22,7 +22,6 @@ import booknaviger.profiles.Profiles;
 import booknaviger.properties.PropertiesManager;
 import booknaviger.readinterface.FXReadInterface;
 import booknaviger.readinterface.ReadInterface;
-import booknaviger.readinterface.ReadInterfacePane;
 import booknaviger.searcher.TableSearcher;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -47,7 +46,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JRadioButtonMenuItem;
@@ -75,7 +73,7 @@ public final class MainInterface extends javax.swing.JFrame {
     private PreviewImageLoader threadedPreviewLoader = new PreviewImageLoader();
     private AbstractImageHandler imageHandler = null;
     private final ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
-    private volatile ReadInterfacePane readInterface = null;
+    private volatile ReadInterface readInterface = null;
     private Thread actionThread = null;
     private final Preferences preferences = Preferences.userNodeForPackage(MainInterface.class);
     private boolean firstLaunch = true;
@@ -1239,14 +1237,9 @@ public final class MainInterface extends javax.swing.JFrame {
                 profileRadioButtonMenuItem.setSelected(true);
             }
             profileRadioButtonMenuItem.addActionListener((ActionEvent e) -> {
-                for (int i = 0; i < profilesListRadioButtonMenuItem.size(); i++) {
-                    if (profilesListRadioButtonMenuItem.get(i).isSelected()) {
-                        String profileName1 = profilesListRadioButtonMenuItem.get(i).getText();
-                        if (!profileName1.equals(profiles.getCurrentProfileName())) {
-                            profiles.setNewCurrentProfile(profileName1);
-                        }
-                    }
-                }
+                profilesListRadioButtonMenuItem.stream().filter((profilesListRadioButtonMenuItem1) -> (profilesListRadioButtonMenuItem1.isSelected())).map((profilesListRadioButtonMenuItem1) -> profilesListRadioButtonMenuItem1.getText()).filter((profileName1) -> (!profileName1.equals(profiles.getCurrentProfileName()))).forEach((profileName1) -> {
+                    profiles.setNewCurrentProfile(profileName1);
+                });
                 refreshProfilesList();
             });
             profileButtonGroup.add(profileRadioButtonMenuItem);
@@ -1271,13 +1264,9 @@ public final class MainInterface extends javax.swing.JFrame {
                 final DefaultTableModel seriesTableModel = (DefaultTableModel) seriesTable.getModel();
                 final DefaultTableModel albumsTableModel = (DefaultTableModel) albumsTable.getModel();
                 try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            seriesTableModel.setRowCount(0);
-                            albumsTableModel.setRowCount(0);
-                        }
+                    SwingUtilities.invokeAndWait(() -> {
+                        seriesTableModel.setRowCount(0);
+                        albumsTableModel.setRowCount(0);
                     });
                 } catch (InterruptedException | InvocationTargetException ex) {
                     Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
@@ -1445,25 +1434,27 @@ public final class MainInterface extends javax.swing.JFrame {
                 readInterface.exit();
             }
             try {
-                new Thread(() -> {
-                    if (FXReadInterface.INSTANCE == null) {
-                        Application.launch(FXReadInterface.class);
-                    } else {
-                        Platform.runLater(() -> {
-                        FXReadInterface.INSTANCE.showTime();
-                        });
-                    }
-                }).start();
+                if (FXReadInterface.INSTANCE == null) {
+                    new Thread(() -> {
+                            Application.launch(FXReadInterface.class);
+                    }).start();
+                }
                 while (FXReadInterface.INSTANCE == null) {
                     Thread.sleep(1);
                 }
                 FXReadInterface.INSTANCE.setImageHandler(imageHandler);
                 FXReadInterface.INSTANCE.createAndSetSwingContent();
                 readInterface = FXReadInterface.INSTANCE.getReadInterface();
-                readInterface.goPage(page);
                 readInterface.setVisible(true);
+                FXReadInterface.INSTANCE.showTime();
+                while (!readInterface.isShowing()) {
+                    Thread.sleep(1);
+                }
+                while (readInterface.getReadComponent().getWidth() == readInterface.getPreferredSize().getWidth()) {
+                    Thread.sleep(1);
+                }
+                readInterface.goPage(page);
                 readInterface.requestFocus();
-                readInterface.revalidate();
                 PropertiesManager.getInstance().setKey("lastReadedSerie", serie.toString());
                 PropertiesManager.getInstance().setKey("lastReadedAlbum", album.toString());
             } catch (Exception ex) {
@@ -1611,7 +1602,7 @@ public final class MainInterface extends javax.swing.JFrame {
      * Get the ReadInterface instance
      * @return the readInterface instance
      */
-    public ReadInterfacePane getReadInterface() {
+    public ReadInterface getReadInterface() {
         return readInterface;
     }
 
