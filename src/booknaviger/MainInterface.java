@@ -75,6 +75,7 @@ public final class MainInterface extends javax.swing.JFrame {
     private PreviewImageLoader threadedPreviewLoader = new PreviewImageLoader();
     private final List<Long> stopThreadedPreviewLoaderID = new ArrayList<>();
     private final Executor albumRefreshExecutor = Executors.newSingleThreadExecutor();
+    private boolean resumeReadingReady;
     private AbstractImageHandler imageHandler = null;
     private final ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
     private volatile ReadInterface readInterface = null;
@@ -1135,6 +1136,7 @@ public final class MainInterface extends javax.swing.JFrame {
                         Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The serie to select doesn't exist : {0}", serie);
                         serie = null;
                         album = null;
+                        resumeReadingReady = true;
                         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBookThread");
                         return;
                     }
@@ -1157,25 +1159,35 @@ public final class MainInterface extends javax.swing.JFrame {
                         Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     if (albumToSelect == null) {
+                        resumeReadingReady = true;
                         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBookThread");
                         return;
                     }
-                    album = new File(albumToSelect);
-                    if (!album.exists()) {
-                        Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The album to select doesn't exist : {0}", album);
-                        album = null;
+                    File albumToSelectFile = new File(albumToSelect);
+                    if (!albumToSelectFile.exists()) {
+                        resumeReadingReady = true;
+                        Logger.getLogger(MainInterface.class.getName()).log(Level.WARNING, "The album to select doesn't exist : {0}", albumToSelectFile);
                         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "changeSelectedBookThread");
                         return;
                     }
-                    Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Selecting the album : {0}", album);
-                    for (int i = 0; i < albumsTable.getRowCount(); i++) {
-                        String rowValue = (String) albumsTable.getValueAt(i, 0) + albumsTable.getValueAt(i, 1);
-                        if (rowValue.equals(album.getName())) {
-                            albumsTable.getSelectionModel().setSelectionInterval(i, i);
-                            albumsTable.scrollRectToVisible(albumsTable.getCellRect(i, 0, true));
-                            break;
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Selecting the album : {0}", albumToSelectFile);
+                    albumRefreshExecutor.execute(() -> {
+                        try {
+                            for (int i = 0; i < albumsTable.getRowCount(); i++) {
+                                String rowValue = (String) albumsTable.getValueAt(i, 0) + albumsTable.getValueAt(i, 1);
+                                if (rowValue.equals(albumToSelectFile.getName())) {
+                                    albumsTable.getSelectionModel().setSelectionInterval(i, i);
+                                    albumsTable.scrollRectToVisible(albumsTable.getCellRect(i, 0, true));
+                                    break;
+                                }
+                            }
+                        } catch (Exception ex) {
+                            Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
+                            new InfoInterface(InfoInterface.InfoLevel.ERROR, "unknown");
                         }
-                    }
+                        resumeReadingReady = true;
+                    });
+                    
                 }
             } catch (Exception ex) {
                 Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, "Unknown exception", ex);
@@ -1454,7 +1466,7 @@ public final class MainInterface extends javax.swing.JFrame {
                 while (!readInterface.isShowing()) {
                     Thread.sleep(1);
                 }
-                while (readInterface.getReadComponent().getWidth() == readInterface.getPreferredSize().getWidth()) {
+                while (readInterface.getReadComponent().getWidth() == readInterface.getReadComponent().getPreferredSize().getWidth()) {
                     Thread.sleep(1);
                 }
                 readInterface.goPage(page);
@@ -1474,6 +1486,7 @@ public final class MainInterface extends javax.swing.JFrame {
      */
     private void resumeReading() {
         Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "resumeReading");
+        resumeReadingReady = false;
         new Thread(() -> {
             Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Resume the reading");
             Thread changeSelectedBookThread = changeSelectedBook(PropertiesManager.getInstance().getKey("lastReadedSerie"), PropertiesManager.getInstance().getKey("lastReadedAlbum"));
@@ -1482,6 +1495,13 @@ public final class MainInterface extends javax.swing.JFrame {
                 changeSelectedBookThread.join();
             } catch (InterruptedException ex) {
                 Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            while (!resumeReadingReady || threadedPreviewLoader.isAlive()) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             if (album != null && serie != null) {
                 if (PropertiesManager.getInstance().getKey("lastReadedPage") != null) {
