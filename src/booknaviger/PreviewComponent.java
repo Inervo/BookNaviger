@@ -53,7 +53,7 @@ public final class PreviewComponent extends JComponent {
      * Define the image to preview
      * @param image The image to preview
      */
-    protected void setImage(final BufferedImage image) {
+    protected synchronized void setImage(final BufferedImage image) {
         Logger.getLogger(PreviewComponent.class.getName()).entering(PreviewComponent.class.getName(), "setImage", image);
         final int width = image.getWidth();
         final int height = image.getHeight();

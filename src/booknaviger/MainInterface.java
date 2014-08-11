@@ -42,6 +42,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -71,6 +73,8 @@ public final class MainInterface extends javax.swing.JFrame {
     private File serie = null;
     private File album = null;
     private PreviewImageLoader threadedPreviewLoader = new PreviewImageLoader();
+    private final List<Long> stopThreadedPreviewLoaderID = new ArrayList<>();
+    private final Executor albumRefreshExecutor = Executors.newSingleThreadExecutor();
     private AbstractImageHandler imageHandler = null;
     private final ResourceBundle resourceBundle = java.util.ResourceBundle.getBundle("booknaviger/resources/MainInterface");
     private volatile ReadInterface readInterface = null;
@@ -1310,7 +1314,6 @@ public final class MainInterface extends javax.swing.JFrame {
      * Refresh the albums of the selected serie
      * @param selectedRow the row of the selected serie
      */
-    @SuppressWarnings("deprecation")
     private void listAlbums(final int selectedRow) {
         Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "listAlbums");
         Thread listAlbumsThread = new Thread(new Runnable() {
@@ -1319,7 +1322,9 @@ public final class MainInterface extends javax.swing.JFrame {
             public void run() {
                 Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Refreshing the album list");
                 try {
-                    threadedPreviewLoader.stop();
+                    synchronized(stopThreadedPreviewLoaderID) {
+                        stopThreadedPreviewLoaderID.add(threadedPreviewLoader.getId());
+                    }
                     serie = null;
                     album = null;
                     while (threadedPreviewLoader.isAlive()) {
@@ -1380,14 +1385,13 @@ public final class MainInterface extends javax.swing.JFrame {
             }
         });
         setActionInProgress(true, listAlbumsThread);
-        listAlbumsThread.start();
+        albumRefreshExecutor.execute(listAlbumsThread);
     }
     
     /**
      * listener on a new album selected
      * @param evt the event associated
      */
-    @SuppressWarnings("deprecation")
     private synchronized void albumsTableValueChanged(javax.swing.event.ListSelectionEvent evt) {
         Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "albumsTableValueChanged");
         album = null;
@@ -1396,7 +1400,7 @@ public final class MainInterface extends javax.swing.JFrame {
         }
         int selectedRow = albumsTable.getSelectedRow();
         if (!evt.getValueIsAdjusting() && selectedRow != -1) {
-            threadedPreviewLoader.stop();
+            stopThreadedPreviewLoaderID.add(threadedPreviewLoader.getId());
             while (threadedPreviewLoader.isAlive()) {
                 try {
                 Thread.sleep(1);
@@ -1493,54 +1497,51 @@ public final class MainInterface extends javax.swing.JFrame {
      * This class have in charge the preview of the selected album
      */
     private class PreviewImageLoader extends Thread {
-
+        
         @Override
         public void run() {
             Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "PreviewImageLoader");
             setActionInProgress(true, this);
             Logger.getLogger(MainInterface.class.getName()).log(Level.INFO, "Preview the album {0}", album);
             try {
-                if (album.isDirectory()) {
-                    imageHandler = new FolderHandler(album);
-                    BufferedImage previewImage = imageHandler.getImage(1);
-                    if (previewImage != null) {
-                        previewComponent.setImage(previewImage);
-                    } else {
-                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for directory. album : {0}", album);
-                        previewComponent.setNoPreviewImage();
+                BufferedImage previewImage = null;
+                File albumMemory = album;
+                if (albumMemory == null) {
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "null album");
+                    previewComponent.setNoPreviewImage();
+                    setActionInProgress(false, null);
+                    Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "PreviewImageLoader");
+                    return;
+                }
+                if (albumMemory.isDirectory()) {
+                    imageHandler = new FolderHandler(albumMemory);
+                    previewImage = imageHandler.getImage(1);
+                }
+                else if (albumMemory.getName().toLowerCase().endsWith(".zip") || albumMemory.getName().toLowerCase().endsWith(".cbz")) {
+                    imageHandler = new ZipHandler(albumMemory);
+                    previewImage = imageHandler.getImage(1);
+                }
+                else if (albumMemory.getName().toLowerCase().endsWith(".rar") || albumMemory.getName().toLowerCase().endsWith(".cbr")) {
+                    imageHandler = new RarHandler(albumMemory);
+                    previewImage = imageHandler.getImage(1);
+                }
+                else if (albumMemory.getName().toLowerCase().endsWith(".pdf")) {
+                    imageHandler = new PdfHandler(albumMemory);
+                    previewImage = imageHandler.getImage(1);
+                }
+                synchronized(stopThreadedPreviewLoaderID) {
+                    for (long iDToStop : stopThreadedPreviewLoaderID) {
+                        if (getId() == iDToStop) {
+                            stopThreadedPreviewLoaderID.remove(iDToStop);
+                            Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "PreviewImageLoader");
+                            return;
+                        }
                     }
                 }
-                else if (album.getName().toLowerCase().endsWith(".zip") || album.getName().toLowerCase().endsWith(".cbz")) {
-                    imageHandler = new ZipHandler(album);
-                    BufferedImage previewImage = imageHandler.getImage(1);
-                    if (previewImage != null) {
-                        previewComponent.setImage(previewImage);
-                    } else {
-                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for zip. album : {0}", album);
-                        previewComponent.setNoPreviewImage();
-                    }
-                }
-                else if (album.getName().toLowerCase().endsWith(".rar") || album.getName().toLowerCase().endsWith(".cbr")) {
-                    imageHandler = new RarHandler(album);
-                    BufferedImage previewImage = imageHandler.getImage(1);
-                    if (previewImage != null) {
-                        previewComponent.setImage(previewImage);
-                    } else {
-                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for rar. album : {0}", album);
-                        previewComponent.setNoPreviewImage();
-                    }
-                }
-                else if (album.getName().toLowerCase().endsWith(".pdf")) {
-                    imageHandler = new PdfHandler(album);
-                    BufferedImage previewImage = imageHandler.getImage(1);
-                    if (previewImage != null) {
-                        previewComponent.setImage(previewImage);
-                    } else {
-                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for pdf. album : {0}", album);
-                        previewComponent.setNoPreviewImage();
-                    }
-                }
-                else {
+                if (previewImage != null) {
+                    previewComponent.setImage(previewImage);
+                } else {
+                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, "no preview for album : {0}", album);
                     previewComponent.setNoPreviewImage();
                 }
             } catch (Exception ex) {
