@@ -192,7 +192,7 @@ public class ReadComponent extends JComponent {
             drawingImageHeigh = (int) readInterfaceScrollPane.getHeight();
             drawingImageWidth = (int) (drawingImageWidth * ratio);
         }
-        if ((fitToScreenHorizontally || fitToScreenVertically) && ratio != 0) {
+        if (fitToScreenHorizontally || fitToScreenVertically) {
             if (drawingImageHeigh > readInterfaceScrollPane.getHeight()) {
                 drawingImageWidth -= readInterfaceScrollPane.getVerticalScrollBar().getWidth();
                 drawingImageHeigh -= (readInterfaceScrollPane.getVerticalScrollBar().getWidth() * ratio);
