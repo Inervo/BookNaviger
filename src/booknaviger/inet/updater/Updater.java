@@ -70,7 +70,7 @@ public class Updater {
             NodeList entryNodeListChild = entryNodeList.item(i).getChildNodes();
             for (int j = 0; j < entryNodeListChild.getLength(); j++) {
                 if (entryNodeListChild.item(j).getNodeName().equals("link")) {
-                    downloadURLString = entryNodeListChild.item(j).getAttributes().getNamedItem("href").getTextContent();
+                    downloadURLString = "https://github.com" + entryNodeListChild.item(j).getAttributes().getNamedItem("href").getTextContent();
                 }
                 if (entryNodeListChild.item(j).getNodeName().equals("title")) {
                     String version = getVersionFromFileName(entryNodeListChild.item(j).getTextContent().trim());
@@ -98,16 +98,7 @@ public class Updater {
     private String getVersionFromFileName(String fileName) {
         Logger.getLogger(Updater.class.getName()).entering(Updater.class.getName(), "getVersionFromFileName", fileName);
         Pattern pattern;
-        if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) {
-            pattern = Pattern.compile("^BookNaviger_mac[a-zA-Z]+_([\\d_]+).*", Pattern.CASE_INSENSITIVE);
-        } else if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-            pattern = Pattern.compile("^BookNaviger_windows_([\\d_]+).*", Pattern.CASE_INSENSITIVE);
-        } else if (System.getProperty("os.name").toLowerCase().startsWith("linux") || System.getProperty("os.name").toLowerCase().startsWith("unix")) {
-            pattern = Pattern.compile("^BookNaviger_unix_([\\d_]+).*", Pattern.CASE_INSENSITIVE);
-        } else {
-            Logger.getLogger(Updater.class.getName()).exiting(Updater.class.getName(), "getVersionFromFileName", null);
-            return null;
-        }
+        pattern = Pattern.compile("([\\d\\.]+)", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(fileName);
         if (matcher.find()) {
             Logger.getLogger(Updater.class.getName()).log(Level.CONFIG, "Version parsed = {0}", matcher.group(1));
@@ -137,7 +128,7 @@ public class Updater {
             return false;
         }
         StringTokenizer currentVersionStringTokenizer = new StringTokenizer(currentVersionNumber, ".");
-        StringTokenizer versionNumberStringTokenizer = new StringTokenizer(versionNumber, "_");
+        StringTokenizer versionNumberStringTokenizer = new StringTokenizer(versionNumber, ".");
         if (!currentVersionStringTokenizer.hasMoreTokens() || !versionNumberStringTokenizer.hasMoreTokens()) {
             Logger.getLogger(Updater.class.getName()).exiting(Updater.class.getName(), "isVersionNumberGreaterThanCurrent", false);
             return false;
@@ -212,5 +203,5 @@ public class Updater {
         Logger.getLogger(Updater.class.getName()).exiting(Updater.class.getName(), "getVersionNumber", downloadURLString);
         return downloadURLString;
     }
-
+    
 }
