@@ -51,7 +51,6 @@ import javafx.application.Application;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -301,6 +300,7 @@ public final class MainInterface extends javax.swing.JFrame {
         appVendorLabel = new javax.swing.JLabel();
         appHomepageLabel = new javax.swing.JLabel();
         mainToolBar = new javax.swing.JToolBar();
+        readButton = new javax.swing.JButton();
         resumeButton = new javax.swing.JButton();
         toolbarSeparator1 = new javax.swing.JToolBar.Separator();
         refreshAllButton = new javax.swing.JButton();
@@ -322,6 +322,7 @@ public final class MainInterface extends javax.swing.JFrame {
         bookFolderMenuItem = new javax.swing.JMenuItem();
         exitMenuItem = new javax.swing.JMenuItem();
         optionMenu = new javax.swing.JMenu();
+        readMenuItem = new javax.swing.JMenuItem();
         resumeMenuItem = new javax.swing.JMenuItem();
         profileMenu = new javax.swing.JMenu();
         profilesMenuItem = new javax.swing.JMenuItem();
@@ -442,6 +443,19 @@ public final class MainInterface extends javax.swing.JFrame {
         mainToolBar.setFloatable(false);
         mainToolBar.setRollover(true);
         mainToolBar.setPreferredSize(new java.awt.Dimension(166, 25));
+
+        readButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/read.png"))); // NOI18N
+        readButton.setFocusable(false);
+        readButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        readButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        readButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        readButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        readButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                readButtonActionPerformed(evt);
+            }
+        });
+        mainToolBar.add(readButton);
 
         resumeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/resume.png"))); // NOI18N
         resumeButton.setFocusable(false);
@@ -678,6 +692,15 @@ public final class MainInterface extends javax.swing.JFrame {
         toolBar.add(fileMenu);
 
         optionMenu.setText(resourceBundle.getString("controls_menu")); // NOI18N
+
+        readMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/read.png"))); // NOI18N
+        readMenuItem.setText(resourceBundle.getString("read_menu")); // NOI18N
+        readMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                readMenuItemActionPerformed(evt);
+            }
+        });
+        optionMenu.add(readMenuItem);
 
         resumeMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         resumeMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/booknaviger/resources/graphics/mainmenu/resume.png"))); // NOI18N
@@ -1066,6 +1089,18 @@ public final class MainInterface extends javax.swing.JFrame {
         exit();
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "formWindowClosing");
     }//GEN-LAST:event_formWindowClosing
+
+    private void readMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readMenuItemActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "readMenuItemActionPerformed");
+        startReading();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "readMenuItemActionPerformed");
+    }//GEN-LAST:event_readMenuItemActionPerformed
+
+    private void readButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readButtonActionPerformed
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "readButtonActionPerformed");
+        startReading();
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "readButtonActionPerformed");
+    }//GEN-LAST:event_readButtonActionPerformed
 
     /**
      * restart the mainInterface (mainly to take new language parameters)
@@ -1702,6 +1737,8 @@ public final class MainInterface extends javax.swing.JFrame {
     private javax.swing.JMenu profileMenu;
     private javax.swing.JPopupMenu.Separator profileSeparator;
     private javax.swing.JMenuItem profilesMenuItem;
+    private javax.swing.JButton readButton;
+    private javax.swing.JMenuItem readMenuItem;
     private javax.swing.JButton refreshAllButton;
     private javax.swing.JMenuItem refreshAllMenuItem;
     private javax.swing.JButton refreshCurrentButton;
