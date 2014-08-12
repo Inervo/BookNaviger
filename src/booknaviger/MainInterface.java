@@ -56,6 +56,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -264,6 +265,17 @@ public final class MainInterface extends javax.swing.JFrame {
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "getMainInterfaceWantedLocation", mainInterfaceLocation);
         return mainInterfaceLocation;
     }
+    
+    /**
+     * Read the extended state of {@link MainInterface} in the {@link #preferences}
+     * @return The extended state to set for MaintInterface
+     */
+    private int getMainInterfaceWantedExtendedState() {
+        Logger.getLogger(MainInterface.class.getName()).entering(MainInterface.class.getName(), "getMainInterfaceWantedExtendedState");
+        int mainInterfaceExtendedState = preferences.getInt("extended-state", 0);
+        Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "getMainInterfaceWantedExtendedState", mainInterfaceExtendedState);
+        return mainInterfaceExtendedState;
+    }
 
     /**
      * This method is called from within the constructor to initialize the
@@ -417,6 +429,7 @@ public final class MainInterface extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("BookNaviger"); // NOI18N
+        setExtendedState(getMainInterfaceWantedExtendedState());
         setLocation(getMainInterfaceWantedLocation());
         setPreferredSize(getMainInterfaceWantedDimension());
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -910,6 +923,10 @@ public final class MainInterface extends javax.swing.JFrame {
         } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             evt.consume();
             startReading();
+        } else if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            evt.consume();
+            ((TableRowSorter)seriesTable.getRowSorter()).setRowFilter(null);
+            seriesTable.scrollRectToVisible(seriesTable.getCellRect(seriesTable.getSelectedRow(), 0, false));
         }
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "seriesTableKeyPressed");
     }//GEN-LAST:event_seriesTableKeyPressed
@@ -926,6 +943,10 @@ public final class MainInterface extends javax.swing.JFrame {
         } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             evt.consume();
             startReading();
+        } else if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            evt.consume();
+            ((TableRowSorter)albumsTable.getRowSorter()).setRowFilter(null);
+            albumsTable.scrollRectToVisible(albumsTable.getCellRect(albumsTable.getSelectedRow(), 0, false));
         }
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "albumsTableKeyPressed");
     }//GEN-LAST:event_albumsTableKeyPressed
@@ -1607,6 +1628,7 @@ public final class MainInterface extends javax.swing.JFrame {
         preferences.putInt("height", getHeight());
         preferences.putInt("X-location", getX());
         preferences.putInt("Y-location", getY());
+        preferences.putInt("extended-state", getExtendedState());
         preferences.putInt("divider-location", booksPreviewSplitPane.getDividerLocation());
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "savePreferences");
     }

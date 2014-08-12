@@ -104,13 +104,12 @@ public class TableSearcher {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
                         jdialog.dispose();
-                        searchField.setText(null);
                     }
                 };
-                searchField.setAction(exit);
                 searchField.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                         KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "exit");
                 searchField.getActionMap().put("exit", exit);
+                searchField.setAction(exit);
                 jdialog.setVisible(true);
                 Logger.getLogger(TableSearcher.class.getName()).exiting(TableSearcher.class.getName(), "QuickSearchListener.keyPressed");
             }
