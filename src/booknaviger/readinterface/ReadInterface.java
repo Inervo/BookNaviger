@@ -46,8 +46,6 @@ public class ReadInterface extends javax.swing.JPanel {
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "ReadInterface", abstractImageHandler);
         this.imageHandler = abstractImageHandler;
         initComponents();
-        setFocusable(true);
-        setEnabled(true);
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "ReadInterface");
     }
 
@@ -651,7 +649,6 @@ public class ReadInterface extends javax.swing.JPanel {
     public void exit() {
         Logger.getLogger(ReadInterface.class.getName()).entering(ReadInterface.class.getName(), "exit");
         Logger.getLogger(ReadInterface.class.getName()).log(Level.INFO, "quitting read interface");
-        this.setVisible(false);
         PropertiesManager.getInstance().setKey("lastReadedPage", String.valueOf(pageNbr));
         FXReadInterface.INSTANCE.close();
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "exit");
@@ -670,9 +667,7 @@ public class ReadInterface extends javax.swing.JPanel {
             trayIcon.addActionListener((ActionEvent e) -> {
                 Logger.getLogger(ReadInterface.class.getName()).log(Level.INFO, "Restoring from minimize");
                 MainInterface.getInstance().setVisible(true);
-                setVisible(true);
                 FXReadInterface.INSTANCE.showTime();
-                requestFocus();
                 SystemTray sysTray = SystemTray.getSystemTray();
                 sysTray.remove(sysTray.getTrayIcons()[0]);
             });
@@ -681,12 +676,10 @@ public class ReadInterface extends javax.swing.JPanel {
             } catch (AWTException ex) {
                 Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Exception with the creation of the systray", ex);
             }
-            this.setVisible(false);
-            FXReadInterface.INSTANCE.close();
+            FXReadInterface.INSTANCE.hide();
             MainInterface.getInstance().setVisible(false);
         } else {
-            this.setVisible(false);
-            FXReadInterface.INSTANCE.close();
+            FXReadInterface.INSTANCE.hide();
             MainInterface.getInstance().setExtendedState(javax.swing.JFrame.ICONIFIED);
         }
         Logger.getLogger(ReadInterface.class.getName()).exiting(ReadInterface.class.getName(), "minimize");

@@ -51,6 +51,7 @@ import javafx.application.Application;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -1482,7 +1483,6 @@ public final class MainInterface extends javax.swing.JFrame {
                 FXReadInterface.INSTANCE.setImageHandler(imageHandler);
                 FXReadInterface.INSTANCE.createAndSetSwingContent();
                 readInterface = FXReadInterface.INSTANCE.getReadInterface();
-                readInterface.setVisible(true);
                 FXReadInterface.INSTANCE.showTime();
                 while (!readInterface.isShowing()) {
                     Thread.sleep(1);
@@ -1655,6 +1655,15 @@ public final class MainInterface extends javax.swing.JFrame {
      */
     public Profiles getProfiles() {
         return profiles;
+    }
+
+    /**
+     * Ask the focus to be set on the album table
+     * @return true if albumtable have the focus, false otherwise
+     */
+    public boolean getFocusOnAlbumsTable() {
+        albumsTable.requestFocus();
+        return albumsTable.isFocusOwner();
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

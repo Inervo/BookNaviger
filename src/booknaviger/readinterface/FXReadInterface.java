@@ -3,8 +3,10 @@
 
 package booknaviger.readinterface;
 
+import booknaviger.MainInterface;
 import booknaviger.osbasics.OSBasics;
 import booknaviger.picturehandler.AbstractImageHandler;
+import java.awt.KeyboardFocusManager;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -124,15 +126,40 @@ public class FXReadInterface extends Application {
     public void showTime() {
         Logger.getLogger(FXReadInterface.class.getName()).entering(FXReadInterface.class.getName(), "showTime");
         Platform.runLater(() -> {
+            readInterface.setFocusable(true);
+            readInterface.setVisible(true);
             stage.show();
+            readInterface.requestFocus();
             Logger.getLogger(FXReadInterface.class.getName()).exiting(FXReadInterface.class.getName(), "showTime");
         });
     }
     
     /**
-     * Hide the JavaFX interface
+     * Close the JavaFX interface and give focus back to MainInterface
      */
     public void close() {
+        Logger.getLogger(FXReadInterface.class.getName()).entering(FXReadInterface.class.getName(), "close");
+        Platform.runLater(() -> {
+            readInterface.setFocusable(false);
+            readInterface.setVisible(false);
+            stage.close();
+            new Thread(() -> {
+                while (!MainInterface.getInstance().getFocusOnAlbumsTable()) {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(FXReadInterface.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }).start();
+            Logger.getLogger(FXReadInterface.class.getName()).exiting(FXReadInterface.class.getName(), "close");
+        });
+    }
+    
+    /**
+     * Hide JavaFX stage
+     */
+    public void hide() {
         Logger.getLogger(FXReadInterface.class.getName()).entering(FXReadInterface.class.getName(), "close");
         Platform.runLater(() -> {
             stage.close();
