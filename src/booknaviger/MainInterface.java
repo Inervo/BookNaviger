@@ -428,7 +428,7 @@ public final class MainInterface extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("BookNaviger"); // NOI18N
+        setTitle(bundle.getString("appTitle")); // NOI18N
         setExtendedState(getMainInterfaceWantedExtendedState());
         setLocation(getMainInterfaceWantedLocation());
         setPreferredSize(getMainInterfaceWantedDimension());

@@ -5,11 +5,13 @@ package booknaviger.readinterface;
 
 import booknaviger.osbasics.OSBasics;
 import booknaviger.picturehandler.AbstractImageHandler;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.input.RotateEvent;
 import javafx.scene.input.SwipeEvent;
@@ -64,11 +66,20 @@ public class FXReadInterface extends Application {
         StackPane pane = new StackPane();
         pane.getChildren().add(swingNode);
         
-        Scene scene = new Scene(pane, Screen.getPrimary().getVisualBounds().getWidth(), Screen.getPrimary().getVisualBounds().getHeight());
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        stage.setX(bounds.getMinX());
+        stage.setY(bounds.getMinY());
+        stage.setWidth(bounds.getWidth());
+        stage.setHeight(bounds.getHeight());
+        if (!OSBasics.isMac()) {
+            stage.setMaximized(true);
+        }
+        
+        Scene scene = new Scene(pane);
         registerEvents(scene);
         
         this.stage = stage;
-        stage.setTitle("BookNaviger");
+        stage.setTitle(ResourceBundle.getBundle("booknaviger/resources/Application").getString("appTitle"));
         stage.setScene(scene);
         Logger.getLogger(FXReadInterface.class.getName()).exiting(FXReadInterface.class.getName(), "start");
     }
