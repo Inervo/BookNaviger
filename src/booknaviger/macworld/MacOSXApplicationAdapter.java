@@ -25,6 +25,7 @@ public class MacOSXApplicationAdapter {
      * Constructor to the adapter for Mac OS X
      * @param mainInterface instance (which could still be in construction) of mainInterface
      */
+    @SuppressWarnings("deprecation")
     public MacOSXApplicationAdapter(final MainInterface mainInterface) {
             Logger.getLogger(MacOSXApplicationAdapter.class.getName()).entering(MacOSXApplicationAdapter.class.getName(), "MacOSXApplicationAdapter", mainInterface);
             Logger.getLogger(MacOSXApplicationAdapter.class.getName()).log(Level.INFO, "Binding to the Mac OS X handlers");

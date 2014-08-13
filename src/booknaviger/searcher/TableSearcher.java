@@ -32,7 +32,7 @@ public class TableSearcher {
     private final JTextField searchField = new JTextField();
     private final JTable table;
     private final JDialog parentJDialog;
-    private TableRowSorter tableRowSorter;
+    private TableRowSorter<?> tableRowSorter;
     
     
     /**

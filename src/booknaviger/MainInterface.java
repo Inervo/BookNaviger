@@ -949,7 +949,7 @@ public final class MainInterface extends javax.swing.JFrame {
             startReading();
         } else if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
             evt.consume();
-            ((TableRowSorter)seriesTable.getRowSorter()).setRowFilter(null);
+            ((TableRowSorter<?>)seriesTable.getRowSorter()).setRowFilter(null);
             seriesTable.scrollRectToVisible(seriesTable.getCellRect(seriesTable.getSelectedRow(), 0, false));
         }
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "seriesTableKeyPressed");
@@ -969,7 +969,7 @@ public final class MainInterface extends javax.swing.JFrame {
             startReading();
         } else if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
             evt.consume();
-            ((TableRowSorter)albumsTable.getRowSorter()).setRowFilter(null);
+            ((TableRowSorter<?>)albumsTable.getRowSorter()).setRowFilter(null);
             albumsTable.scrollRectToVisible(albumsTable.getCellRect(albumsTable.getSelectedRow(), 0, false));
         }
         Logger.getLogger(MainInterface.class.getName()).exiting(MainInterface.class.getName(), "albumsTableKeyPressed");
